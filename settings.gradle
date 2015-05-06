@@ -1,0 +1,3 @@
+include ':app'
+// include ':integration-tests'
+include ':wishlist'
