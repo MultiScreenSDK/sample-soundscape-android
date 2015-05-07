@@ -28,6 +28,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.samsung.soundscape.App;
+
 public class Util {
     //The debug tag.
     private static final String TAG = "SamsungSoundScape";
@@ -455,9 +457,9 @@ public class Util {
      *
      * @return true if WiFi is connected, otherwise false.
      */
-    public static boolean isWiFiConnected(Context context) {
+    public static boolean isWiFiConnected() {
         //Get connectivity manager.
-        ConnectivityManager connManager = (ConnectivityManager) context.
+        ConnectivityManager connManager = (ConnectivityManager) App.getInstance().
                 getSystemService(Context.CONNECTIVITY_SERVICE);
 
         //get network info object.

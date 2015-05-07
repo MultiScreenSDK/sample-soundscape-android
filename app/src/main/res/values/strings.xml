@@ -49,10 +49,6 @@
     <string name="select_device">Select Device</string>
     <string name="title_activity_connect">ConnectActivity</string>
 
-    <!--TV application settings-->
-    <string name="app_url"></string>
-    <string name="channel_id"></string>
-
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 </resources>

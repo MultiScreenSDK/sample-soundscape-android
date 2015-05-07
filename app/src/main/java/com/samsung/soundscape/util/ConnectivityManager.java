@@ -13,6 +13,7 @@ import com.samsung.multiscreen.Result;
 import com.samsung.multiscreen.Search;
 import com.samsung.multiscreen.Service;
 import com.samsung.multiscreen.util.RunUtil;
+import com.samsung.soundscape.App;
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.adapter.ServiceAdapter;
 
@@ -45,9 +46,6 @@ public class ConnectivityManager {
     /** The flag shows that application is going to exit.  */
     private boolean isExisting = false;
 
-    //The context object.
-    private Context context;
-
     /**
      * The service change listener, it will invoked when service is changed like add, remove, etc.
      */
@@ -64,19 +62,18 @@ public class ConnectivityManager {
      *
      * @return
      */
-    public static ConnectivityManager getInstance(Context context) {
+    public static ConnectivityManager getInstance() {
         if (instance == null) {
             synchronized (lock) {
                 if (instance == null) {
-                    instance = new ConnectivityManager(context);
+                    instance = new ConnectivityManager();
                 }
             }
         }
         return instance;
     }
 
-    public ConnectivityManager(Context context) {
-        this.context = context;
+    public ConnectivityManager() {
         //Create Service list adapter.
 
 
@@ -146,17 +143,19 @@ public class ConnectivityManager {
     public void startDiscovery() {
         //Create the search object if it is null.
         if (search == null) {
-            search = Service.search(context);
+            search = Service.search(App.getInstance());
             search.setOnServiceFoundListener(mOnServiceFoundListener);
             search.setOnServiceLostListener(mOnServiceLostListener);
         }
 
         //When WiFi is connected and search process is not running.
-        if (Util.isWiFiConnected(context) && !search.isSearching()) {
+        if (Util.isWiFiConnected() && !search.isSearching()) {
 
             if (!search.isStarting()) {
                 //Clear the TV list.
-                adapter.clear();
+                if (adapter != null) {
+                    adapter.clear();
+                }
 
                 //Start discovery.
                 search.start();
@@ -344,7 +343,7 @@ public class ConnectivityManager {
 
         //Unregister the WiFi state listener.
         try {
-            context.unregisterReceiver(mWifiStateChangedReceiver);
+            App.getInstance().unregisterReceiver(mWifiStateChangedReceiver);
         } catch (Exception e) {//ignore if there is error.
         }
 
@@ -378,10 +377,10 @@ public class ConnectivityManager {
         }
 
         //Parse Application Url.
-        Uri url = Uri.parse(context.getString(R.string.app_url));
+        Uri url = Uri.parse(App.getInstance().getString(R.string.app_url));
 
         // Get an instance of Application.
-        mMultiscreenApp = service.createApplication(url, context.getString(R.string.channel_id));
+        mMultiscreenApp = service.createApplication(url, App.getInstance().getString(R.string.channel_id));
 
         //Set the connection timeout to 20 seconds.
         //When the TV is unavailable after 20 seconds, onDisconnect event is called.
@@ -518,7 +517,7 @@ public class ConnectivityManager {
         IntentFilter mWiFiStateFilter = new IntentFilter();
         mWiFiStateFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         mWiFiStateFilter.addAction(android.net.ConnectivityManager.CONNECTIVITY_ACTION);
-        context.registerReceiver(mWifiStateChangedReceiver, mWiFiStateFilter);
+        App.getInstance().registerReceiver(mWifiStateChangedReceiver, mWiFiStateFilter);
     }
 
 
