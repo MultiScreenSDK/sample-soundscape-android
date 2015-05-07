@@ -44,5 +44,7 @@
     <string name="navigation_drawer_close">Drawer Close</string>
     <string name="title_home">Home</string>
 
-
+    <!-- Connect Activity -->
+    <string name="connect">Connect</string>
+    <string name="select_device">Select Device</string>
 </resources>
