@@ -44,4 +44,25 @@
     <color name="dark_grey">#1f1f1f</color>
     <color name="navigation_drawer_item_separator">#c2c2c2</color>
 
+    <!-- Color set for client header -->
+    <color name="user_color_1">#EF6C00</color>
+    <color name="user_color_2">#1A237E</color>
+    <color name="user_color_3">#689F38</color>
+    <color name="user_color_4">#E91E63</color>
+    <color name="user_color_5">#2196F3</color>
+    <color name="user_color_6">#B71C1C</color>
+    <color name="user_color_7">#01579B</color>
+    <color name="user_color_8">#009688</color>
+    <color name="user_color_9">#673AB7</color>
+    <color name="user_color_10">#607D8B</color>
+    <color name="user_color_11">#880E4F</color>
+    <color name="user_color_12">#3F51B5</color>
+    <color name="user_color_13">#827717</color>
+    <color name="user_color_14">#9C27B0</color>
+    <color name="user_color_15">#3E2723</color>
+    <color name="user_color_16">#E65100</color>
+    <color name="user_color_17">#006064</color>
+    <color name="user_color_18">#1B5E20</color>
+    <color name="user_color_19">#4A148C</color>
+    <color name="user_color_20">#795548</color>
 </resources>
