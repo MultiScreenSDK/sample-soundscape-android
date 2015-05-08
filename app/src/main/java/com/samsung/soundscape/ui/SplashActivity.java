@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.samsung.soundscape.App;
 import com.samsung.soundscape.R;
 
 /**
@@ -28,6 +29,10 @@ public class SplashActivity extends Activity{
                 finish();
             }
         }, getResources().getInteger(R.integer.splash_timeout));
+
+        if (!App.getInstance().getConnectivityManager().isDiscovering()) {
+            App.getInstance().getConnectivityManager().startDiscovery();
+        }
     }
 
     @Override

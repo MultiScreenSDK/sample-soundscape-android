@@ -25,25 +25,39 @@ import java.util.ArrayList;
  */
 public class ConnectivityManager {
 
-    /** An singleton instance of this class */
+    /**
+     * An singleton instance of this class
+     */
     private static ConnectivityManager instance = null;
 
-    /** A lock used to synchronize creation of this object and access to the service map. */
+    /**
+     * A lock used to synchronize creation of this object and access to the service map.
+     */
     protected static final Object lock = new Object();
 
-    /** The Search object which is going to run discovery service.  */
+    /**
+     * The Search object which is going to run discovery service.
+     */
     private Search search = null;
 
-    /** Multiscreen TV service */
+    /**
+     * Multiscreen TV service
+     */
     private com.samsung.multiscreen.Service service;
 
-    /** Multiscreen TV application */
+    /**
+     * Multiscreen TV application
+     */
     private com.samsung.multiscreen.Application mMultiscreenApp;
 
-    /** The adapter used to maintain TV service list. */
+    /**
+     * The adapter used to maintain TV service list.
+     */
     private ServiceAdapter adapter;
 
-    /** The flag shows that application is going to exit.  */
+    /**
+     * The flag shows that application is going to exit.
+     */
     private boolean isExisting = false;
 
     /**
@@ -53,7 +67,9 @@ public class ConnectivityManager {
         public void onServiceChanged();
     }
 
-    /** The array list of ServiceChangedListener.  */
+    /**
+     * The array list of ServiceChangedListener.
+     */
     private ArrayList<ServiceChangedListener> listeners = new ArrayList<ServiceChangedListener>();
 
 
@@ -78,7 +94,7 @@ public class ConnectivityManager {
 
 
         //TODO: comment is for the moment.
-        //adapter = new ServiceAdapter(context, R.layout.cell_service_layout);
+        adapter = new ServiceAdapter(App.getInstance(), R.layout.fragment_carousel);
 
         //Register Wifi state listener.
         registerWiFiStateListener();
@@ -131,6 +147,7 @@ public class ConnectivityManager {
 
     /**
      * Check if discovery process is running.
+     *
      * @return true discovery is running otherwise false.
      */
     public boolean isDiscovering() {
@@ -166,6 +183,8 @@ public class ConnectivityManager {
     private Search.OnServiceFoundListener mOnServiceFoundListener = new Search.OnServiceFoundListener() {
         @Override
         public void onFound(Service service) {
+            Util.d("Service onFound: " + service);
+
             //TV is found, update the TV list.
             updateTVList(service);
         }
@@ -277,6 +296,7 @@ public class ConnectivityManager {
 
     /**
      * Set the TV service.
+     *
      * @param service the new TV service to be used.
      */
     public void setService(final Service service) {
@@ -323,6 +343,7 @@ public class ConnectivityManager {
 
     /**
      * Update the current service and start to launch TV application.
+     *
      * @param service the new TV service.
      */
     private void updateServiceAndConnect(Service service) {
@@ -360,6 +381,7 @@ public class ConnectivityManager {
 
     /**
      * Check if TV is connected already.
+     *
      * @return true if TV is connected otherwise false.
      */
     public boolean isTVConnected() {
@@ -448,8 +470,9 @@ public class ConnectivityManager {
 
     /**
      * Sent the byte array to TV.
-     * @param event the channel event.
-     * @param data the object to sent to TV.
+     *
+     * @param event   the channel event.
+     * @param data    the object to sent to TV.
      * @param payload payload data in format of byte array.
      */
     public void sendToTV(String event, Object data, byte[] payload) {
@@ -460,8 +483,9 @@ public class ConnectivityManager {
 
     /**
      * Sent the data to TV.
-     * @param event  the channel event.
-     * @param data the object to sent to TV.
+     *
+     * @param event the channel event.
+     * @param data  the object to sent to TV.
      */
     public void sendToTV(String event, Object data) {
         if (mMultiscreenApp != null && mMultiscreenApp.isConnected()) {
@@ -472,6 +496,7 @@ public class ConnectivityManager {
 
     /**
      * Set the discovery stop listener called when discovery is stopped.
+     *
      * @param listener the listener.
      */
     public void setDiscoveryOnStopListener(Search.OnStopListener listener) {

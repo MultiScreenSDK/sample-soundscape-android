@@ -37,20 +37,20 @@ import com.samsung.soundscape.R;
 import com.samsung.soundscape.util.ConnectivityManager;
 
 public class ConnectActivity extends AppCompatActivity implements ConnectivityManager.ServiceChangedListener{
-    ConnectivityManager mConnectivityManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.connect_activity);
 
-        mConnectivityManager = ConnectivityManager.getInstance();
-        mConnectivityManager.addServiceChangedListener(this);
+        App.getInstance().getConnectivityManager().addServiceChangedListener(this);
     }
 
     protected void onDestroy() {
         super.onDestroy();
 
+        //Remove from listener
+        App.getInstance().getConnectivityManager().removeServiceChangedListener(this);
         //Clean up everything before exiting.
         App.getInstance().cleanup();
     }
@@ -59,8 +59,8 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
         super.onStart();
 
         //Start the service discovery if it is not started before.
-        if (!mConnectivityManager.isDiscovering()) {
-            mConnectivityManager.startDiscovery();
+        if (!App.getInstance().getConnectivityManager().isDiscovering()) {
+            App.getInstance().getConnectivityManager().startDiscovery();
         }
     }
 
@@ -68,9 +68,7 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
         super.onStop();
 
         //Stop discovery when the app goes to background.
-        if (mConnectivityManager.isDiscovering()) {
-            mConnectivityManager.stopDiscovery();
-        }
+        App.getInstance().getConnectivityManager().stopDiscovery();
     }
 
     @Override
