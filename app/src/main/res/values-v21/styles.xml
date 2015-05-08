@@ -94,14 +94,8 @@
         <item name="android:background">@drawable/nav_menu_button_background_selector</item>
     </style>
 
-    <style name="MyButtonStyle" parent="Widget.AppCompat.Button">
-        <item name="android:background">@color/white</item>
-        <item name="android:textColor">#eb6c00</item>
-    </style>
-
-    <style name="DefaultButtonStyle" parent="Widget.AppCompat.Button">
-        <!--<item name="android:background">@drawable/btn_material</item>-->
-        <item name="android:color">@color/green</item>
+    <style name="DefaultButtonStyle" parent="@android:style/Widget.Material.Button">
+        <item name="android:colorButtonNormal">@color/white</item>
         <item name="android:textColor">#eb6c00</item>
         <item name="android:textAllCaps">false</item>
     </style>

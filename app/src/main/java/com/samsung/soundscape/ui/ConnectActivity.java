@@ -27,6 +27,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +43,12 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.connect_activity);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.connectContent).setVisibility(View.VISIBLE);
+            }
+        }, getResources().getInteger(R.integer.splash_timeout));
 
         App.getInstance().getConnectivityManager().addServiceChangedListener(this);
     }

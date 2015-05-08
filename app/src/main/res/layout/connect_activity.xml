@@ -1,26 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_speaker_xxhdpi"
+    android:orientation="vertical"
+    >
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:background="#607D8B"/>
+    <RelativeLayout
+        android:id="@+id/connectContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:visibility="invisible">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/textView"
-        android:layout_gravity="center_horizontal" />
+        <TextView
+            android:id="@+id/discover_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/wifi_message"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="0dp"
+            android:fontFamily="sans-serif-light"
+            android:text="Found X devices"
+            android:textColor="#fff"
+            android:textSize="20sp"/>
 
-    <com.gc.materialdesign.views.ButtonRectangle
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#2196F3"
-        android:text="@string/connect" />
+        <TextView
+            android:id="@+id/wifi_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/buttonRipple"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="24dp"
+            android:fontFamily="sans-serif-light"
+            android:text="on 'mittest'"
+            android:textColor="#fff"
+            android:textSize="20sp"/>
 
-</LinearLayout>
+        <com.andexert.library.RippleView
+            android:id="@+id/buttonRipple"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="100dp"
+            android:padding="0dp"
+            app:rv_color="@color/gray">
+
+            <Button
+                android:id="@+id/connect_button"
+                style="@style/DefaultButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="0dp"
+                android:paddingBottom="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="16dp"
+                android:stateListAnimator="@anim/button_elevation"
+                android:text="Connect"
+                android:textColor="#eb6c00"
+                android:textSize="20sp"/>
+
+        </com.andexert.library.RippleView>
+    </RelativeLayout>
+
+</RelativeLayout>

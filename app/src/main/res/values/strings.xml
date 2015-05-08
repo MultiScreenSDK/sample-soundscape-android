@@ -48,6 +48,8 @@
     <string name="connect">Connect</string>
     <string name="select_device">Select Device</string>
     <string name="title_activity_connect">ConnectActivity</string>
+    <string name="connected_to">Connected to:</string>
+    <string name="switch_to">Switch to:</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
