@@ -100,6 +100,15 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.PlaylistActivity"
+            android:label="@string/title_activity_playlist" >
+        </activity>
+        <activity
+            android:name=".ui.LibraryActivity"
+            android:label="@string/title_activity_library" >
+        </activity>
     </application>
 
 </manifest>

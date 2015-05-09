@@ -26,6 +26,8 @@ package com.samsung.soundscape.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import com.samsung.soundscape.App;
@@ -52,6 +54,18 @@ public class Util {
      */
     public static void e(String message) {
         if (DEBUG) Log.e(TAG, message);
+    }
+
+
+    public static String getWifiName() {
+        String ssid = "none";
+        if (isWiFiConnected()) {
+            WifiManager wifiManager = (WifiManager) App.getInstance().getSystemService(Context.WIFI_SERVICE);
+            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+            ssid = wifiInfo.getSSID();
+        }
+
+        return ssid;
     }
 
 //    /**

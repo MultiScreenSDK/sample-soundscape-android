@@ -51,6 +51,18 @@
     <string name="connected_to">Connected to:</string>
     <string name="switch_to">Switch to:</string>
 
+    <string name="connect_status_nodevice">No device is found</string>
+    <plurals name="connect_status_found_devices">
+        <item quantity="one">Found %d devices</item>
+    </plurals>
+    <string name="connect_status_discovered">Discovered %1$s</string>
+    <string name="connect_status_on">on %1$s</string>
+    <string name="connect_status_information">Information</string>
+
+
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_playlist">PlaylistActivity</string>
+    <string name="title_activity_library">LibraryActivity</string>
+
 </resources>
