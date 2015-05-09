@@ -40,6 +40,7 @@ import android.widget.TextView;
 import com.samsung.multiscreen.util.RunUtil;
 import com.samsung.soundscape.App;
 import com.samsung.soundscape.R;
+import com.samsung.soundscape.adapter.ServiceAdapter;
 import com.samsung.soundscape.util.ConnectivityManager;
 import com.samsung.soundscape.util.Util;
 
@@ -47,6 +48,7 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
     Button actionButton;
     TextView discoveryMessage;
     TextView wifiMessage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +73,7 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
     protected void onDestroy() {
         super.onDestroy();
 
-        //Remove from listener
+        //Remove from listener list
         App.getInstance().getConnectivityManager().removeServiceChangedListener(this);
         //Clean up everything before exiting.
         App.getInstance().cleanup();
@@ -97,6 +99,17 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
 
         @Override
         public void onClick(View v) {
+            ServiceAdapter adapter = App.getInstance().getConnectivityManager().getServiceAdapter();
+            int count = adapter.getCount();
+
+            if (count == 0) {
+                //Show information
+            } else if (count == 1) {
+                //Connect to the device directly.
+                App.getInstance().getConnectivityManager().setService(adapter.getItem(0));
+            } else {
+                //show select device dialog.
+            }
 
         }
     };
