@@ -69,7 +69,7 @@
             android:layout_height="match_parent"
             android:background="#616161"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <View
                 android:id="@+id/connectedToDivider"
