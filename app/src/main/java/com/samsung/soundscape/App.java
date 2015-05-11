@@ -85,6 +85,7 @@ public class App extends Application {
     public void cleanup() {
         //Clean up multiscreen service.
         mConnectivityManager.clearService();
+        mConnectivityManager = null;
     }
 
 

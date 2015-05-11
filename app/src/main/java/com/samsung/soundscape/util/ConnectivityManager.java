@@ -24,16 +24,12 @@ import java.util.ArrayList;
  * Provides the Samsung MultiScreen functions.
  */
 public class ConnectivityManager {
+    public static final String EVENT_ADD_SONG = "";
 
-    /**
-     * An singleton instance of this class
-     */
-    private static ConnectivityManager instance = null;
-
-    /**
-     * A lock used to synchronize creation of this object and access to the service map.
-     */
-    protected static final Object lock = new Object();
+    //Singleton holder.
+    private static class SingletonHolder {
+        static final ConnectivityManager INSTANCE = new ConnectivityManager();
+    }
 
     /**
      * The Search object which is going to run discovery service.
@@ -79,17 +75,10 @@ public class ConnectivityManager {
      * @return
      */
     public static ConnectivityManager getInstance() {
-        if (instance == null) {
-            synchronized (lock) {
-                if (instance == null) {
-                    instance = new ConnectivityManager();
-                }
-            }
-        }
-        return instance;
+        return SingletonHolder.INSTANCE;
     }
 
-    public ConnectivityManager() {
+    private ConnectivityManager() {
         //Create Service list adapter.
 
 
