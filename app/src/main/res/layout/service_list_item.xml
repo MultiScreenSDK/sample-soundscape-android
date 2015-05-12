@@ -1,30 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<com.andexert.library.RippleView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/serviceItem"
-    android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:background="@color/white"
-    android:orientation="horizontal">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/buttonRipple"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:padding="0dp"
+    app:rv_color="@color/gray">
 
-    <ImageView
-        android:id="@+id/serviceIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="center"
-        android:scaleType="center"
-        android:src="@drawable/ic_speaker_gray"/>
-
-    <TextView
-        android:id="@+id/serviceText"
+    <LinearLayout
+        android:id="@+id/serviceItem"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/LightBlue"
-        android:gravity="center_vertical"
-        android:paddingLeft="16dp"
-        android:text="Service"
-        android:textColor="#212121"
-        android:textSize="18sp"/>
+        android:layout_height="48dp"
+        android:layout_marginLeft="12dp"
+        android:background="@color/white"
+        android:clickable="true"
+        android:orientation="horizontal">
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/serviceIcon"
+            android:layout_width="36dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_speaker_gray"/>
+
+        <TextView
+            android:id="@+id/serviceText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="12dp"
+            android:paddingRight="16dp"
+            android:text="Shape"
+            android:textColor="#212121"
+            android:textSize="18sp"/>
+
+    </LinearLayout>
+</com.andexert.library.RippleView>
