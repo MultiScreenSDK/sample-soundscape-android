@@ -25,17 +25,15 @@
 
 package com.samsung.soundscape.ui;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -64,15 +62,15 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
         }, getResources().getInteger(R.integer.splash_timeout));
 
         actionButton = (Button) findViewById(R.id.connect_button);
-//        actionButton.setOnClickListener(actionButtonOnClickListener);
-        actionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentManager fm = getFragmentManager();
-                DialogFragment fragment = MyDialogFragment.newInstance(0);
-                fragment.show(fm, "dialog");
-            }
-        });
+        actionButton.setOnClickListener(actionButtonOnClickListener);
+//        actionButton.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                FragmentManager fm = getFragmentManager();
+//                DialogFragment fragment = ServiceListFragment.newInstance(0);
+//                fragment.show(fm, "dialog");
+//            }
+//        });
 
         discoveryMessage = (TextView) findViewById(R.id.discover_message);
         wifiMessage = (TextView) findViewById(R.id.wifi_message);
@@ -105,7 +103,7 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
         App.getInstance().getConnectivityManager().stopDiscovery();
     }
 
-    private View.OnClickListener actionButtonOnClickListener = new View.OnClickListener() {
+    private OnClickListener actionButtonOnClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -119,6 +117,7 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
                 App.getInstance().getConnectivityManager().setService(adapter.getItem(0));
             } else {
                 //show select device dialog.
+                showServiceListDialog();
             }
 
         }
@@ -140,11 +139,20 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
                     getString(R.string.connect)
             );
         } else {
-            updateUI(getResources().getQuantityString(R.plurals.connect_status_found_devices, 1, count),
+            updateUI(String.format(getString(R.string.connect_status_found_devices), count),
                     String.format(getString(R.string.connect_status_on),
                             Util.getWifiName()),
                     getString(R.string.select_device)
             );
+        }
+    }
+
+    @Override
+    public void onConnectionChanged() {
+        if (App.getInstance().getConnectivityManager().isTVConnected()) {
+
+            //When TV is connected, go to playlist screen.
+            startActivity(new Intent(this, PlaylistActivity.class));
         }
     }
 
@@ -171,7 +179,7 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
         });
     }
 
-    void showDialog() {
+    void showServiceListDialog() {
 
         // DialogFragment.show() will take care of adding the fragment
         // in a transaction.  We also want to remove any currently showing
@@ -184,111 +192,10 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
         ft.addToBackStack(null);
 
         // Create and show the dialog.
-        DialogFragment newFragment = MyDialogFragment.newInstance(1);
+        DialogFragment newFragment = ServiceListFragment.newInstance(0);
         newFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_NoTitleBar);
         newFragment.show(ft, "dialog");
     }
 
 
-    public static class MyDialogFragment extends DialogFragment {
-        int mNum;
-
-        /**
-         * Create a new instance of MyDialogFragment, providing "num"
-         * as an argument.
-         */
-        static MyDialogFragment newInstance(int num) {
-            MyDialogFragment f = new MyDialogFragment();
-
-            // Supply num input as an argument.
-            Bundle args = new Bundle();
-            args.putInt("num", num);
-            f.setArguments(args);
-
-            return f;
-        }
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            mNum = getArguments().getInt("num");
-
-            // Pick a style based on the num.
-            int style = DialogFragment.STYLE_NORMAL, theme = 0;
-            switch ((mNum - 1) % 6) {
-                case 1:
-                    style = DialogFragment.STYLE_NO_TITLE;
-                    break;
-                case 2:
-                    style = DialogFragment.STYLE_NO_FRAME;
-                    break;
-                case 3:
-                    style = DialogFragment.STYLE_NO_INPUT;
-                    break;
-                case 4:
-                    style = DialogFragment.STYLE_NORMAL;
-                    break;
-                case 5:
-                    style = DialogFragment.STYLE_NORMAL;
-                    break;
-                case 6:
-                    style = DialogFragment.STYLE_NO_TITLE;
-                    break;
-                case 7:
-                    style = DialogFragment.STYLE_NO_FRAME;
-                    break;
-                case 8:
-                    style = DialogFragment.STYLE_NORMAL;
-                    break;
-            }
-            switch ((mNum - 1) % 6) {
-                case 4:
-                    theme = android.R.style.Theme_Holo;
-                    break;
-                case 5:
-                    theme = android.R.style.Theme_Holo_Light_Dialog;
-                    break;
-                case 6:
-                    theme = android.R.style.Theme_Holo_Light;
-                    break;
-                case 7:
-                    theme = android.R.style.Theme_Holo_Light_Panel;
-                    break;
-                case 8:
-                    theme = android.R.style.Theme_Holo_Light;
-                    break;
-            }
-            setStyle(style, theme);
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomTheme_Dialog);
-            builder.setView(LayoutInflater.from(getActivity()).inflate(R.layout.fragment_connect_service, null));
-            return builder.show();
-        }
-
-//        @Override
-//        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                                 Bundle savedInstanceState) {
-////            View v = inflater.inflate(R.layout.fragment_dialog, container, false);
-////            View tv = v.findViewById(R.id.text);
-////            ((TextView)tv).setText("Dialog #" + mNum + ": using style "
-////                    + getNameForNum(mNum));
-////
-////            // Watch for button clicks.
-////            Button button = (Button)v.findViewById(R.id.show);
-////            button.setOnClickListener(new OnClickListener() {
-////                public void onClick(View v) {
-////                    // When button is clicked, call up to owning activity.
-////                    ((FragmentDialog)getActivity()).showDialog();
-////                }
-////            });
-////
-////            return v;
-//            View v = inflater.inflate(R.layout.fragment_connect_service, container, false);
-//            getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-//            return v;
-//        }
-    }
 }

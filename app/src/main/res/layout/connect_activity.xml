@@ -23,7 +23,7 @@
             android:layout_centerHorizontal="true"
             android:layout_margin="0dp"
             android:fontFamily="sans-serif-light"
-            android:text="Found X devices"
+            android:text="Searching devices..."
             android:textColor="#fff"
             android:textSize="20sp"/>
 
@@ -35,7 +35,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="24dp"
             android:fontFamily="sans-serif-light"
-            android:text="on 'mittest'"
+            android:text="on your current WiFi network"
             android:textColor="#fff"
             android:textSize="20sp"/>
 

@@ -24,10 +24,14 @@ public class PlaylistActivity extends AppCompatActivity implements ConnectivityM
 
         //Remove from listener list
         App.getInstance().getConnectivityManager().removeServiceChangedListener(this);
+        App.getInstance().getConnectivityManager().disconnect();
     }
 
     @Override
-    public void onServiceChanged() {
+    public void onServiceChanged() {}
+
+    @Override
+    public void onConnectionChanged() {
         //When the device is disconnected, go back to connect screen.
         if (!App.getInstance().getConnectivityManager().isTVConnected()) {
             finish();

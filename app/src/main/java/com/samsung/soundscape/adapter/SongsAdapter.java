@@ -26,6 +26,5 @@ public class SongsAdapter extends RecyclerView.Adapter
         public ListItemViewHolder(View itemView) {
             super(itemView);
         }
-        // … shown above in the ViewHolder section
     }
 }

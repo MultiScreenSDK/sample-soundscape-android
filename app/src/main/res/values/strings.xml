@@ -53,9 +53,7 @@
     <string name="switch_to">Switch to:</string>
 
     <string name="connect_status_nodevice">No device is found</string>
-    <plurals name="connect_status_found_devices">
-        <item quantity="one">Found %d devices</item>
-    </plurals>
+    <string name="connect_status_found_devices">Discovered %1$d</string>
     <string name="connect_status_discovered">Discovered %1$s</string>
     <string name="connect_status_on">on %1$s</string>
     <string name="connect_status_information">Information</string>

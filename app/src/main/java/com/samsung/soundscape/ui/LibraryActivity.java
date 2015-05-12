@@ -27,6 +27,10 @@ public class LibraryActivity extends AppCompatActivity implements ConnectivityMa
 
     @Override
     public void onServiceChanged() {
+    }
+
+    @Override
+    public void onConnectionChanged() {
         //When the device is disconnected, go back to connect screen.
         if (!App.getInstance().getConnectivityManager().isTVConnected()) {
             finish();

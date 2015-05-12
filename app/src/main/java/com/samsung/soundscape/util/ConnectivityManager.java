@@ -60,7 +60,10 @@ public class ConnectivityManager {
      * The service change listener, it will invoked when service is changed like add, remove, etc.
      */
     public interface ServiceChangedListener {
+        //Triggered when service is added or removed.
         public void onServiceChanged();
+        //Triggered when the connection is changed (either disconnected or connected).
+        public void onConnectionChanged();
     }
 
     /**
@@ -80,10 +83,7 @@ public class ConnectivityManager {
 
     private ConnectivityManager() {
         //Create Service list adapter.
-
-
-        //TODO: comment is for the moment.
-        adapter = new ServiceAdapter(App.getInstance(), R.layout.fragment_carousel);
+        adapter = new ServiceAdapter(App.getInstance(), R.layout.service_list_item);
 
         //Register Wifi state listener.
         registerWiFiStateListener();
@@ -254,10 +254,14 @@ public class ConnectivityManager {
     /**
      * Notify all the service change listeners that service change happens.
      */
-    private void notifyListeners() {
+    private void notifyListeners(boolean serviceChanged) {
         for (ServiceChangedListener listener : listeners) {
             if (listener != null) {
-                listener.onServiceChanged();
+                if (serviceChanged) {
+                    listener.onServiceChanged();
+                } else {
+                    listener.onConnectionChanged();
+                }
             }
         }
     }
@@ -279,7 +283,7 @@ public class ConnectivityManager {
         });
 
         //Notify UI to update cast icon.
-        notifyListeners();
+        notifyListeners(true);
     }
 
 
@@ -405,7 +409,7 @@ public class ConnectivityManager {
                 if (client != null) {
 
                     //Notify service change listeners.
-                    notifyListeners();
+                    notifyListeners(false);
 
                     //restart to discovery if service is disconnected and
                     // this application is not closing.
@@ -429,7 +433,7 @@ public class ConnectivityManager {
                 adapter.notifyDataSetChanged();
 
                 //Notify UI listeners.
-                notifyListeners();
+                notifyListeners(false);
             }
         });
 
@@ -437,7 +441,7 @@ public class ConnectivityManager {
         mMultiscreenApp.setOnErrorListener(new Channel.OnErrorListener() {
             @Override
             public void onError(com.samsung.multiscreen.Error error) {
-                notifyListeners();
+                notifyListeners(false);
                 if (!isExisting) startDiscovery();
             }
         });
@@ -452,10 +456,17 @@ public class ConnectivityManager {
             @Override
             public void onError(com.samsung.multiscreen.Error error) {
                 //failed to launch TV application. Notify TV service changes.
-                notifyListeners();
+                notifyListeners(false);
             }
         });
     }
+
+    public void disconnect() {
+        if (service != null && mMultiscreenApp != null && mMultiscreenApp.isConnected()) {
+            mMultiscreenApp.disconnect();
+        }
+    }
+
 
     /**
      * Sent the byte array to TV.
