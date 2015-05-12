@@ -14,7 +14,7 @@
         android:layout_alignParentBottom="true"
         android:layout_gravity="center"
         android:scaleType="center"
-        android:src="@drawable/ic_connected_gray"/>
+        android:src="@drawable/ic_speaker_gray"/>
 
     <TextView
         android:id="@+id/serviceText"

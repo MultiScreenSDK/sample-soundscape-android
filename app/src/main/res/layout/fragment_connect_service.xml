@@ -91,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="16dp"
-                    android:src="@drawable/ic_connected_gray" />
+                    android:src="@drawable/ic_speaker_white" />
 
                 <TextView
                     android:id="@+id/selectedServiceText"
@@ -100,7 +100,8 @@
                     android:layout_marginLeft="16dp"
                     android:gravity="center_vertical"
                     android:text="Shape"
-                    android:textColor="#fff" />
+                    android:textColor="#fff"
+                    android:textSize="18dp" />
             </LinearLayout>
 
             <com.andexert.library.RippleView
