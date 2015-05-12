@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/libraryItem"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:background="@color/white"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/albumArt"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_speaker_gray"/>
+
+    <LinearLayout
+        android:id="@+id/libraryItemText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingLeft="8dp">
+
+        <TextView
+            android:id="@+id/songTitle"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:text="Trap Queen"
+            android:textColor="#212121"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/songArtist"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center_vertical"
+            android:text="Fetty Wap"
+            android:textColor="#212121"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+</LinearLayout>

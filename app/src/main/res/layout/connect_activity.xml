@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:visibility="visible">
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/discover_message"
@@ -24,7 +24,7 @@
             android:layout_margin="0dp"
             android:fontFamily="sans-serif-light"
             android:text="Searching devices..."
-            android:textColor="#fff"
+            android:textColor="@color/white"
             android:textSize="20sp"/>
 
         <TextView
@@ -36,7 +36,7 @@
             android:layout_marginBottom="24dp"
             android:fontFamily="sans-serif-light"
             android:text="on your current WiFi network"
-            android:textColor="#fff"
+            android:textColor="@color/white"
             android:textSize="20sp"/>
 
         <com.andexert.library.RippleView
