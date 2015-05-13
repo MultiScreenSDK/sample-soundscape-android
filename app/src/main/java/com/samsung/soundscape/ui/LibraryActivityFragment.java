@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import com.samsung.multiscreen.Application;
 import com.samsung.multiscreen.Channel;
 import com.samsung.multiscreen.Message;
-import com.samsung.soundscape.App;
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.util.ConnectivityManager;
 
@@ -36,17 +35,17 @@ public class LibraryActivityFragment extends Fragment {
     public void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Application application = App.getInstance().getConnectivityManager().getMultiscreenApp();
+        Application application = ConnectivityManager.getInstance().getMultiscreenApp();
         if (application != null) {
             application.addOnMessageListener(
-                    ConnectivityManager.EVENT_ADD_SONG, onAddSongListener);
+                    ConnectivityManager.EVENT_ADD_TRACK, onAddSongListener);
         }
     }
 
     public void onDestroy () {
-        Application application = App.getInstance().getConnectivityManager().getMultiscreenApp();
+        Application application = ConnectivityManager.getInstance().getMultiscreenApp();
         if (application != null) {
-            application.removeOnMessageListener(ConnectivityManager.EVENT_ADD_SONG, onAddSongListener);
+            application.removeOnMessageListener(ConnectivityManager.EVENT_ADD_TRACK, onAddSongListener);
         }
 
         super.onDestroy();

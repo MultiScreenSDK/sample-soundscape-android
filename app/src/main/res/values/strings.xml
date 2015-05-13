@@ -56,6 +56,7 @@
     <string name="connect_status_found_devices">Discovered %1$d</string>
     <string name="connect_status_discovered">Discovered %1$s</string>
     <string name="connect_status_on">on %1$s</string>
+    <string name="connect_to_message">Connect to \n %1$s...</string>
     <string name="connect_status_information">Information</string>
 
 
@@ -68,5 +69,4 @@
     <string name="add_all">Add All</string>
 
     <string name="action_connect">Connect</string>
-
 </resources>

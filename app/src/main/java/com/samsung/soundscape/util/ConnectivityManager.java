@@ -16,20 +16,32 @@ import com.samsung.multiscreen.util.RunUtil;
 import com.samsung.soundscape.App;
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.adapter.ServiceAdapter;
+import com.samsung.soundscape.events.ConnectionChangedEvent;
+import com.samsung.soundscape.events.ServiceChangedEvent;
 
 import java.util.ArrayList;
+
+import de.greenrobot.event.EventBus;
 
 
 /**
  * Provides the Samsung MultiScreen functions.
  */
 public class ConnectivityManager {
-    public static final String EVENT_ADD_SONG = "";
+    public static final String EVENT_ADD_TRACK = "addTrack";
+    public static final String EVENT_REMOVE_TRACK = "removeTrack";
+    public static final String EVENT_APP_STATE_REQUEST = "appStateRequest";
+    public static final String EVENT_APP_STATE = "appState";
+    public static final String EVENT_TRACK_START = "trackStart";
+    public static final String EVENT_PLAY = "play";
+    public static final String EVENT_PAUSE = "pause";
+    public static final String EVENT_NEXT = "next";
 
-    //Singleton holder.
-    private static class SingletonHolder {
-        static final ConnectivityManager INSTANCE = new ConnectivityManager();
-    }
+    /** An singleton instance of this class */
+    private static ConnectivityManager instance = null;
+
+    /** A lock used to synchronize creation of this object and access to the service map. */
+    protected static final Object lock = new Object();
 
     /**
      * The Search object which is going to run discovery service.
@@ -78,13 +90,17 @@ public class ConnectivityManager {
      * @return
      */
     public static ConnectivityManager getInstance() {
-        return SingletonHolder.INSTANCE;
+        if (instance == null) {
+            synchronized (lock) {
+                if (instance == null) {
+                    instance = new ConnectivityManager();
+                }
+            }
+        }
+        return instance;
     }
 
     private ConnectivityManager() {
-        //Create Service list adapter.
-        adapter = new ServiceAdapter(App.getInstance(), R.layout.service_list_item);
-
         //Register Wifi state listener.
         registerWiFiStateListener();
     }
@@ -94,6 +110,10 @@ public class ConnectivityManager {
      */
     public ServiceAdapter getServiceAdapter() {
         return adapter;
+    }
+
+    public void setServiceAdapter(ServiceAdapter adapter) {
+        this.adapter = adapter;
     }
 
     /**
@@ -147,6 +167,8 @@ public class ConnectivityManager {
      * start TV discovery.
      */
     public void startDiscovery() {
+        Util.d("startDiscovery");
+
         //Create the search object if it is null.
         if (search == null) {
             search = Service.search(App.getInstance());
@@ -238,10 +260,11 @@ public class ConnectivityManager {
         //Add if does not exist or replace it.
         if (!getServiceAdapter().contains(service)) {
 
-            //We do not add it to the list when the service is connected already.
-            if (!service.equals(getService()) || !isTVConnected()) {
-                adapter.add(service);
-            }
+//            //We do not add it to the list when the service is connected already.
+//            if (!service.equals(getService()) || !isTVConnected()) {
+//                adapter.add(service);
+//            }
+            adapter.add(service);
         } else {
             //Replace the service with new service.
             adapter.replace(service);
@@ -249,6 +272,31 @@ public class ConnectivityManager {
 
         //Notify listeners that service has changed. Please update UI accordingly.
         notifyDataChange();
+    }
+
+//    public void addConnectedServerToList() {
+//        if (service == null) {
+//            return;
+//        }
+//
+//        //Add if does not exist or replace it.
+//        if (!getServiceAdapter().contains(service)) {
+//                adapter.add(service);
+//        } else {
+//            //Replace the service with new service.
+//            adapter.replace(service);
+//        }
+//
+//        //Notify listeners that service has changed. Please update UI accordingly.
+//        notifyDataChange();
+//
+//    }
+
+    public void removeConnectedServiceFromList() {
+        if (service != null && adapter != null) {
+            adapter.remove(service);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     /**
@@ -284,6 +332,8 @@ public class ConnectivityManager {
 
         //Notify UI to update cast icon.
         notifyListeners(true);
+
+        EventBus.getDefault().post(new ServiceChangedEvent());
     }
 
 
@@ -410,6 +460,7 @@ public class ConnectivityManager {
 
                     //Notify service change listeners.
                     notifyListeners(false);
+                    EventBus.getDefault().post(new ConnectionChangedEvent(null));
 
                     //restart to discovery if service is disconnected and
                     // this application is not closing.
@@ -429,11 +480,12 @@ public class ConnectivityManager {
 
                 //Update Service list.
                 //Remove the connected service from switch to list.
-                adapter.remove(getService());
-                adapter.notifyDataSetChanged();
+                //adapter.remove(getService());
+                //adapter.notifyDataSetChanged();
 
                 //Notify UI listeners.
                 notifyListeners(false);
+                EventBus.getDefault().post(new ConnectionChangedEvent(null));
             }
         });
 
@@ -442,6 +494,8 @@ public class ConnectivityManager {
             @Override
             public void onError(com.samsung.multiscreen.Error error) {
                 notifyListeners(false);
+                EventBus.getDefault().post(new ConnectionChangedEvent(error.toString()));
+
                 if (!isExisting) startDiscovery();
             }
         });
@@ -457,6 +511,8 @@ public class ConnectivityManager {
             public void onError(com.samsung.multiscreen.Error error) {
                 //failed to launch TV application. Notify TV service changes.
                 notifyListeners(false);
+
+                EventBus.getDefault().post(new ConnectionChangedEvent(error.toString()));
             }
         });
     }

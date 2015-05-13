@@ -64,7 +64,7 @@ public class PlaylistActivity extends AppCompatActivity implements ConnectivityM
         });
 
         //Start to monitor multiscreen status.
-        App.getInstance().getConnectivityManager().addServiceChangedListener(this);
+        ConnectivityManager.getInstance().addServiceChangedListener(this);
     }
 
     @Override
@@ -83,8 +83,8 @@ public class PlaylistActivity extends AppCompatActivity implements ConnectivityM
         super.onDestroy();
 
         //Remove from listener list
-        App.getInstance().getConnectivityManager().removeServiceChangedListener(this);
-        App.getInstance().getConnectivityManager().disconnect();
+        ConnectivityManager.getInstance().removeServiceChangedListener(this);
+        ConnectivityManager.getInstance().disconnect();
     }
 
     @Override
@@ -93,7 +93,7 @@ public class PlaylistActivity extends AppCompatActivity implements ConnectivityM
     @Override
     public void onConnectionChanged() {
         //When the device is disconnected, go back to connect screen.
-        if (!App.getInstance().getConnectivityManager().isTVConnected()) {
+        if (!ConnectivityManager.getInstance().isTVConnected()) {
             finish();
         }
     }

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-import com.samsung.soundscape.App;
 import com.samsung.soundscape.R;
 
 /**
@@ -27,10 +26,6 @@ public class SplashActivity extends Activity{
                 finish();
             }
         }, getResources().getInteger(R.integer.splash_timeout));
-
-        if (!App.getInstance().getConnectivityManager().isDiscovering()) {
-            App.getInstance().getConnectivityManager().startDiscovery();
-        }
     }
 
     @Override

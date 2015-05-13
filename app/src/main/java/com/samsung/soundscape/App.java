@@ -23,28 +23,11 @@
 package com.samsung.soundscape;
 
 import android.app.Application;
-import android.graphics.BitmapFactory;
-
-import com.samsung.soundscape.util.ConnectivityManager;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 public class App extends Application {
     /** The application instance. */
     private static App instance;
-
-    private ExecutorService createThumbnailsService = Executors.newFixedThreadPool(10);
-
-    /** Used to calculate how many activity is at foreground. */
-    public int activityCounter = 0;
-
-    /** The default options used to load bitmap file. */
-    private BitmapFactory.Options optionsLoadingThumbnail;
-
-    /** The connectivity manager instance. */
-    private ConnectivityManager mConnectivityManager;
 
 
     /**
@@ -64,29 +47,6 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        //Get connectivity manager.
-        mConnectivityManager = ConnectivityManager.getInstance();
     }
-
-    /**
-     * Get the connectivity manager.
-     * @return
-     */
-    public ConnectivityManager getConnectivityManager() {
-        return mConnectivityManager;
-    }
-
-
-
-    /**
-     * The clean up method, it should only be called when application exits.
-     */
-    public void cleanup() {
-        //Clean up multiscreen service.
-        mConnectivityManager.clearService();
-        mConnectivityManager = null;
-    }
-
 
 }

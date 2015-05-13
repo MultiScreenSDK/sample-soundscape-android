@@ -32,23 +32,31 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.samsung.multiscreen.util.RunUtil;
-import com.samsung.soundscape.App;
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.adapter.ServiceAdapter;
+import com.samsung.soundscape.events.ConnectionChangedEvent;
+import com.samsung.soundscape.events.ServiceChangedEvent;
 import com.samsung.soundscape.util.ConnectivityManager;
 import com.samsung.soundscape.util.Util;
+
+import de.greenrobot.event.EventBus;
 
 public class ConnectActivity extends AppCompatActivity implements ConnectivityManager.ServiceChangedListener {
     Button actionButton;
     TextView discoveryMessage;
     TextView wifiMessage;
 
+    /** The connectivity manager instance. */
+    private ConnectivityManager mConnectivityManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,24 +83,32 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
         discoveryMessage = (TextView) findViewById(R.id.discover_message);
         wifiMessage = (TextView) findViewById(R.id.wifi_message);
 
-        App.getInstance().getConnectivityManager().addServiceChangedListener(this);
+        //Get connectivity manager.
+        mConnectivityManager = ConnectivityManager.getInstance();
+        mConnectivityManager.setServiceAdapter(new ServiceAdapter(this, R.layout.service_list_item));
+        mConnectivityManager.addServiceChangedListener(this);
+
+        EventBus.getDefault().register(this);
     }
 
     protected void onDestroy() {
         super.onDestroy();
 
         //Remove from listener list
-        App.getInstance().getConnectivityManager().removeServiceChangedListener(this);
+        mConnectivityManager.removeServiceChangedListener(this);
+
+        EventBus.getDefault().unregister(this);
+
         //Clean up everything before exiting.
-        App.getInstance().cleanup();
+        cleanup();
     }
 
     public void onStart() {
         super.onStart();
 
         //Start the service discovery if it is not started before.
-        if (!App.getInstance().getConnectivityManager().isDiscovering()) {
-            App.getInstance().getConnectivityManager().startDiscovery();
+        if (!mConnectivityManager.isDiscovering()) {
+            mConnectivityManager.startDiscovery();
         }
     }
 
@@ -100,21 +116,21 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
         super.onStop();
 
         //Stop discovery when the app goes to background.
-        App.getInstance().getConnectivityManager().stopDiscovery();
+        mConnectivityManager.stopDiscovery();
     }
 
     private OnClickListener actionButtonOnClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            ServiceAdapter adapter = App.getInstance().getConnectivityManager().getServiceAdapter();
+            ServiceAdapter adapter = mConnectivityManager.getServiceAdapter();
             int count = adapter.getCount();
 
             if (count == 0) {
                 //Show information
             } else if (count == 1) {
                 //Connect to the device directly.
-                App.getInstance().getConnectivityManager().setService(adapter.getItem(0));
+               mConnectivityManager.setService(adapter.getItem(0));
             } else {
                 //show select device dialog.
                 showServiceListDialog();
@@ -123,9 +139,19 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
         }
     };
 
-    @Override
-    public void onServiceChanged() {
-        int count = App.getInstance().getConnectivityManager().getServiceAdapter().getCount();
+
+    // This method will be called when a MessageEvent is posted
+    public void onEvent(ConnectionChangedEvent event){
+        if (mConnectivityManager.isTVConnected()) {
+
+            //When TV is connected, go to playlist screen.
+            startActivity(new Intent(this, PlaylistActivity.class));
+        }
+    }
+
+    // This method will be called when a SomeOtherEvent is posted
+    public void onEvent(ServiceChangedEvent event){
+        int count = mConnectivityManager.getServiceAdapter().getCount();
 
         if (count == 0) {
             updateUI(getString(R.string.connect_status_nodevice),
@@ -148,12 +174,13 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
     }
 
     @Override
-    public void onConnectionChanged() {
-        if (App.getInstance().getConnectivityManager().isTVConnected()) {
+    public void onServiceChanged() {
 
-            //When TV is connected, go to playlist screen.
-            startActivity(new Intent(this, PlaylistActivity.class));
-        }
+    }
+
+    @Override
+    public void onConnectionChanged() {
+
     }
 
     public void updateUI(final String firstMsg, final String secondMsg, final String buttonCaption) {
@@ -191,11 +218,37 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
         }
         ft.addToBackStack(null);
 
-        // Create and show the dialog.
+        // Create and show the dialog, only shows the connect to panel.
         DialogFragment newFragment = ServiceListFragment.newInstance(0);
         newFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_NoTitleBar);
         newFragment.show(ft, "dialog");
     }
 
+    /**
+     * The clean up method, it should only be called when application exits.
+     */
+    private void cleanup() {
+        //Clean up multiscreen service.
+        mConnectivityManager.clearService();
+        mConnectivityManager = null;
+    }
+
+    public void displayConnectingMessage(String tvName) {
+        String message = String.format(getString(R.string.connect_to_message), tvName);
+        TextView textView = new TextView(this);
+        textView.setText(message);
+        textView.setPadding(40, 20, 40, 20);
+        textView.setBackgroundColor(0x80000000);
+        RelativeLayout.LayoutParams params =
+                new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                        RelativeLayout.LayoutParams.WRAP_CONTENT);
+        textView.setLayoutParams(params);
+
+
+        Toast toast = Toast.makeText(this,message, Toast.LENGTH_LONG);
+        toast.setView(textView);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
 
 }

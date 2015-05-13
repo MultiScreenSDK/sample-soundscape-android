@@ -12,9 +12,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.samsung.multiscreen.Service;
-import com.samsung.soundscape.App;
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.adapter.ServiceAdapter;
+import com.samsung.soundscape.util.ConnectivityManager;
 
 public class ServiceListFragment extends DialogFragment {
     public static final int TYPE_SELECT_SERVICE = 0;
@@ -50,15 +50,19 @@ public class ServiceListFragment extends DialogFragment {
 
         if (view != null) {
             ListView listView = (ListView)view.findViewById(R.id.deviceListView);
-            listView.setAdapter(App.getInstance().getConnectivityManager().getServiceAdapter());
+            listView.setAdapter(ConnectivityManager.getInstance().getServiceAdapter());
             listView.setOnItemClickListener(new ListView.OnItemClickListener(){
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    ServiceAdapter adapter = App.getInstance().getConnectivityManager().getServiceAdapter();
+                    ServiceAdapter adapter = ConnectivityManager.getInstance().getServiceAdapter();
                     Service service = adapter.getItem(position);
-                    App.getInstance().getConnectivityManager().setService(service);
+                    ConnectivityManager.getInstance().setService(service);
 
+                    if (getActivity() instanceof  ConnectActivity) {
+                        ConnectActivity activity = (ConnectActivity)getActivity();
+                        activity.displayConnectingMessage(service.getName());
+                    }
                     ServiceListFragment.this.getDialog().dismiss();
                 }
             });
@@ -78,7 +82,7 @@ public class ServiceListFragment extends DialogFragment {
                     @Override
                     public void onClick(View v) {
                         //Disconnect from application.
-                        App.getInstance().getConnectivityManager().getMultiscreenApp().disconnect();
+                        ConnectivityManager.getInstance().getMultiscreenApp().disconnect();
                     }
                 });
             } else if (mType == TYPE_SELECT_SERVICE) {
