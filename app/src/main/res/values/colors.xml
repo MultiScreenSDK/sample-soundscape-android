@@ -45,6 +45,9 @@
     <color name="navigation_drawer_item_separator">#c2c2c2</color>
 
     <color name="default_btn">#ff9700</color>
+    <color name="default_now_playing">@color/black</color>
+    <color name="default_list_item">#212121</color>
+    <color name="playlist_list_item">#757575</color>
 
     <!-- Some default colors -->
     <color name="white">#FFFFFF</color>

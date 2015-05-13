@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/playlistItem"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:background="@color/white"
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:id="@+id/albumArt"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:scaleType="centerInside"
+        android:src="@drawable/album_placeholder"/>
+
+    <LinearLayout
+        android:id="@+id/playlistItemText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingLeft="8dp"
+        android:paddingRight="16dp" >
+
+        <TextView
+            android:id="@+id/songTitle"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:text="Trap Queen"
+            android:textColor="@color/playlist_list_item"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/songArtist"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center_vertical"
+            android:text="Fetty Wap"
+            android:textColor="@color/playlist_list_item"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+</LinearLayout>

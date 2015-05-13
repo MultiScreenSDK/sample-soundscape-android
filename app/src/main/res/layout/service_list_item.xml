@@ -13,10 +13,11 @@
         android:id="@+id/serviceItem"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginLeft="12dp"
+        android:paddingLeft="12dp"
         android:background="@color/white"
         android:clickable="true"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:stateListAnimator="@anim/button_elevation" >
 
         <ImageView
             android:id="@+id/serviceIcon"
@@ -34,7 +35,7 @@
             android:paddingLeft="12dp"
             android:paddingRight="16dp"
             android:text="Shape"
-            android:textColor="#212121"
+            android:textColor="@color/default_list_item"
             android:textSize="18sp"/>
 
     </LinearLayout>

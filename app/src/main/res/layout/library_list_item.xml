@@ -14,7 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:background="@color/white"
-        android:orientation="horizontal">
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:stateListAnimator="@anim/button_elevation" >
 
         <ImageView
             android:id="@+id/albumArt"
@@ -22,7 +24,7 @@
             android:layout_height="48dp"
             android:layout_gravity="center"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_speaker_gray"/>
+            android:src="@drawable/album_placeholder"/>
 
         <LinearLayout
             android:id="@+id/libraryItemText"
@@ -41,7 +43,7 @@
                 android:layout_gravity="center"
                 android:gravity="center_vertical"
                 android:text="Trap Queen"
-                android:textColor="#212121"
+                android:textColor="@color/default_list_item"
                 android:textSize="14sp"/>
 
             <TextView
@@ -52,7 +54,7 @@
                 android:fontFamily="sans-serif-light"
                 android:gravity="center_vertical"
                 android:text="Fetty Wap"
-                android:textColor="#212121"
+                android:textColor="@color/default_list_item"
                 android:textSize="12sp"/>
         </LinearLayout>
 
