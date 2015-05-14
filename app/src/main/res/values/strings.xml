@@ -51,6 +51,7 @@
     <string name="connect_to">Connect to:</string>
     <string name="connected_to">Connected to:</string>
     <string name="switch_to">Switch to:</string>
+    <string name="connecting_to">Connecting to</string>
 
     <string name="connect_status_nodevice">No device is found</string>
     <string name="connect_status_found_devices">Discovered %1$d</string>
