@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.graphics.drawable.StateListDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,7 +13,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,6 +33,7 @@ import com.samsung.soundscape.util.ConnectivityManager;
 import com.samsung.soundscape.util.Util;
 
 import java.util.Arrays;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -51,6 +55,9 @@ public class PlaylistActivity extends AppCompatActivity {
     private LinearLayout connectedToHeader;
     Toolbar toolbar;
 
+    //The library layout
+    private ViewGroup libraryLayout;
+
     //user colors
     private String[] colors;
     private int userColor;
@@ -62,11 +69,13 @@ public class PlaylistActivity extends AppCompatActivity {
     //The adapter to display tracks from library.
     TracksAdapter tracksAdapter;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
+
+        libraryLayout = (ViewGroup)findViewById(R.id.libraryLayout);
+        libraryLayout.setVisibility(View.GONE);
 
         connectedToIcon = (ImageView)findViewById(R.id.connectedToIcon);
         connectedToIcon.setOnClickListener(new View.OnClickListener() {
@@ -107,20 +116,11 @@ public class PlaylistActivity extends AppCompatActivity {
         });
 
         addButton = (FloatingActionButton)findViewById(R.id.addButton);
+
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int resource = R.anim.rotate_clockwise;
-                if (!clockwise) {
-                    resource = R.anim.rotate_counterclockwise;
-
-
-                } else {
-                    showLibraryDialog();
-                }
-                clockwise = !clockwise;
-                Animation rotation = AnimationUtils.loadAnimation(getApplicationContext(), resource);
-                v.startAnimation(rotation);
+                animateLibrary(v);
             }
         });
 
@@ -140,6 +140,54 @@ public class PlaylistActivity extends AppCompatActivity {
         updateUI();
     }
 
+    private void animateLibrary(final View v) {
+        int animResource = R.anim.rotate_clockwise;
+        int drawResource = R.drawable.ic_action_cancel;
+        if (!clockwise) {
+            animResource = R.anim.rotate_counterclockwise;
+            drawResource = R.drawable.ic_add_white;
+        }
+        final boolean show = clockwise;
+        clockwise = !clockwise;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            AnimationSet animationSet = (AnimationSet) AnimationUtils.loadAnimation(getApplicationContext(), animResource);
+            List<Animation> animations = animationSet.getAnimations();
+            animations.get(0).setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    Log.d(this.getClass().getName(), "animation start");
+                    if (!show) {
+                        hideLibraryDialog();
+                    }
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    Log.d(this.getClass().getName(), "animation end");
+                    if (show) {
+                        showLibraryDialog();
+                    }
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            v.startAnimation(animationSet);
+        } else {
+            // TODO: Figure out a workaround for the pre-Lollipop animation issue where
+            // the final animation state is always reset, regardless of setting fillAfter.
+            addButton.setIcon(getResources().getDrawable(drawResource), false);
+            if (show) {
+                showLibraryDialog();
+            } else {
+                hideLibraryDialog();
+            }
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // If the drawer is open, show the global app actions in the action bar. See also
@@ -150,6 +198,15 @@ public class PlaylistActivity extends AppCompatActivity {
 //        }
         getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!clockwise) {
+            animateLibrary(addButton);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -248,22 +305,27 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
 
-    void showLibraryDialog() {
+    private void showLibraryDialog() {
 
         // DialogFragment.show() will take care of adding the fragment
         // in a transaction.  We also want to remove any currently showing
         // dialog, so make our own transaction and take care of that here.
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("libraryDialog");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
+//        FragmentTransaction ft = getFragmentManager().beginTransaction();
+//        Fragment prev = getFragmentManager().findFragmentByTag("libraryDialog");
+//        if (prev != null) {
+//            ft.remove(prev);
+//        }
+//        ft.addToBackStack(null);
+//
+//        // Create and show the dialog, only shows the connect to panel.
+//        DialogFragment newFragment = LibraryFragment.newInstance(userColor);
+//        newFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_NoTitleBar);
+//        newFragment.show(ft, "libraryDialog");
+        libraryLayout.setVisibility(View.VISIBLE);
+    }
 
-        // Create and show the dialog, only shows the connect to panel.
-        DialogFragment newFragment = LibraryFragment.newInstance(userColor);
-        newFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_NoTitleBar);
-        newFragment.show(ft, "libraryDialog");
+    private void hideLibraryDialog() {
+        libraryLayout.setVisibility(View.GONE);
     }
 
     private void updateUI() {

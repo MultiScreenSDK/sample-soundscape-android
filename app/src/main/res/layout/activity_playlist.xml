@@ -86,11 +86,16 @@
         android:layout_marginBottom="24dp"
         android:layout_marginRight="16dp"
         app:fab_backgroundColor="@color/user_color_1"
+        app:fab_elevation="0dp"
         app:fab_iconSrc="@drawable/ic_add_white"
         app:fab_radius="24dp"
-        app:fab_elevation="0dp"
         app:rd_enable="true"
-        app:rd_rippleType="touch"
-        app:rd_rippleColor="@color/gray"/>
+        app:rd_rippleColor="@color/gray"
+        app:rd_rippleType="touch"/>
 
+    <include layout="@layout/fragment_library"
+        android:layout_width="@dimen/library_width"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/addButton"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
