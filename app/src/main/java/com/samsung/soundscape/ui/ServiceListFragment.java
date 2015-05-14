@@ -1,5 +1,6 @@
 package com.samsung.soundscape.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -8,29 +9,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.samsung.multiscreen.Service;
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.adapter.ServiceAdapter;
 import com.samsung.soundscape.util.ConnectivityManager;
+import com.samsung.soundscape.util.Util;
 
 public class ServiceListFragment extends DialogFragment {
-    public static final int TYPE_SELECT_SERVICE = 0;
-    public static final int TYPE_FULL = 1;
-    int mType;
+    int mColor;
 
     /**
      * Create a new instance of MyDialogFragment, providing dialog type
      * as an argument.
      */
-    static ServiceListFragment newInstance(int type) {
+    static ServiceListFragment newInstance(int color) {
         ServiceListFragment f = new ServiceListFragment();
 
         // Supply type input as an argument.
         Bundle args = new Bundle();
-        args.putInt("type", type);
+        args.putInt("color", color);
         f.setArguments(args);
 
         return f;
@@ -39,7 +41,7 @@ public class ServiceListFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mType = getArguments().getInt("type");
+        mColor = getArguments().getInt("color");
     }
 
     @Override
@@ -51,41 +53,57 @@ public class ServiceListFragment extends DialogFragment {
         if (view != null) {
             ListView listView = (ListView)view.findViewById(R.id.deviceListView);
             listView.setAdapter(ConnectivityManager.getInstance().getServiceAdapter());
-            listView.setOnItemClickListener(new ListView.OnItemClickListener(){
+            listView.setOnItemClickListener(new ListView.OnItemClickListener() {
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     ServiceAdapter adapter = ConnectivityManager.getInstance().getServiceAdapter();
                     Service service = adapter.getItem(position);
-                    ConnectivityManager.getInstance().setService(service);
 
-                    if (getActivity() instanceof  ConnectActivity) {
-                        ConnectActivity activity = (ConnectActivity)getActivity();
-                        activity.displayConnectingMessage(service.getName());
+                    Activity activity = getActivity();
+                    if (activity instanceof ConnectActivity) {
+                        ConnectActivity ca = (ConnectActivity) getActivity();
+                        ca.displayConnectingMessage(service.getName());
+                    } else if (activity instanceof  PlaylistActivity) {
+                        PlaylistActivity pa = (PlaylistActivity)activity;
+                        pa.isSwitchingService = true;
+                        ConnectivityManager.getInstance().disconnect();
                     }
+
+                    ConnectivityManager.getInstance().setService(service);
                     ServiceListFragment.this.getDialog().dismiss();
                 }
             });
+
             LinearLayout llConnectTo = (LinearLayout)view.findViewById(R.id.selectedServiceLayout);
 
-            if (mType == TYPE_FULL) {
+            if (ConnectivityManager.getInstance().isTVConnected()) {
                 //Display connected device and disconnect button.
                 llConnectTo.setVisibility(View.VISIBLE);
 
-                Button btnDisconnect = (Button) view.findViewById(R.id.disconnectButton);
+                ImageView selectedServiceIcon = (ImageView)view.findViewById(R.id.selectedServiceIcon);
+                if (ConnectivityManager.getInstance().getConnectedServiceType() == ConnectivityManager.ServiceType.Speaker) {
+                    //The speaker is connected
+                    selectedServiceIcon.setImageResource(R.drawable.ic_speaker_gray);
+                } else if (ConnectivityManager.getInstance().getConnectedServiceType() == ConnectivityManager.ServiceType.TV) {
+                    //The TV or TV simulator is connected.
+                    selectedServiceIcon.setImageResource(R.drawable.ic_tv_gray);
+                }
+                TextView selectedServiceText = (TextView)view.findViewById(R.id.selectedServiceText);
+                selectedServiceText.setText(Util.getFriendlyTvName(ConnectivityManager.getInstance().getService().getName()));
 
-                //TODO: set the text color accoding to user's color.
-                //btnDisconnect.setTextColor();
+                Button btnDisconnect = (Button) view.findViewById(R.id.disconnectButton);
+                btnDisconnect.setTextColor(mColor);
 
                 btnDisconnect.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
                         //Disconnect from application.
-                        ConnectivityManager.getInstance().getMultiscreenApp().disconnect();
+                        ConnectivityManager.getInstance().disconnect();
                     }
                 });
-            } else if (mType == TYPE_SELECT_SERVICE) {
+            } else {
                 //Hide connected device and disconnect button.
                 llConnectTo.setVisibility(View.GONE);
             }

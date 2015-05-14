@@ -9,6 +9,7 @@ import android.net.wifi.WifiManager;
 
 import com.samsung.multiscreen.Channel;
 import com.samsung.multiscreen.Client;
+import com.samsung.multiscreen.Message;
 import com.samsung.multiscreen.Result;
 import com.samsung.multiscreen.Search;
 import com.samsung.multiscreen.Service;
@@ -16,8 +17,10 @@ import com.samsung.multiscreen.util.RunUtil;
 import com.samsung.soundscape.App;
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.adapter.ServiceAdapter;
+import com.samsung.soundscape.events.AppStateEvent;
 import com.samsung.soundscape.events.ConnectionChangedEvent;
 import com.samsung.soundscape.events.ServiceChangedEvent;
+import com.samsung.soundscape.model.AppState;
 
 import java.util.ArrayList;
 
@@ -28,6 +31,10 @@ import de.greenrobot.event.EventBus;
  * Provides the Samsung MultiScreen functions.
  */
 public class ConnectivityManager {
+    public enum ServiceType {
+        Other, TV, Speaker
+    }
+
     public static final String EVENT_ADD_TRACK = "addTrack";
     public static final String EVENT_REMOVE_TRACK = "removeTrack";
     public static final String EVENT_APP_STATE_REQUEST = "appStateRequest";
@@ -37,10 +44,14 @@ public class ConnectivityManager {
     public static final String EVENT_PAUSE = "pause";
     public static final String EVENT_NEXT = "next";
 
-    /** An singleton instance of this class */
+    /**
+     * An singleton instance of this class
+     */
     private static ConnectivityManager instance = null;
 
-    /** A lock used to synchronize creation of this object and access to the service map. */
+    /**
+     * A lock used to synchronize creation of this object and access to the service map.
+     */
     protected static final Object lock = new Object();
 
     /**
@@ -74,6 +85,7 @@ public class ConnectivityManager {
     public interface ServiceChangedListener {
         //Triggered when service is added or removed.
         public void onServiceChanged();
+
         //Triggered when the connection is changed (either disconnected or connected).
         public void onConnectionChanged();
     }
@@ -119,17 +131,17 @@ public class ConnectivityManager {
     /**
      * Current selected service.
      */
-    public Service getService() {
-        return service;
-    }
+//    public Service getService() {
+//        return service;
+//    }
 
 
     /**
      * Get TV application.
      */
-    public com.samsung.multiscreen.Application getMultiscreenApp() {
-        return mMultiscreenApp;
-    }
+//    public com.samsung.multiscreen.Application getMultiscreenApp() {
+//        return mMultiscreenApp;
+//    }
 
     /**
      * Add service change listener to the list.
@@ -253,18 +265,18 @@ public class ConnectivityManager {
      * @param service the TV service to be added.
      */
     private void updateTVList(Service service) {
-        if (service == null) {
+        if (service == null || adapter == null) {
             return;
         }
 
-        //Add if does not exist or replace it.
-        if (!getServiceAdapter().contains(service)) {
+        Util.d("updateTVList: " + service.toString());
 
-//            //We do not add it to the list when the service is connected already.
-//            if (!service.equals(getService()) || !isTVConnected()) {
-//                adapter.add(service);
-//            }
-            adapter.add(service);
+        //Add if does not exist or replace it.
+        if (!adapter.contains(service)) {
+            //Do not add it to the list when the service is connected already.
+            if (!service.equals(this.service) || !isTVConnected()) {
+                adapter.add(service);
+            }
         } else {
             //Replace the service with new service.
             adapter.replace(service);
@@ -291,13 +303,13 @@ public class ConnectivityManager {
 //        notifyDataChange();
 //
 //    }
-
-    public void removeConnectedServiceFromList() {
-        if (service != null && adapter != null) {
-            adapter.remove(service);
-            adapter.notifyDataSetChanged();
-        }
-    }
+//
+//    public void removeConnectedServiceFromList() {
+//        if (service != null && adapter != null) {
+//            adapter.remove(service);
+//            adapter.notifyDataSetChanged();
+//        }
+//    }
 
     /**
      * Notify all the service change listeners that service change happens.
@@ -343,10 +355,10 @@ public class ConnectivityManager {
      * @param service the new TV service to be used.
      */
     public void setService(final Service service) {
-        if (this.getService() != null) {
+        if (this.service != null) {
 
             //Launch the TV mMultiscreenApp directly if we already got the TV service.
-            if (getService().equals(service)) {
+            if (this.service.equals(service)) {
 
                 //Launch the TV app it is not connected.
                 //Do nothing if it is already connected.
@@ -382,6 +394,10 @@ public class ConnectivityManager {
             //connect to a new TV.
             updateServiceAndConnect(service);
         }
+    }
+
+    public Service getService() {
+        return service;
     }
 
     /**
@@ -431,6 +447,19 @@ public class ConnectivityManager {
         return service != null && mMultiscreenApp != null && mMultiscreenApp.isConnected();
     }
 
+
+    public ServiceType getConnectedServiceType() {
+        if (service == null) {
+            return ServiceType.Other;
+        }
+
+        String type = service.getType();
+        if (type.endsWith(" speaker")) {
+            return ServiceType.Speaker;
+        }
+
+        return ServiceType.TV;
+    }
 
     /**
      * Makes connection to the TV and start the application on the TV
@@ -500,6 +529,8 @@ public class ConnectivityManager {
             }
         });
 
+        mMultiscreenApp.addOnMessageListener(EVENT_APP_STATE, onAppStateListener);
+
         //Connect and launch the TV application.
         mMultiscreenApp.connect(new Result<Client>() {
 
@@ -519,35 +550,25 @@ public class ConnectivityManager {
 
     public void disconnect() {
         if (service != null && mMultiscreenApp != null && mMultiscreenApp.isConnected()) {
+            mMultiscreenApp.removeOnMessageListeners();
             mMultiscreenApp.disconnect();
+            service = null;
         }
     }
 
-
-    /**
-     * Sent the byte array to TV.
-     *
-     * @param event   the channel event.
-     * @param data    the object to sent to TV.
-     * @param payload payload data in format of byte array.
-     */
-    public void sendToTV(String event, Object data, byte[] payload) {
-        if (mMultiscreenApp != null && mMultiscreenApp.isConnected()) {
-            mMultiscreenApp.publish(event, data, payload);
-        }
-    }
-
-    /**
-     * Sent the data to TV.
-     *
-     * @param event the channel event.
-     * @param data  the object to sent to TV.
-     */
-    public void sendToTV(String event, Object data) {
-        if (mMultiscreenApp != null && mMultiscreenApp.isConnected()) {
-            mMultiscreenApp.publish(event, data);
-        }
-    }
+//
+//    /**
+//     * Sent the byte array to TV.
+//     *
+//     * @param event   the channel event.
+//     * @param data    the object to sent to TV.
+//     * @param payload payload data in format of byte array.
+//     */
+//    public void sendToTV(String event, Object data, byte[] payload) {
+//        if (mMultiscreenApp != null && mMultiscreenApp.isConnected()) {
+//            mMultiscreenApp.publish(event, data, payload);
+//        }
+//    }
 
 
     /**
@@ -590,6 +611,35 @@ public class ConnectivityManager {
             startDiscovery();
         }
     }
+
+    public void requestAppState() {
+        sendToTV(EVENT_APP_STATE_REQUEST, null, Message.TARGET_HOST);
+    }
+
+    private Channel.OnMessageListener onAppStateListener = new Channel.OnMessageListener() {
+        @Override
+        public void onMessage(Message message) {
+            Util.d("onAppStateListener: " + message.toString());
+
+            if (message != null && message.getData() != null) {
+                EventBus.getDefault().post(new AppStateEvent(AppState.parse(message.getData().toString())));
+            }
+        }
+    };
+
+    /**
+     * Sent the data to TV.
+     *
+     * @param event  the channel event.
+     * @param data   the object to sent to TV.
+     * @param target the target to receive message.
+     */
+    private void sendToTV(String event, Object data, String target) {
+        if (mMultiscreenApp != null && mMultiscreenApp.isConnected()) {
+            mMultiscreenApp.publish(event, data, target);
+        }
+    }
+
 
     /**
      * Register network change listeners.

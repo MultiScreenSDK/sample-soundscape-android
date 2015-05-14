@@ -1,28 +1,63 @@
 package com.samsung.soundscape.ui;
 
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.graphics.Color;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.rey.material.widget.FloatingActionButton;
-import com.samsung.soundscape.App;
+import com.samsung.multiscreen.Service;
+import com.samsung.multiscreen.util.RunUtil;
 import com.samsung.soundscape.R;
+import com.samsung.soundscape.events.ConnectionChangedEvent;
+import com.samsung.soundscape.model.Track;
 import com.samsung.soundscape.util.ConnectivityManager;
+import com.samsung.soundscape.util.Util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
-public class PlaylistActivity extends AppCompatActivity implements ConnectivityManager.ServiceChangedListener {
+import de.greenrobot.event.EventBus;
+
+public class PlaylistActivity extends AppCompatActivity {
 
     private ImageView playControl;
     private StateListDrawable playControlDrawable;
     private boolean clockwise = true;
+
+    //The S icon at the top right screen.
+    private ImageView connectedToIcon;
+    //The add buton at the botoom and right corner.
+    private FloatingActionButton addButton;
+
+    //The text to display the connected service name.
+    private TextView connectedToText;
+
+    //The connected to section container.
+    private LinearLayout connectedToHeader;
+    Toolbar toolbar;
+
+    //user colors
+    private String[] colors;
+    private int userColor;
+
+    //The flag shows that it is switch service.
+    //Do not close this activity while switching service.
+    public boolean isSwitchingService = false;
 
 
     @Override
@@ -30,8 +65,26 @@ public class PlaylistActivity extends AppCompatActivity implements ConnectivityM
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        connectedToIcon = (ImageView)findViewById(R.id.connectedToIcon);
+        connectedToIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.d("Connect to icon is clicked.");
+
+            }
+        });
+
+        connectedToText = (TextView)findViewById(R.id.connectedToText);
+        connectedToHeader = (LinearLayout)findViewById(R.id.connectedToHeader);
+
+        //Load user colors resource.
+        colors = getResources().getStringArray(R.array.UserColors);
+
+        //Add toolbar
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
         playControl = (ImageView)findViewById(R.id.playControl);
         playControlDrawable = (StateListDrawable)playControl.getDrawable();
 
@@ -39,6 +92,7 @@ public class PlaylistActivity extends AppCompatActivity implements ConnectivityM
         playControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: replace with Util.d API.
                 Log.d(this.getClass().getName(), "Play Control");
                 if (Arrays.equals(playControlDrawable.getState(), new int[]{android.R.attr.state_enabled})) {
                     playControlDrawable.setState(new int[]{android.R.attr.state_enabled, android.R.attr.state_checked});
@@ -49,7 +103,7 @@ public class PlaylistActivity extends AppCompatActivity implements ConnectivityM
             }
         });
 
-        final FloatingActionButton addButton = (FloatingActionButton)findViewById(R.id.addButton);
+        addButton = (FloatingActionButton)findViewById(R.id.addButton);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,8 +117,20 @@ public class PlaylistActivity extends AppCompatActivity implements ConnectivityM
             }
         });
 
-        //Start to monitor multiscreen status.
-        ConnectivityManager.getInstance().addServiceChangedListener(this);
+        //Register to receive events.
+        EventBus.getDefault().register(this);
+
+        //select user color.
+        selectColor();
+
+        //Request multiscreen app state.
+        ConnectivityManager.getInstance().requestAppState();
+
+        //Load library in background.
+        RunUtil.runInBackground(loadLibrary);
+
+        //Update UI with color and service information.
+        updateUI();
     }
 
     @Override
@@ -79,22 +145,113 @@ public class PlaylistActivity extends AppCompatActivity implements ConnectivityM
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_connect:
+                //When the S icon is clicked, opens the service list dialog.
+                showServiceListDialog();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
     protected void onDestroy() {
         super.onDestroy();
 
-        //Remove from listener list
-        ConnectivityManager.getInstance().removeServiceChangedListener(this);
+        //Remove event monitor.
+        EventBus.getDefault().unregister(this);
+
+        //Disconnect from multiscreen app.
         ConnectivityManager.getInstance().disconnect();
     }
 
-    @Override
-    public void onServiceChanged() {}
 
-    @Override
-    public void onConnectionChanged() {
-        //When the device is disconnected, go back to connect screen.
+    // This method will be called when a MessageEvent is posted
+    public void onEvent(ConnectionChangedEvent event){
         if (!ConnectivityManager.getInstance().isTVConnected()) {
-            finish();
+
+            //Ignore the disconnect event when it is switching service.
+            if (!isSwitchingService) {
+                finish();
+            }
+        } else {
+            //Reset the flag when it is connected;
+            isSwitchingService = false;
+
+            //Happens when switch service.
+            selectColor();
+            updateUI();
         }
+    }
+
+
+    private Runnable loadLibrary = new Runnable() {
+        @Override
+        public void run() {
+            String data = null;
+            try {
+                data = Util.readUrl(getString(R.string.playlist_url));
+            }catch (Exception e) {
+                Util.e("Error when loading library:" + e.toString());
+            }
+
+            //Parse data into objects.
+            if (data != null) {
+                ArrayList<Track> tracks = new ArrayList<>();
+                Gson gson = new Gson();
+                tracks = gson.fromJson(data, ArrayList.class);
+
+                Util.d(tracks.toString());
+            }
+        }
+    };
+
+    void showServiceListDialog() {
+
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+
+        //Get Connectivity manager instance.
+        ConnectivityManager cm = ConnectivityManager.getInstance();
+
+        //start discovery
+        cm.restartDiscovery();
+
+        // Create and show the dialog, only shows the connect to panel.
+        DialogFragment newFragment = ServiceListFragment.newInstance(userColor);
+        newFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_NoTitleBar);
+        newFragment.show(ft, "dialog");
+    }
+
+    private void updateUI() {
+        if (ConnectivityManager.getInstance().getConnectedServiceType() == ConnectivityManager.ServiceType.Speaker) {
+            //The speaker is connected
+            connectedToIcon.setImageResource(R.drawable.ic_speaker_white);
+        } else if (ConnectivityManager.getInstance().getConnectedServiceType() == ConnectivityManager.ServiceType.TV) {
+            //The TV or TV simulator is connected.
+            connectedToIcon.setImageResource(R.drawable.ic_tv_white);
+        }
+
+
+        toolbar.setBackgroundColor(userColor);
+        connectedToHeader.setBackgroundColor(userColor);
+        addButton.setBackgroundColor(userColor);
+        Service service = ConnectivityManager.getInstance().getService();
+        connectedToText.setText(Util.getFriendlyTvName(service.getName()));
+    }
+
+    private void selectColor() {
+        //Get user color randomly.
+        String color = colors[(int)(colors.length*Math.random())];
+        userColor = Color.parseColor(color);
     }
 }

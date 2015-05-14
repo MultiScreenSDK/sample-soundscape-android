@@ -4,8 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class SongsAdapter extends RecyclerView.Adapter
-                <SongsAdapter.ListItemViewHolder> {
+public class TracksAdapter extends RecyclerView.Adapter
+                <TracksAdapter.ListItemViewHolder> {
 
     @Override
     public ListItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

@@ -109,11 +109,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoTitleBar">
         </activity>
-        <activity
-            android:name=".ui.LibraryActivity"
-            android:label="@string/title_activity_library"
-            android:launchMode="singleTop">
-        </activity>
     </application>
 
 </manifest>

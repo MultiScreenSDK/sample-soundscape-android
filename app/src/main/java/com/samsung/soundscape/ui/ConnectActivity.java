@@ -108,6 +108,12 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
 
         //Start the service discovery if it is not started before.
         if (!mConnectivityManager.isDiscovering()) {
+            //Make sure the connected device will be added into list.
+            //mConnectivityManager.getServiceAdapter().setAddConnectedService(true);
+
+
+
+            //start discovery.
             mConnectivityManager.startDiscovery();
         }
     }
@@ -234,7 +240,7 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
     }
 
     public void displayConnectingMessage(String tvName) {
-        String message = String.format(getString(R.string.connect_to_message), tvName);
+        String message = String.format(getString(R.string.connect_to_message), Util.getFriendlyTvName(tvName));
         TextView textView = new TextView(this);
         textView.setText(message);
         textView.setPadding(40, 20, 40, 20);

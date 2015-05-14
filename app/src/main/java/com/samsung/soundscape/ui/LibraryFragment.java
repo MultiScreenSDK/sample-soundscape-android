@@ -7,46 +7,50 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
-import com.samsung.multiscreen.Application;
 import com.samsung.multiscreen.Channel;
 import com.samsung.multiscreen.Message;
 import com.samsung.soundscape.R;
-import com.samsung.soundscape.util.ConnectivityManager;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class LibraryActivityFragment extends Fragment {
+public class LibraryFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView.Adapter mAdapter;
 
-    public LibraryActivityFragment() {
+    private ListView libraryListView;
+
+    public LibraryFragment() {
         super();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_library, container, false);
+        View view = inflater.inflate(R.layout.fragment_library, container, false);
+        libraryListView = (ListView)view.findViewById(R.id.libraryListView);
+
+        return view;
     }
 
     public void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Application application = ConnectivityManager.getInstance().getMultiscreenApp();
-        if (application != null) {
-            application.addOnMessageListener(
-                    ConnectivityManager.EVENT_ADD_TRACK, onAddSongListener);
-        }
+//        Application application = ConnectivityManager.getInstance().getMultiscreenApp();
+//        if (application != null) {
+//            application.addOnMessageListener(
+//                    ConnectivityManager.EVENT_ADD_TRACK, onAddSongListener);
+//        }
     }
 
     public void onDestroy () {
-        Application application = ConnectivityManager.getInstance().getMultiscreenApp();
-        if (application != null) {
-            application.removeOnMessageListener(ConnectivityManager.EVENT_ADD_TRACK, onAddSongListener);
-        }
+//        Application application = ConnectivityManager.getInstance().getMultiscreenApp();
+//        if (application != null) {
+//            application.removeOnMessageListener(ConnectivityManager.EVENT_ADD_TRACK, onAddSongListener);
+//        }
 
         super.onDestroy();
     }

@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="0dp"
-    tools:context="com.samsung.soundscape.ui.LibraryActivityFragment" >
+    tools:context="com.samsung.soundscape.ui.LibraryFragment" >
 
     <RelativeLayout
         android:id="@+id/libraryHeader"

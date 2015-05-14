@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.samsung.multiscreen.Service;
 import com.samsung.soundscape.R;
+import com.samsung.soundscape.util.Util;
 
 public class ServiceAdapter extends ArrayAdapter<Service> {
 
@@ -95,7 +96,7 @@ public class ServiceAdapter extends ArrayAdapter<Service> {
 
         final Service service = getItem(position);
         holder.position = position;
-        holder.deviceName.setText(service.getName());
+        holder.deviceName.setText(Util.getFriendlyTvName(service.getName()));
 
         //TODO: remove the font???
         //holder.deviceName.setTypeface(Util.customFont(context));
