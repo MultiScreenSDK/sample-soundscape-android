@@ -35,6 +35,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -66,6 +67,13 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
             @Override
             public void run() {
                 findViewById(R.id.connectContent).setVisibility(View.VISIBLE);
+
+                View toastLayout = getLayoutInflater().inflate(R.layout.toast, (ViewGroup)findViewById(R.id.toastLayout));
+                Toast toast = new Toast(getApplicationContext());
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.setDuration(Toast.LENGTH_LONG);
+                toast.setView(toastLayout);
+                toast.show();
             }
         }, getResources().getInteger(R.integer.splash_timeout));
 
@@ -241,7 +249,7 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
         textView.setLayoutParams(params);
 
 
-        Toast toast = Toast.makeText(this,message, Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
         toast.setView(textView);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();

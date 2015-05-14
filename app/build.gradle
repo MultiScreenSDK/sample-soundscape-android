@@ -40,7 +40,6 @@ dependencies {
     androidTestCompile 'org.mockito:mockito-core:1.9.5'
     compile files('libs/android-msf-api-2.0.16.jar')
     compile project(':wishlist')
-
 }
 
 android {
