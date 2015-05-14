@@ -71,31 +71,21 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
 
         actionButton = (Button) findViewById(R.id.connect_button);
         actionButton.setOnClickListener(actionButtonOnClickListener);
-//        actionButton.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                FragmentManager fm = getFragmentManager();
-//                DialogFragment fragment = ServiceListFragment.newInstance(0);
-//                fragment.show(fm, "dialog");
-//            }
-//        });
 
         discoveryMessage = (TextView) findViewById(R.id.discover_message);
         wifiMessage = (TextView) findViewById(R.id.wifi_message);
 
         //Get connectivity manager.
         mConnectivityManager = ConnectivityManager.getInstance();
+        //Create service adapter to store services
         mConnectivityManager.setServiceAdapter(new ServiceAdapter(this, R.layout.service_list_item));
-        mConnectivityManager.addServiceChangedListener(this);
 
+        //Register to receive events.
         EventBus.getDefault().register(this);
     }
 
     protected void onDestroy() {
         super.onDestroy();
-
-        //Remove from listener list
-        mConnectivityManager.removeServiceChangedListener(this);
 
         EventBus.getDefault().unregister(this);
 

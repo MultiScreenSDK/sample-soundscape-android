@@ -64,8 +64,8 @@ public class ServiceListFragment extends DialogFragment {
                     if (activity instanceof ConnectActivity) {
                         ConnectActivity ca = (ConnectActivity) getActivity();
                         ca.displayConnectingMessage(service.getName());
-                    } else if (activity instanceof  PlaylistActivity) {
-                        PlaylistActivity pa = (PlaylistActivity)activity;
+                    } else if (activity instanceof PlaylistActivity) {
+                        PlaylistActivity pa = (PlaylistActivity) activity;
                         pa.isSwitchingService = true;
                         ConnectivityManager.getInstance().disconnect();
                     }

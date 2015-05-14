@@ -1,30 +1,88 @@
 package com.samsung.soundscape.adapter;
 
-import android.support.v7.widget.RecyclerView;
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-public class TracksAdapter extends RecyclerView.Adapter
-                <TracksAdapter.ListItemViewHolder> {
+import com.samsung.soundscape.R;
+import com.samsung.soundscape.model.Track;
+import com.squareup.picasso.Picasso;
 
-    @Override
-    public ListItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return null;
+public class TracksAdapter extends ArrayAdapter<Track> {
+
+    private int layoutResourceId;
+    private static LayoutInflater inflater = null;
+    private Context context;
+
+    public TracksAdapter(Context context, int resourceId) {
+        super(context, resourceId);
+        this.context = context;
+        this.layoutResourceId = resourceId;
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    @Override
-    public void onBindViewHolder(ListItemViewHolder holder, int position) {
-
+    public boolean contains(Track track) {
+        return (getPosition(track) >= 0);
     }
 
-    @Override
-    public int getItemCount() {
-        return 0;
-    }
+    /**
+     * Replace the existing service with new service.
+     *
+     * @param track the new track.
+     */
+    public void replace(Track track) {
 
-    public final static class ListItemViewHolder extends RecyclerView.ViewHolder {
-        public ListItemViewHolder(View itemView) {
-            super(itemView);
+        //Get the service position.
+        int position = getPosition(track);
+
+        //Check if position is valid.
+        if (position >= 0) {
+
+            //Remove the existing service.
+            remove(track);
+
+            //Insert the new service at the same position.
+            insert(track, position);
         }
     }
+
+
+    static class ViewHolder {
+        public TextView songTitle;
+        public TextView songArtist;
+        public ImageView albumArt;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View row = convertView;
+
+        if (row == null) {
+            row = inflater.inflate(layoutResourceId, parent, false);
+            ViewHolder holder = new ViewHolder();
+            holder.songTitle = (TextView) row.findViewById(R.id.songTitle);
+            holder.songArtist = (TextView) row.findViewById(R.id.songArtist);
+            holder.albumArt = (ImageView) row.findViewById(R.id.albumArt);
+            row.setTag(holder);
+        }
+
+        final ViewHolder holder = (ViewHolder) row.getTag();
+
+        final Track track = getItem(position);
+        holder.songTitle.setText(track.getTitle());
+        holder.songArtist.setText(track.getArtist());
+        Picasso.with(context).load(track.getAlbumArtThumbnail().replace(" ", "%20")).into(holder.albumArt);
+
+        return row;
+    }
+
 }

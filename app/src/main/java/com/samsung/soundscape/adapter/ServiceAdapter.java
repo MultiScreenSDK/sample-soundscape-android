@@ -27,10 +27,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.samsung.multiscreen.Service;
 import com.samsung.soundscape.R;
+import com.samsung.soundscape.util.ConnectivityManager;
 import com.samsung.soundscape.util.Util;
 
 public class ServiceAdapter extends ArrayAdapter<Service> {
@@ -73,6 +75,7 @@ public class ServiceAdapter extends ArrayAdapter<Service> {
 
     static class ViewHolder {
         public TextView deviceName;
+        public ImageView serviceIcon;
         public int position;
     }
 
@@ -89,6 +92,7 @@ public class ServiceAdapter extends ArrayAdapter<Service> {
             row = inflater.inflate(layoutResourceId, parent, false);
             ViewHolder holder = new ViewHolder();
             holder.deviceName = (TextView) row.findViewById(R.id.serviceText);
+            holder.serviceIcon = (ImageView)row.findViewById(R.id.serviceIcon);
             row.setTag(holder);
         }
 
@@ -97,6 +101,12 @@ public class ServiceAdapter extends ArrayAdapter<Service> {
         final Service service = getItem(position);
         holder.position = position;
         holder.deviceName.setText(Util.getFriendlyTvName(service.getName()));
+
+        if (ConnectivityManager.getInstance().getServiceType(service) == ConnectivityManager.ServiceType.Speaker) {
+            holder.serviceIcon.setImageResource(R.drawable.ic_speaker_gray);
+        } else {
+            holder.serviceIcon.setImageResource(R.drawable.ic_tv_gray);
+        }
 
         //TODO: remove the font???
         //holder.deviceName.setTypeface(Util.customFont(context));

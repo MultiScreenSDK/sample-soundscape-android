@@ -26,12 +26,15 @@
 package com.samsung.soundscape.util;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 import com.samsung.soundscape.App;
 
@@ -101,19 +104,19 @@ public class Util {
 //        return Typeface.createFromAsset(context.getAssets(), font);
 //    }
 //
-//    /**
-//     * Return the screen size
-//     *
-//     * @return The point object contains screen width and height.
-//     */
-//    public static Point getDisplaySize() {
-//        WindowManager wm = (WindowManager) App.getInstance().getSystemService(Context.WINDOW_SERVICE);
-//        Display display = wm.getDefaultDisplay();
-//        Point size = new Point();
-//        display.getSize(size);
-//        return size;
-//    }
-//
+    /**
+     * Return the screen size
+     *
+     * @return The point object contains screen width and height.
+     */
+    public static Point getDisplaySize() {
+        WindowManager wm = (WindowManager) App.getInstance().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size;
+    }
+
 //
 //    /**
 //     * Calculate the DP by give pixels.

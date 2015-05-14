@@ -8,15 +8,15 @@ import java.util.ArrayList;
  * Created by bliu on 5/13/2015.
  */
 public class AppState {
-    private String status;
+    private CurrentStatus status;
     private String nowPlaying;
     private ArrayList<Track> playlist = new ArrayList<>();
 
-    public String getStatus() {
+    public CurrentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(CurrentStatus status) {
         this.status = status;
     }
 

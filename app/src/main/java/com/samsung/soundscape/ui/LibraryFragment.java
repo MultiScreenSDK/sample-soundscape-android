@@ -1,108 +1,138 @@
 package com.samsung.soundscape.ui;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.samsung.multiscreen.Channel;
-import com.samsung.multiscreen.Message;
 import com.samsung.soundscape.R;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class LibraryFragment extends Fragment {
+public class LibraryFragment extends DialogFragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView.Adapter mAdapter;
 
     private ListView libraryListView;
 
-    public LibraryFragment() {
-        super();
+
+    //The user color.
+    int mColor;
+
+    /**
+     * Create a new instance of LibraryFragment.
+     */
+    static LibraryFragment newInstance(int color) {
+        LibraryFragment f = new LibraryFragment();
+
+        // Supply type input as an argument.
+        Bundle args = new Bundle();
+        args.putInt("color", color);
+        f.setArguments(args);
+
+        return f;
     }
+
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_library, container, false);
-        libraryListView = (ListView)view.findViewById(R.id.libraryListView);
-
-        return view;
-    }
-
-    public void onCreate (Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        Application application = ConnectivityManager.getInstance().getMultiscreenApp();
-//        if (application != null) {
-//            application.addOnMessageListener(
-//                    ConnectivityManager.EVENT_ADD_TRACK, onAddSongListener);
-//        }
+        mColor = getArguments().getInt("color");
     }
+
+//    @Override
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                             Bundle savedInstanceState) {
+//        View view = inflater.inflate(R.layout.fragment_library, container, false);
+//        libraryListView = (ListView)view.findViewById(R.id.libraryListView);
+//
+//        return view;
+//    }
+
 
     public void onDestroy () {
-//        Application application = ConnectivityManager.getInstance().getMultiscreenApp();
-//        if (application != null) {
-//            application.removeOnMessageListener(ConnectivityManager.EVENT_ADD_TRACK, onAddSongListener);
-//        }
-
         super.onDestroy();
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        //noinspection ConstantConditions
-//        mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
-//        mLayoutManager = new LinearLayoutManager(getActivity());
-//
-//        //adapter
-//        mAdapter = new SongsAdapter();
-//
-//        mRecyclerView.setLayoutManager(mLayoutManager);
-//        mRecyclerView.setAdapter(mAdapter);
-//
-//        // additional decorations
-//        //noinspection StatementWithEmptyBody
-//        if (!Util.supportsViewElevation()) {
-//            // Lollipop or later has native drop shadow feature. ItemShadowDecorator is not required.
-//            //mRecyclerView.addItemDecoration(new ItemShadowDecorator((NinePatchDrawable) getResources().getDrawable(R.drawable.material_shadow_z1)));
-//        }
-        //mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(getResources().getDrawable(R.drawable.list_divider), true));
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_library, null);
 
+        if (view != null) {
+//            ListView listView = (ListView)view.findViewById(R.id.deviceListView);
+//            listView.setAdapter(ConnectivityManager.getInstance().getServiceAdapter());
+//            listView.setOnItemClickListener(new ListView.OnItemClickListener() {
+//
+//                @Override
+//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                    ServiceAdapter adapter = ConnectivityManager.getInstance().getServiceAdapter();
+//                    Service service = adapter.getItem(position);
+//
+//                    Activity activity = getActivity();
+//                    if (activity instanceof ConnectActivity) {
+//                        ConnectActivity ca = (ConnectActivity) getActivity();
+//                        ca.displayConnectingMessage(service.getName());
+//                    } else if (activity instanceof PlaylistActivity) {
+//                        PlaylistActivity pa = (PlaylistActivity) activity;
+//                        pa.isSwitchingService = true;
+//                        ConnectivityManager.getInstance().disconnect();
+//                    }
+//
+//
+//                }
+//            });
+//
+//            LinearLayout llConnectTo = (LinearLayout)view.findViewById(R.id.selectedServiceLayout);
+//
+//            if (ConnectivityManager.getInstance().isTVConnected()) {
+//                //Display connected device and disconnect button.
+//                llConnectTo.setVisibility(View.VISIBLE);
+//
+//                ImageView selectedServiceIcon = (ImageView)view.findViewById(R.id.selectedServiceIcon);
+//                if (ConnectivityManager.getInstance().getConnectedServiceType() == ConnectivityManager.ServiceType.Speaker) {
+//                    //The speaker is connected
+//                    selectedServiceIcon.setImageResource(R.drawable.ic_speaker_gray);
+//                } else if (ConnectivityManager.getInstance().getConnectedServiceType() == ConnectivityManager.ServiceType.TV) {
+//                    //The TV or TV simulator is connected.
+//                    selectedServiceIcon.setImageResource(R.drawable.ic_tv_gray);
+//                }
+//                TextView selectedServiceText = (TextView)view.findViewById(R.id.selectedServiceText);
+//                selectedServiceText.setText(Util.getFriendlyTvName(ConnectivityManager.getInstance().getService().getName()));
+//
+//                Button btnDisconnect = (Button) view.findViewById(R.id.disconnectButton);
+//                btnDisconnect.setTextColor(mColor);
+//
+//                btnDisconnect.setOnClickListener(new View.OnClickListener() {
+//
+//                    @Override
+//                    public void onClick(View v) {
+//                        //Disconnect from application.
+//                        ConnectivityManager.getInstance().disconnect();
+//                    }
+//                });
+//            } else {
+//                //Hide connected device and disconnect button.
+//                llConnectTo.setVisibility(View.GONE);
+//            }
+
+            ListView libraryListView = (ListView)view.findViewById(R.id.libraryListView);
+            Activity activity = getActivity();
+            if (activity instanceof PlaylistActivity) {
+                PlaylistActivity pa = (PlaylistActivity)activity;
+                libraryListView.setAdapter(pa.tracksAdapter);
+            }
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomTheme_Dialog);
+        builder.setView(view);
+        return builder.show();
     }
-
-
-    @Override
-    public void onDestroyView() {
-        if (mRecyclerView != null) {
-            mRecyclerView.setItemAnimator(null);
-            mRecyclerView.setAdapter(null);
-            mRecyclerView = null;
-        }
-
-        if (mAdapter != null) {
-            //WrapperAdapterUtils.releaseAll(mWrappedAdapter);
-
-            mAdapter = null;
-        }
-
-        mLayoutManager = null;
-
-        super.onDestroyView();
-    }
-
-    private Channel.OnMessageListener onAddSongListener = new Channel.OnMessageListener() {
-        @Override
-        public void onMessage(Message message) {
-
-        }
-    };
 }

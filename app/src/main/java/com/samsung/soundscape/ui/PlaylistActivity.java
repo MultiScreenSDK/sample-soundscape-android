@@ -23,12 +23,12 @@ import com.rey.material.widget.FloatingActionButton;
 import com.samsung.multiscreen.Service;
 import com.samsung.multiscreen.util.RunUtil;
 import com.samsung.soundscape.R;
+import com.samsung.soundscape.adapter.TracksAdapter;
 import com.samsung.soundscape.events.ConnectionChangedEvent;
 import com.samsung.soundscape.model.Track;
 import com.samsung.soundscape.util.ConnectivityManager;
 import com.samsung.soundscape.util.Util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import de.greenrobot.event.EventBus;
@@ -58,6 +58,9 @@ public class PlaylistActivity extends AppCompatActivity {
     //The flag shows that it is switch service.
     //Do not close this activity while switching service.
     public boolean isSwitchingService = false;
+
+    //The adapter to display tracks from library.
+    TracksAdapter tracksAdapter;
 
 
     @Override
@@ -110,6 +113,10 @@ public class PlaylistActivity extends AppCompatActivity {
                 int resource = R.anim.rotate_clockwise;
                 if (!clockwise) {
                     resource = R.anim.rotate_counterclockwise;
+
+
+                } else {
+                    showLibraryDialog();
                 }
                 clockwise = !clockwise;
                 Animation rotation = AnimationUtils.loadAnimation(getApplicationContext(), resource);
@@ -198,11 +205,19 @@ public class PlaylistActivity extends AppCompatActivity {
 
             //Parse data into objects.
             if (data != null) {
-                ArrayList<Track> tracks = new ArrayList<>();
+                Track[] tracks;
                 Gson gson = new Gson();
-                tracks = gson.fromJson(data, ArrayList.class);
+                //Parse string to track array.
+                tracks = gson.fromJson(data, Track[].class);
 
-                Util.d(tracks.toString());
+                //Create tracks adapter.
+                if (tracksAdapter == null) {
+                    tracksAdapter = new TracksAdapter(PlaylistActivity.this, R.layout.library_list_item);
+                }
+
+                tracksAdapter.clear();
+                tracksAdapter.addAll(tracks);
+                tracksAdapter.notifyDataSetChanged();
             }
         }
     };
@@ -230,6 +245,25 @@ public class PlaylistActivity extends AppCompatActivity {
         DialogFragment newFragment = ServiceListFragment.newInstance(userColor);
         newFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_NoTitleBar);
         newFragment.show(ft, "dialog");
+    }
+
+
+    void showLibraryDialog() {
+
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("libraryDialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog, only shows the connect to panel.
+        DialogFragment newFragment = LibraryFragment.newInstance(userColor);
+        newFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_NoTitleBar);
+        newFragment.show(ft, "libraryDialog");
     }
 
     private void updateUI() {

@@ -37,6 +37,7 @@ public class ConnectivityManager {
 
     public static final String EVENT_ADD_TRACK = "addTrack";
     public static final String EVENT_REMOVE_TRACK = "removeTrack";
+    public static final String EVENT_TRACK_STATUS = "trackStatus";
     public static final String EVENT_APP_STATE_REQUEST = "appStateRequest";
     public static final String EVENT_APP_STATE = "appState";
     public static final String EVENT_TRACK_START = "trackStart";
@@ -449,6 +450,10 @@ public class ConnectivityManager {
 
 
     public ServiceType getConnectedServiceType() {
+        return getServiceType(this.service);
+    }
+
+    public ServiceType getServiceType(Service service) {
         if (service == null) {
             return ServiceType.Other;
         }
@@ -530,6 +535,7 @@ public class ConnectivityManager {
         });
 
         mMultiscreenApp.addOnMessageListener(EVENT_APP_STATE, onAppStateListener);
+        mMultiscreenApp.addOnMessageListener(EVENT_TRACK_STATUS, onTrackStatusListener);
 
         //Connect and launch the TV application.
         mMultiscreenApp.connect(new Result<Client>() {
@@ -626,6 +632,18 @@ public class ConnectivityManager {
             }
         }
     };
+
+    private Channel.OnMessageListener onTrackStatusListener = new Channel.OnMessageListener() {
+        @Override
+        public void onMessage(Message message) {
+            Util.d("onTrackStatusListener: " + message.toString());
+
+            if (message != null && message.getData() != null) {
+                //EventBus.getDefault().post(new AppStateEvent(AppState.parse(message.getData().toString())));
+            }
+        }
+    };
+
 
     /**
      * Sent the data to TV.
