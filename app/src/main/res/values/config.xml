@@ -3,6 +3,7 @@
     <integer name="splash_timeout">3000</integer>
 
     <string name="app_url">http://localhost:3000/tv/</string>
+    <!--<string name="app_url">http://s3-us-west-1.amazonaws.com/dev-multiscreen-examples/examples/soundscape/tester/index.html</string>-->
     <string name="channel_id">com.samsung.soundscape</string>
     <string name="playlist_url">https://s3-us-west-1.amazonaws.com/dev-multiscreen-music-library/library.json</string>
 

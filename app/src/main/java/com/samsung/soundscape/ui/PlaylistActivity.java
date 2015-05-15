@@ -16,8 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -27,12 +29,15 @@ import com.samsung.multiscreen.util.RunUtil;
 import com.samsung.soundscape.App;
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.adapter.TracksAdapter;
+import com.samsung.soundscape.events.AddTrackEvent;
 import com.samsung.soundscape.events.ConnectionChangedEvent;
+import com.samsung.soundscape.events.TrackPlaybackEvent;
 import com.samsung.soundscape.model.Track;
 import com.samsung.soundscape.util.ConnectivityManager;
 import com.samsung.soundscape.util.Util;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 import de.greenrobot.event.EventBus;
 
@@ -66,17 +71,80 @@ public class PlaylistActivity extends AppCompatActivity {
     public boolean isSwitchingService = false;
 
     //The adapter to display tracks from library.
-    TracksAdapter tracksAdapter;
+    TracksAdapter libraryAdapter;
+    //The adapter to display playlist.
+    TracksAdapter playlistAdapter;
+
+    ListView playlistListView;
+    TextView songTitle, songArtist;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
 
+        //Add toolbar
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        //Load user colors resource.
+        colors = getResources().getStringArray(R.array.UserColors);
+
+
+        initializeLibraryView();
+        initializePlaylistView();
+
+        //Register to receive events.
+        EventBus.getDefault().register(this);
+
+        //select user color.
+        selectColor();
+
+        //Request multiscreen app state.
+        ConnectivityManager.getInstance().requestAppState();
+
+        //Load library in background.
+        RunUtil.runInBackground(loadLibrary);
+
+        //Update UI with color and service information.
+        updateUI();
+    }
+
+    private void initializeLibraryView() {
+
         libraryLayout = (ViewGroup)findViewById(R.id.libraryLayout);
         libraryLayout.setVisibility(View.INVISIBLE);
 
-        connectedToIcon = (ImageView)findViewById(R.id.connectedToIcon);
+        ListView libraryListView = (ListView)findViewById(R.id.libraryListView);
+        libraryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Track track = libraryAdapter.getItem(position);
+                //format to string #AARRGGBB
+                //track.setColor(String.format("#%08X", (0xFFFFFF & mColor)));
+                //Give a unique id for the song to be added.
+                track.setId(UUID.randomUUID().toString());
+
+                ConnectivityManager.getInstance().addTrack(track);
+                showAddTrackToastMessage();
+
+                //getPlaylistActivity().addTrack(track);
+            }
+        });
+
+        //Create library adapter.
+        libraryAdapter = new TracksAdapter(PlaylistActivity.this, R.layout.library_list_item);
+        libraryListView.setAdapter(libraryAdapter);
+    }
+
+
+    private void initializePlaylistView() {
+        playlistAdapter = new TracksAdapter(this, R.layout.playlist_list_item);
+        playlistListView = (ListView) findViewById(R.id.playlistListView);
+        playlistListView.setAdapter(playlistAdapter);
+
+        connectedToIcon = (ImageView) findViewById(R.id.connectedToIcon);
         connectedToIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,19 +153,14 @@ public class PlaylistActivity extends AppCompatActivity {
             }
         });
 
-        connectedToText = (TextView)findViewById(R.id.connectedToText);
-        connectedToHeader = (LinearLayout)findViewById(R.id.connectedToHeader);
+        connectedToText = (TextView) findViewById(R.id.connectedToText);
+        connectedToHeader = (LinearLayout) findViewById(R.id.connectedToHeader);
 
-        //Load user colors resource.
-        colors = getResources().getStringArray(R.array.UserColors);
+        songTitle = (TextView)findViewById(R.id.songTitle);
+        songArtist = (TextView)findViewById(R.id.songArtist);
 
-        //Add toolbar
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-
-        playControl = (ImageView)findViewById(R.id.playControl);
-        playControlDrawable = (StateListDrawable)playControl.getDrawable();
+        playControl = (ImageView) findViewById(R.id.playControl);
+        playControlDrawable = (StateListDrawable) playControl.getDrawable();
 
         // TODO: Replace this example play control
         playControl.setOnClickListener(new View.OnClickListener() {
@@ -114,29 +177,17 @@ public class PlaylistActivity extends AppCompatActivity {
             }
         });
 
-        addButton = (FloatingActionButton)findViewById(R.id.addButton);
-
+        addButton = (FloatingActionButton) findViewById(R.id.addButton);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 animateLibrary(v);
             }
         });
+    }
 
-        //Register to receive events.
-        EventBus.getDefault().register(this);
+    private void showAddTrackToastMessage() {
 
-        //select user color.
-        selectColor();
-
-        //Request multiscreen app state.
-        ConnectivityManager.getInstance().requestAppState();
-
-        //Load library in background.
-        RunUtil.runInBackground(loadLibrary);
-
-        //Update UI with color and service information.
-        updateUI();
     }
 
     private void animateLibrary(final View v) {
@@ -195,6 +246,7 @@ public class PlaylistActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
     protected void onDestroy() {
         super.onDestroy();
 
@@ -207,21 +259,36 @@ public class PlaylistActivity extends AppCompatActivity {
 
 
     // This method will be called when a MessageEvent is posted
-    public void onEvent(ConnectionChangedEvent event){
-        if (!ConnectivityManager.getInstance().isTVConnected()) {
+    public void onEvent(ConnectionChangedEvent event) {
+        if (event.errorMessage == null) {
+            if (!ConnectivityManager.getInstance().isTVConnected()) {
 
-            //Ignore the disconnect event when it is switching service.
-            if (!isSwitchingService) {
-                finish();
+                //Ignore the disconnect event when it is switching service.
+                if (!isSwitchingService) {
+                    finish();
+                }
+            } else {
+                //Reset the flag when it is connected;
+                isSwitchingService = false;
+
+                //Happens when switch service.
+                selectColor();
+                updateUI();
             }
-        } else {
-            //Reset the flag when it is connected;
-            isSwitchingService = false;
-
-            //Happens when switch service.
-            selectColor();
-            updateUI();
         }
+    }
+
+    public void onEvent(AddTrackEvent event) {
+        addTrack(event.track);
+    }
+
+    public void onEvent(TrackPlaybackEvent event) {
+        String id = event.id;
+    }
+
+    public void addTrack(Track track) {
+        playlistAdapter.add(track);
+        playlistAdapter.notifyDataSetChanged();
     }
 
 
@@ -231,28 +298,29 @@ public class PlaylistActivity extends AppCompatActivity {
             String data = null;
             try {
                 data = Util.readUrl(getString(R.string.playlist_url));
-            }catch (Exception e) {
+            } catch (Exception e) {
                 Util.e("Error when loading library:" + e.toString());
             }
 
             //Parse data into objects.
             if (data != null) {
-                Track[] tracks;
                 Gson gson = new Gson();
-                //Parse string to track array.
-                tracks = gson.fromJson(data, Track[].class);
-
-                //Create tracks adapter.
-                if (tracksAdapter == null) {
-                    tracksAdapter = new TracksAdapter(PlaylistActivity.this, R.layout.library_list_item);
-                }
-
-                tracksAdapter.clear();
-                tracksAdapter.addAll(tracks);
-                tracksAdapter.notifyDataSetChanged();
+                //Parse string to track array, then add into library list.
+                addTracksIntoLibrary(gson.fromJson(data, Track[].class));
             }
         }
     };
+
+    private void addTracksIntoLibrary(final Track[] tracks) {
+        RunUtil.runOnUI(new Runnable() {
+            @Override
+            public void run() {
+                libraryAdapter.clear();
+                libraryAdapter.addAll(tracks);
+                libraryAdapter.notifyDataSetChanged();
+            }
+        });
+    }
 
     void showServiceListDialog() {
 
@@ -281,21 +349,6 @@ public class PlaylistActivity extends AppCompatActivity {
 
 
     private void showLibraryDialog() {
-
-        // DialogFragment.show() will take care of adding the fragment
-        // in a transaction.  We also want to remove any currently showing
-        // dialog, so make our own transaction and take care of that here.
-//        FragmentTransaction ft = getFragmentManager().beginTransaction();
-//        Fragment prev = getFragmentManager().findFragmentByTag("libraryDialog");
-//        if (prev != null) {
-//            ft.remove(prev);
-//        }
-//        ft.addToBackStack(null);
-//
-//        // Create and show the dialog, only shows the connect to panel.
-//        DialogFragment newFragment = LibraryFragment.newInstance(userColor);
-//        newFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_NoTitleBar);
-//        newFragment.show(ft, "libraryDialog");
         expand(libraryLayout);
     }
 
@@ -317,12 +370,14 @@ public class PlaylistActivity extends AppCompatActivity {
         connectedToHeader.setBackgroundColor(userColor);
         addButton.setBackgroundColor(userColor);
         Service service = ConnectivityManager.getInstance().getService();
-        connectedToText.setText(Util.getFriendlyTvName(service.getName()));
+        if (service != null) {
+            connectedToText.setText(Util.getFriendlyTvName(service.getName()));
+        }
     }
 
     private void selectColor() {
         //Get user color randomly.
-        String color = colors[(int)(colors.length*Math.random())];
+        String color = colors[(int) (colors.length * Math.random())];
         userColor = Color.parseColor(color);
     }
 

@@ -51,7 +51,7 @@ import com.samsung.soundscape.util.Util;
 
 import de.greenrobot.event.EventBus;
 
-public class ConnectActivity extends AppCompatActivity implements ConnectivityManager.ServiceChangedListener {
+public class ConnectActivity extends AppCompatActivity {
     Button actionButton;
     TextView discoveryMessage;
     TextView wifiMessage;
@@ -101,23 +101,18 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
         cleanup();
     }
 
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
 
         //Start the service discovery if it is not started before.
         if (!mConnectivityManager.isDiscovering()) {
-            //Make sure the connected device will be added into list.
-            //mConnectivityManager.getServiceAdapter().setAddConnectedService(true);
-
-
-
             //start discovery.
             mConnectivityManager.startDiscovery();
         }
     }
 
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
 
         //Stop discovery when the app goes to background.
         mConnectivityManager.stopDiscovery();
@@ -177,15 +172,6 @@ public class ConnectActivity extends AppCompatActivity implements ConnectivityMa
         }
     }
 
-    @Override
-    public void onServiceChanged() {
-
-    }
-
-    @Override
-    public void onConnectionChanged() {
-
-    }
 
     public void updateUI(final String firstMsg, final String secondMsg, final String buttonCaption) {
         RunUtil.runOnUI(new Runnable() {

@@ -63,7 +63,7 @@
             android:paddingTop="0dp">
 
             <ListView
-                android:id="@+id/libraryListView"
+                android:id="@+id/playlistListView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:divider="#bbbbbb"

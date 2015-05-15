@@ -13,16 +13,21 @@ import com.samsung.multiscreen.Message;
 import com.samsung.multiscreen.Result;
 import com.samsung.multiscreen.Search;
 import com.samsung.multiscreen.Service;
+import com.samsung.multiscreen.util.JSONUtil;
 import com.samsung.multiscreen.util.RunUtil;
 import com.samsung.soundscape.App;
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.adapter.ServiceAdapter;
-import com.samsung.soundscape.events.AppStateEvent;
+import com.samsung.soundscape.events.AddTrackEvent;
 import com.samsung.soundscape.events.ConnectionChangedEvent;
 import com.samsung.soundscape.events.ServiceChangedEvent;
-import com.samsung.soundscape.model.AppState;
+import com.samsung.soundscape.events.TrackPlaybackEvent;
+import com.samsung.soundscape.model.Track;
 
-import java.util.ArrayList;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 
 import de.greenrobot.event.EventBus;
 
@@ -41,6 +46,7 @@ public class ConnectivityManager {
     public static final String EVENT_APP_STATE_REQUEST = "appStateRequest";
     public static final String EVENT_APP_STATE = "appState";
     public static final String EVENT_TRACK_START = "trackStart";
+    public static final String EVENT_TRACK_END = "trackEnd";
     public static final String EVENT_PLAY = "play";
     public static final String EVENT_PAUSE = "pause";
     public static final String EVENT_NEXT = "next";
@@ -80,22 +86,6 @@ public class ConnectivityManager {
      */
     private boolean isExisting = false;
 
-    /**
-     * The service change listener, it will invoked when service is changed like add, remove, etc.
-     */
-    public interface ServiceChangedListener {
-        //Triggered when service is added or removed.
-        public void onServiceChanged();
-
-        //Triggered when the connection is changed (either disconnected or connected).
-        public void onConnectionChanged();
-    }
-
-    /**
-     * The array list of ServiceChangedListener.
-     */
-    private ArrayList<ServiceChangedListener> listeners = new ArrayList<ServiceChangedListener>();
-
 
     /**
      * Returns the instance.
@@ -129,43 +119,6 @@ public class ConnectivityManager {
         this.adapter = adapter;
     }
 
-    /**
-     * Current selected service.
-     */
-//    public Service getService() {
-//        return service;
-//    }
-
-
-    /**
-     * Get TV application.
-     */
-//    public com.samsung.multiscreen.Application getMultiscreenApp() {
-//        return mMultiscreenApp;
-//    }
-
-    /**
-     * Add service change listener to the list.
-     *
-     * @param listener the listener to be added.
-     */
-    public void addServiceChangedListener(ServiceChangedListener listener) {
-
-        //Add the listener if it does not exist.
-        if (!listeners.contains(listener)) {
-            listeners.add(listener);
-        }
-    }
-
-    /**
-     * Remove the service change listener from list.
-     *
-     * @param listener the listener to be removed.
-     */
-    public void removeServiceChangedListener(ServiceChangedListener listener) {
-        //Remove the listener.
-        listeners.remove(listener);
-    }
 
     /**
      * Check if discovery process is running.
@@ -312,20 +265,20 @@ public class ConnectivityManager {
 //        }
 //    }
 
-    /**
-     * Notify all the service change listeners that service change happens.
-     */
-    private void notifyListeners(boolean serviceChanged) {
-        for (ServiceChangedListener listener : listeners) {
-            if (listener != null) {
-                if (serviceChanged) {
-                    listener.onServiceChanged();
-                } else {
-                    listener.onConnectionChanged();
-                }
-            }
-        }
-    }
+//    /**
+//     * Notify all the service change listeners that service change happens.
+//     */
+//    private void notifyListeners(boolean serviceChanged) {
+//        for (ServiceChangedListener listener : listeners) {
+//            if (listener != null) {
+//                if (serviceChanged) {
+//                    listener.onServiceChanged();
+//                } else {
+//                    listener.onConnectionChanged();
+//                }
+//            }
+//        }
+//    }
 
     /**
      * Notify TV list adapter that data set is changed.
@@ -344,8 +297,6 @@ public class ConnectivityManager {
         });
 
         //Notify UI to update cast icon.
-        notifyListeners(true);
-
         EventBus.getDefault().post(new ServiceChangedEvent());
     }
 
@@ -428,9 +379,6 @@ public class ConnectivityManager {
         } catch (Exception e) {//ignore if there is error.
         }
 
-        //Clear all the listeners.
-        listeners.clear();
-
         //Disconnect TV if it is connected.
         if (isTVConnected()) {
             mMultiscreenApp.disconnect();
@@ -493,7 +441,6 @@ public class ConnectivityManager {
                 if (client != null) {
 
                     //Notify service change listeners.
-                    notifyListeners(false);
                     EventBus.getDefault().post(new ConnectionChangedEvent(null));
 
                     //restart to discovery if service is disconnected and
@@ -517,8 +464,7 @@ public class ConnectivityManager {
                 //adapter.remove(getService());
                 //adapter.notifyDataSetChanged();
 
-                //Notify UI listeners.
-                notifyListeners(false);
+                //Notify to update UI.
                 EventBus.getDefault().post(new ConnectionChangedEvent(null));
             }
         });
@@ -527,7 +473,7 @@ public class ConnectivityManager {
         mMultiscreenApp.setOnErrorListener(new Channel.OnErrorListener() {
             @Override
             public void onError(com.samsung.multiscreen.Error error) {
-                notifyListeners(false);
+                Util.e("setOnErrorListener: " + error.toString());
                 EventBus.getDefault().post(new ConnectionChangedEvent(error.toString()));
 
                 if (!isExisting) startDiscovery();
@@ -536,6 +482,9 @@ public class ConnectivityManager {
 
         mMultiscreenApp.addOnMessageListener(EVENT_APP_STATE, onAppStateListener);
         mMultiscreenApp.addOnMessageListener(EVENT_TRACK_STATUS, onTrackStatusListener);
+        mMultiscreenApp.addOnMessageListener(EVENT_ADD_TRACK, onAddTrackListener);
+        mMultiscreenApp.addOnMessageListener(EVENT_TRACK_START, onTrackStartListener);
+        mMultiscreenApp.addOnMessageListener(EVENT_TRACK_END, onTrackEndListener);
 
         //Connect and launch the TV application.
         mMultiscreenApp.connect(new Result<Client>() {
@@ -546,9 +495,9 @@ public class ConnectivityManager {
 
             @Override
             public void onError(com.samsung.multiscreen.Error error) {
-                //failed to launch TV application. Notify TV service changes.
-                notifyListeners(false);
+                Util.e("connect onError: " + error.toString());
 
+                //failed to launch TV application. Notify TV service changes.
                 EventBus.getDefault().post(new ConnectionChangedEvent(error.toString()));
             }
         });
@@ -622,13 +571,38 @@ public class ConnectivityManager {
         sendToTV(EVENT_APP_STATE_REQUEST, null, Message.TARGET_HOST);
     }
 
+    public void addTrack(Track track) {
+        try {
+            JSONObject obj = new JSONObject(track.toJsonString());
+            sendToTV(EVENT_ADD_TRACK, obj, Message.TARGET_ALL);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeTrack(String trackId) {
+        sendToTV(EVENT_REMOVE_TRACK, trackId, Message.TARGET_BROADCAST);
+    }
+
+    public void pause() {
+        sendToTV(EVENT_PAUSE, null, Message.TARGET_BROADCAST);
+    }
+
+    public void play() {
+        sendToTV(EVENT_PLAY, null, Message.TARGET_BROADCAST);
+    }
+
+    public void next() {
+        sendToTV(EVENT_NEXT, null, Message.TARGET_BROADCAST);
+    }
+
     private Channel.OnMessageListener onAppStateListener = new Channel.OnMessageListener() {
         @Override
         public void onMessage(Message message) {
             Util.d("onAppStateListener: " + message.toString());
 
             if (message != null && message.getData() != null) {
-                EventBus.getDefault().post(new AppStateEvent(AppState.parse(message.getData().toString())));
+                //EventBus.getDefault().post(new AppStateEvent(AppState.parse(message.getData().toString())));
             }
         }
     };
@@ -639,11 +613,49 @@ public class ConnectivityManager {
             Util.d("onTrackStatusListener: " + message.toString());
 
             if (message != null && message.getData() != null) {
-                //EventBus.getDefault().post(new AppStateEvent(AppState.parse(message.getData().toString())));
+                //EventBus.getDefault().post(new TrackStatusEvent(CurrentStatus.parse(message.getData().toString())));
             }
         }
     };
 
+    private Channel.OnMessageListener onTrackStartListener = new Channel.OnMessageListener() {
+        @Override
+        public void onMessage(Message message) {
+            Util.d("onTrackStartListener: " + message.toString());
+
+            if (message != null && message.getData() != null) {
+                EventBus.getDefault().post(new TrackPlaybackEvent(message.getData().toString(),
+                        message.getEvent()));
+            }
+        }
+    };
+
+    private Channel.OnMessageListener onTrackEndListener = new Channel.OnMessageListener() {
+        @Override
+        public void onMessage(Message message) {
+            Util.d("onTrackEndListener: " + message.toString());
+
+            if (message != null && message.getData() != null) {
+                EventBus.getDefault().post(new TrackPlaybackEvent(message.getData().toString(),
+                        message.getEvent()));
+            }
+        }
+    };
+
+
+    private Channel.OnMessageListener onAddTrackListener = new Channel.OnMessageListener() {
+        @Override
+        public void onMessage(Message message) {
+            Util.d("onAddTrackListener: " + message.toString());
+
+            if (message != null && message.getData() != null) {
+                if (message.getData() instanceof HashMap) {
+                    String jsonString = JSONUtil.toJSONString((HashMap)message.getData());
+                    EventBus.getDefault().post(new AddTrackEvent(Track.parse(jsonString)));
+                }
+            }
+        }
+    };
 
     /**
      * Sent the data to TV.
@@ -654,6 +666,7 @@ public class ConnectivityManager {
      */
     private void sendToTV(String event, Object data, String target) {
         if (mMultiscreenApp != null && mMultiscreenApp.isConnected()) {
+            Util.d("Send to TV: event=" + event + "  data=" + data);
             mMultiscreenApp.publish(event, data, target);
         }
     }

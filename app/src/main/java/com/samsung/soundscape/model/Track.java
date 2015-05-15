@@ -1,11 +1,10 @@
 package com.samsung.soundscape.model;
 
 
-import android.graphics.Color;
-
+import com.google.gson.Gson;
 import com.samsung.soundscape.util.Util;
 
-public class Track {
+public class Track extends Base {
     private String id;
     private String artist;
     private String album;
@@ -13,7 +12,7 @@ public class Track {
     private String file;
     private String albumArt;
     private String albumArtThumbnail;
-    private String color;
+//    private String color;
     private int duration;
 
 
@@ -74,27 +73,27 @@ public class Track {
     }
 
 
-    public int getColorInt() {
-        int intColor = 0;
-
-        if (color != null) {
-            try {
-                intColor = Color.parseColor(color);
-            } catch (IllegalArgumentException iae) {
-                Util.e("getColorInt exception: " + iae.toString());
-            }
-        }
-
-        return intColor;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
+//    public int getColorInt() {
+//        int intColor = 0;
+//
+//        if (color != null) {
+//            try {
+//                intColor = Color.parseColor(color);
+//            } catch (IllegalArgumentException iae) {
+//                Util.e("getColorInt exception: " + iae.toString());
+//            }
+//        }
+//
+//        return intColor;
+//    }
+//
+//    public String getColor() {
+//        return color;
+//    }
+//
+//    public void setColor(String color) {
+//        this.color = color;
+//    }
 
     public int getDuration() {
         return duration;
@@ -104,4 +103,20 @@ public class Track {
         this.duration = duration;
     }
 
+
+    public static Track parse(String data) {
+        if (data == null) {
+            return null;
+        }
+
+        Track result = null;
+        Gson gson = new Gson();
+
+        try {
+            result = gson.fromJson(data, Track.class);
+        }catch (Exception e) {
+            Util.e("Error parsing string to class: " + e.toString());
+        }
+        return result;
+    }
 }

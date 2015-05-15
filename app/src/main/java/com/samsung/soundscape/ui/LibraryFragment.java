@@ -1,6 +1,5 @@
 package com.samsung.soundscape.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -8,9 +7,15 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.samsung.soundscape.R;
+import com.samsung.soundscape.adapter.TracksAdapter;
+import com.samsung.soundscape.model.Track;
+import com.samsung.soundscape.util.ConnectivityManager;
+
+import java.util.UUID;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -22,6 +27,7 @@ public class LibraryFragment extends DialogFragment {
 
     private ListView libraryListView;
 
+    private TracksAdapter adapter;
 
     //The user color.
     int mColor;
@@ -51,13 +57,14 @@ public class LibraryFragment extends DialogFragment {
 //    public View onCreateView(LayoutInflater inflater, ViewGroup container,
 //                             Bundle savedInstanceState) {
 //        View view = inflater.inflate(R.layout.fragment_library, container, false);
-//        libraryListView = (ListView)view.findViewById(R.id.libraryListView);
+//        playlistListView = (ListView)view.findViewById(R.id.playlistListView);
 //
 //        return view;
 //    }
 
 
     public void onDestroy () {
+        adapter = null;
         super.onDestroy();
     }
 
@@ -124,15 +131,37 @@ public class LibraryFragment extends DialogFragment {
 //            }
 
             ListView libraryListView = (ListView)view.findViewById(R.id.libraryListView);
-            Activity activity = getActivity();
-            if (activity instanceof PlaylistActivity) {
-                PlaylistActivity pa = (PlaylistActivity)activity;
-                libraryListView.setAdapter(pa.tracksAdapter);
-            }
+            libraryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Track track = adapter.getItem(position);
+                    //format to string #AARRGGBB
+                    //track.setColor(String.format("#%08X", (0xFFFFFF & mColor)));
+                    //Give a unique id for the song to be added.
+                    track.setId(UUID.randomUUID().toString());
+
+                    ConnectivityManager.getInstance().addTrack(track);
+                    showToastMessage();
+
+                    //getPlaylistActivity().addTrack(track);
+                }
+            });
+
+            adapter = getPlaylistActivity().libraryAdapter;
+            libraryListView.setAdapter(adapter);
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomTheme_Dialog);
         builder.setView(view);
         return builder.show();
     }
+
+    private void showToastMessage() {
+
+    }
+
+    private PlaylistActivity getPlaylistActivity() {
+        return  (PlaylistActivity)getActivity();
+    }
+
 }

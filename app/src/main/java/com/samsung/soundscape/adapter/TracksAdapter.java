@@ -80,7 +80,7 @@ public class TracksAdapter extends ArrayAdapter<Track> {
         final Track track = getItem(position);
         holder.songTitle.setText(track.getTitle());
         holder.songArtist.setText(track.getArtist());
-        Picasso.with(context).load(track.getAlbumArtThumbnail().replace(" ", "%20")).into(holder.albumArt);
+        Picasso.with(context).load(track.getAlbumArtThumbnail().replace(" ", "%20")).fit().into(holder.albumArt);
 
         return row;
     }

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Created by bliu on 5/13/2015.
  */
-public class AppState {
+public class AppState extends Base {
     private CurrentStatus status;
     private String nowPlaying;
     private ArrayList<Track> playlist = new ArrayList<>();
