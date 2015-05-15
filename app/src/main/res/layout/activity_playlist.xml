@@ -14,9 +14,9 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_gravity="center"
+        android:background="@color/white"
         android:orientation="vertical"
-        android:padding="0dp"
-        >
+        android:padding="0dp" >
 
         <include layout="@layout/toolbar" />
 
@@ -87,7 +87,7 @@
         android:layout_marginRight="16dp"
         app:fab_backgroundColor="@color/user_color_1"
         app:fab_elevation="0dp"
-        app:fab_iconSrc="@drawable/ic_add_white"
+        app:fab_iconSrc="@drawable/rotate"
         app:fab_radius="24dp"
         app:rd_enable="true"
         app:rd_rippleColor="@color/gray"

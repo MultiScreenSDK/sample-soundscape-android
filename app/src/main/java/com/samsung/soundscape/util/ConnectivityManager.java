@@ -167,14 +167,14 @@ public class ConnectivityManager {
             Util.d("Service onFound: " + service);
 
             //TV is found, update the TV list.
-            updateTVList(service);
+//            updateTVList(service);
         }
     };
     private Search.OnServiceLostListener mOnServiceLostListener = new Search.OnServiceLostListener() {
         @Override
         public void onLost(Service service) {
             //TV is removed. We will remove the TV from TV list.
-            removeTV(service);
+//            removeTV(service);
         }
     };
 
