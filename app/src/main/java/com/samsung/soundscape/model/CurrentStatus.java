@@ -11,24 +11,24 @@ public class CurrentStatus extends Base {
 
     private String id;
     private float time;
-    private String status;
+    private String state;
 
-    public CurrentStatus(String id, long time, String status) {
-        this.setId(id);
-        this.setTime(time);
-        this.setStatus(status);
+    public CurrentStatus(String id, float time, String state) {
+        this.id = id;
+        this.time = time;
+        this.state = state;
     }
 
     public boolean isPlaying() {
-        return (getStatus() != null && getStatus().equals(STATE_PLAYING));
+        return (state != null && state.equals(STATE_PLAYING));
     }
 
     public boolean isPaused() {
-        return (getStatus() != null && getStatus().equals(STATE_PLAYING));
+        return (state != null && state.equals(STATE_PLAYING));
     }
 
-    public static boolean isPlaying(String status) {
-        return (status != null && status.equals(STATE_PLAYING));
+    public static boolean isPlaying(String state) {
+        return (state != null && state.equals(STATE_PLAYING));
     }
 
     public static CurrentStatus parse(String data) {
@@ -56,11 +56,11 @@ public class CurrentStatus extends Base {
         this.time = time;
     }
 
-    public String getStatus() {
-        return status;
+    public String getState() {
+        return state;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setState(String state) {
+        this.state = state;
     }
 }

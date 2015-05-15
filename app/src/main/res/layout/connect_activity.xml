@@ -36,7 +36,8 @@
             android:fontFamily="sans-serif-light"
             android:text="on your current WiFi network"
             android:textColor="@color/white"
-            android:textSize="20sp"/>
+            android:textSize="20sp"
+            android:visibility="invisible"/>
 
         <com.andexert.library.RippleView
             android:id="@+id/buttonRipple"
@@ -59,7 +60,8 @@
                 android:paddingRight="16dp"
                 android:paddingTop="16dp"
                 android:stateListAnimator="@anim/button_elevation"
-                android:text="Connect" />
+                android:text="Connect"
+                android:visibility="invisible"/>
 
         </com.andexert.library.RippleView>
     </RelativeLayout>

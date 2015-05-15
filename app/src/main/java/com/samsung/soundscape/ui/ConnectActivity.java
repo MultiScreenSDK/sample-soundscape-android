@@ -178,6 +178,7 @@ public class ConnectActivity extends AppCompatActivity {
 
                 discoveryMessage.setVisibility(firstMsg != null ? View.VISIBLE : View.INVISIBLE);
                 wifiMessage.setVisibility(secondMsg != null ? View.VISIBLE : View.INVISIBLE);
+                actionButton.setVisibility(buttonCaption != null ? View.VISIBLE : View.INVISIBLE);
 
                 if (firstMsg != null) {
                     discoveryMessage.setText(firstMsg);
@@ -220,24 +221,6 @@ public class ConnectActivity extends AppCompatActivity {
         mConnectivityManager.clearService();
         mConnectivityManager = null;
     }
-
-//    public void displayConnectingMessage(String tvName) {
-//        String message = String.format(getString(R.string.connect_to_message), Util.getFriendlyTvName(tvName));
-//        TextView textView = new TextView(this);
-//        textView.setText(message);
-//        textView.setPadding(40, 20, 40, 20);
-//        textView.setBackgroundColor(0x80000000);
-//        RelativeLayout.LayoutParams params =
-//                new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-//                        RelativeLayout.LayoutParams.WRAP_CONTENT);
-//        textView.setLayoutParams(params);
-//
-//
-//        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
-//        toast.setView(textView);
-//        toast.setGravity(Gravity.CENTER, 0, 0);
-//        toast.show();
-//    }
 
 
     public void displayConnectingMessage(String tvName) {

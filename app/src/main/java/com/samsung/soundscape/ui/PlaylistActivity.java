@@ -160,16 +160,13 @@ public class PlaylistActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                setPlayState(!isPlaying());
-//                Log.d(this.getClass().getName(), "Play Control");
-//                if (Arrays.equals(playControlDrawable.getState(), new int[]{android.R.attr.state_enabled})) {
-//                    Log.d(this.getClass().getName(), "Play Control without checked");
-//                    playControlDrawable.setState(new int[]{android.R.attr.state_enabled, android.R.attr.state_checked});
-//                } else {
-//                    Log.d(this.getClass().getName(), "Play Control with checked.");
-//                    playControlDrawable.setState(new int[]{android.R.attr.state_enabled});
-//                }
-//                playControl.setImageDrawable(playControlDrawable.getCurrent());
+                if (isPlaying()) {
+                    ConnectivityManager.getInstance().pause();
+                    setPlayState(false);
+                } else {
+                    ConnectivityManager.getInstance().play();
+                    setPlayState(true);
+                }
             }
         });
 
@@ -276,6 +273,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
     /**
      * Triggered when app state is changed.
+     *
      * @param event
      */
     public void onEvent(AppStateEvent event) {
@@ -289,12 +287,11 @@ public class PlaylistActivity extends AppCompatActivity {
             updatePlaybackView(state.getId(), state.getTime());
         }
 
-        Util.d("current state id=" + event.state.getStatus().getId());
-
     }
 
     /**
      * Triggered when a new track is added.
+     *
      * @param event
      */
     public void onEvent(AddTrackEvent event) {
@@ -303,6 +300,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
     /**
      * Triggered when playback state is changed.
+     *
      * @param event the playback event.
      */
     public void onEvent(TrackPlaybackEvent event) {
@@ -317,7 +315,16 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
     public void onEvent(TrackStatusEvent event) {
-        updatePlaybackView(event.status.getId(), event.status.getTime());
+        CurrentStatus status = event.status;
+        if (status != null) {
+
+            //Only update the play status when the state is changed.
+            if (status.getState() != null && status.isPlaying() != isPlaying()) {
+                setPlayState(status.isPlaying());
+            }
+
+            updatePlaybackView(status.getId(), status.getTime());
+        }
     }
 
     public void addTrack(Track track) {
@@ -335,11 +342,9 @@ public class PlaylistActivity extends AppCompatActivity {
         if (statePlaying) {
             //set to playing state.
             playControlDrawable.setState(new int[]{android.R.attr.state_enabled});
-            ConnectivityManager.getInstance().play();
         } else {
             //set to paused state.
             playControlDrawable.setState(new int[]{android.R.attr.state_enabled, android.R.attr.state_checked});
-            ConnectivityManager.getInstance().pause();
         }
 
         playControl.setImageDrawable(playControlDrawable.getCurrent());
@@ -446,8 +451,6 @@ public class PlaylistActivity extends AppCompatActivity {
                 songTitle.setText(track.getTitle());
                 songArtist.setText(track.getArtist());
             }
-
-//            setPlayState(status.isPlaying());
 
         } else {
             playControl.setVisibility(View.INVISIBLE);

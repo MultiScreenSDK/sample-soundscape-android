@@ -1,6 +1,8 @@
 package com.samsung.soundscape.model;
 
 
+import android.graphics.Color;
+
 import com.google.gson.Gson;
 import com.samsung.soundscape.util.Util;
 
@@ -73,19 +75,19 @@ public class Track extends Base {
     }
 
 
-//    public int getColorInt() {
-//        int intColor = 0;
-//
-//        if (color != null) {
-//            try {
-//                intColor = Color.parseColor(color);
-//            } catch (IllegalArgumentException iae) {
-//                Util.e("getColorInt exception: " + iae.toString());
-//            }
-//        }
-//
-//        return intColor;
-//    }
+    public int getColorInt() {
+        int intColor = 0;
+
+        if (color != null) {
+            try {
+                intColor = Color.parseColor(color);
+            } catch (IllegalArgumentException iae) {
+                Util.e("getColorInt exception: " + iae.toString());
+            }
+        }
+
+        return intColor;
+    }
 
     public String getColor() {
         return color;
