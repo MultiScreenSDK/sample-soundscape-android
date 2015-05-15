@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.rey.material.widget.FloatingActionButton;
@@ -30,8 +30,11 @@ import com.samsung.soundscape.App;
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.adapter.TracksAdapter;
 import com.samsung.soundscape.events.AddTrackEvent;
+import com.samsung.soundscape.events.AppStateEvent;
 import com.samsung.soundscape.events.ConnectionChangedEvent;
 import com.samsung.soundscape.events.TrackPlaybackEvent;
+import com.samsung.soundscape.events.TrackStatusEvent;
+import com.samsung.soundscape.model.CurrentStatus;
 import com.samsung.soundscape.model.Track;
 import com.samsung.soundscape.util.ConnectivityManager;
 import com.samsung.soundscape.util.Util;
@@ -113,23 +116,21 @@ public class PlaylistActivity extends AppCompatActivity {
 
     private void initializeLibraryView() {
 
-        libraryLayout = (ViewGroup)findViewById(R.id.libraryLayout);
+        libraryLayout = (ViewGroup) findViewById(R.id.libraryLayout);
         libraryLayout.setVisibility(View.INVISIBLE);
 
-        ListView libraryListView = (ListView)findViewById(R.id.libraryListView);
+        ListView libraryListView = (ListView) findViewById(R.id.libraryListView);
         libraryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Track track = libraryAdapter.getItem(position);
                 //format to string #AARRGGBB
-                //track.setColor(String.format("#%08X", (0xFFFFFF & mColor)));
+                track.setColor(String.format("#%08X", (0xFFFFFF & userColor)));
                 //Give a unique id for the song to be added.
                 track.setId(UUID.randomUUID().toString());
 
                 ConnectivityManager.getInstance().addTrack(track);
                 showAddTrackToastMessage();
-
-                //getPlaylistActivity().addTrack(track);
             }
         });
 
@@ -144,36 +145,31 @@ public class PlaylistActivity extends AppCompatActivity {
         playlistListView = (ListView) findViewById(R.id.playlistListView);
         playlistListView.setAdapter(playlistAdapter);
 
+        //show the speaker or TV icon depends on service type.
         connectedToIcon = (ImageView) findViewById(R.id.connectedToIcon);
-        connectedToIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Util.d("Connect to icon is clicked.");
-
-            }
-        });
 
         connectedToText = (TextView) findViewById(R.id.connectedToText);
         connectedToHeader = (LinearLayout) findViewById(R.id.connectedToHeader);
 
-        songTitle = (TextView)findViewById(R.id.songTitle);
-        songArtist = (TextView)findViewById(R.id.songArtist);
+        songTitle = (TextView) findViewById(R.id.songTitle);
+        songArtist = (TextView) findViewById(R.id.songArtist);
 
         playControl = (ImageView) findViewById(R.id.playControl);
         playControlDrawable = (StateListDrawable) playControl.getDrawable();
-
-        // TODO: Replace this example play control
         playControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: replace with Util.d API.
-                Log.d(this.getClass().getName(), "Play Control");
-                if (Arrays.equals(playControlDrawable.getState(), new int[]{android.R.attr.state_enabled})) {
-                    playControlDrawable.setState(new int[]{android.R.attr.state_enabled, android.R.attr.state_checked});
-                } else {
-                    playControlDrawable.setState(new int[]{android.R.attr.state_enabled});
-                }
-                playControl.setImageDrawable(playControlDrawable.getCurrent());
+
+                setPlayState(!isPlaying());
+//                Log.d(this.getClass().getName(), "Play Control");
+//                if (Arrays.equals(playControlDrawable.getState(), new int[]{android.R.attr.state_enabled})) {
+//                    Log.d(this.getClass().getName(), "Play Control without checked");
+//                    playControlDrawable.setState(new int[]{android.R.attr.state_enabled, android.R.attr.state_checked});
+//                } else {
+//                    Log.d(this.getClass().getName(), "Play Control with checked.");
+//                    playControlDrawable.setState(new int[]{android.R.attr.state_enabled});
+//                }
+//                playControl.setImageDrawable(playControlDrawable.getCurrent());
             }
         });
 
@@ -187,6 +183,12 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
     private void showAddTrackToastMessage() {
+        View toastLayout = getLayoutInflater().inflate(R.layout.add_track, (ViewGroup) findViewById(R.id.toastLayout));
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(toastLayout);
+        toast.show();
 
     }
 
@@ -216,12 +218,6 @@ public class PlaylistActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // If the drawer is open, show the global app actions in the action bar. See also
-        // showGlobalContextActionBar, which controls the top-left area of the action bar.
-//        if (drawerLayout != null && isDrawerOpen()) {
-//            inflater.inflate(R.menu.global, menu);
-//            showGlobalContextActionBar();
-//        }
         getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -278,12 +274,50 @@ public class PlaylistActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Triggered when app state is changed.
+     * @param event
+     */
+    public void onEvent(AppStateEvent event) {
+        playlistAdapter.clear();
+        playlistAdapter.addAll(event.state.getPlaylist());
+        playlistAdapter.notifyDataSetChanged();
+
+        CurrentStatus state = event.state.getStatus();
+        //If it is playing something, update the status.
+        if (state != null) {
+            updatePlaybackView(state.getId(), state.getTime());
+        }
+
+        Util.d("current state id=" + event.state.getStatus().getId());
+
+    }
+
+    /**
+     * Triggered when a new track is added.
+     * @param event
+     */
     public void onEvent(AddTrackEvent event) {
         addTrack(event.track);
     }
 
+    /**
+     * Triggered when playback state is changed.
+     * @param event the playback event.
+     */
     public void onEvent(TrackPlaybackEvent event) {
-        String id = event.id;
+
+        if (event.isStart()) {
+            //Update the songs information in control panel.
+            updatePlaybackView(event.id, 0);
+        } else {
+            //Track is end. Remove the track from playlist.
+            removeTrackById(event.id);
+        }
+    }
+
+    public void onEvent(TrackStatusEvent event) {
+        updatePlaybackView(event.status.getId(), event.status.getTime());
     }
 
     public void addTrack(Track track) {
@@ -291,6 +325,25 @@ public class PlaylistActivity extends AppCompatActivity {
         playlistAdapter.notifyDataSetChanged();
     }
 
+    private boolean isPlaying() {
+        return Arrays.equals(playControlDrawable.getState(), new int[]{android.R.attr.state_enabled});
+    }
+
+    private void setPlayState(boolean statePlaying) {
+        Util.d("setPlayState, playing state = " + statePlaying);
+
+        if (statePlaying) {
+            //set to playing state.
+            playControlDrawable.setState(new int[]{android.R.attr.state_enabled});
+            ConnectivityManager.getInstance().play();
+        } else {
+            //set to paused state.
+            playControlDrawable.setState(new int[]{android.R.attr.state_enabled, android.R.attr.state_checked});
+            ConnectivityManager.getInstance().pause();
+        }
+
+        playControl.setImageDrawable(playControlDrawable.getCurrent());
+    }
 
     private Runnable loadLibrary = new Runnable() {
         @Override
@@ -321,6 +374,7 @@ public class PlaylistActivity extends AppCompatActivity {
             }
         });
     }
+
 
     void showServiceListDialog() {
 
@@ -373,16 +427,89 @@ public class PlaylistActivity extends AppCompatActivity {
         if (service != null) {
             connectedToText.setText(Util.getFriendlyTvName(service.getName()));
         }
+
+        //Given the initial state of the play/pause button.
+        setPlayState(true);
+
+        //Update the playback panel.
+        updatePlaybackView(null, 0);
     }
 
+    private void updatePlaybackView(String id, float time) {
+        if (id != null) {
+            playControl.setVisibility(View.VISIBLE);
+            songTitle.setVisibility(View.VISIBLE);
+            songArtist.setVisibility(View.VISIBLE);
+
+            Track track = getTrackById(id);
+            if (track != null) {
+                songTitle.setText(track.getTitle());
+                songArtist.setText(track.getArtist());
+            }
+
+//            setPlayState(status.isPlaying());
+
+        } else {
+            playControl.setVisibility(View.INVISIBLE);
+            songTitle.setVisibility(View.INVISIBLE);
+            songArtist.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private Track getTrackById(String id) {
+        if (id != null && playlistAdapter != null) {
+            for (int i = 0; i < playlistAdapter.getCount(); i++) {
+                Track track = playlistAdapter.getItem(i);
+                if (track.getId().equals(id)) {
+                    return track;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private void removeTrackById(String id) {
+        if (id != null && playlistAdapter != null) {
+            for (int i = 0; i < playlistAdapter.getCount(); i++) {
+                Track track = playlistAdapter.getItem(i);
+                if (track.getId().equals(id)) {
+
+                    playlistAdapter.remove(track);
+                    break;
+                } else {
+                    //Remove the tracks before the song with given id.
+                    playlistAdapter.remove(track);
+                }
+            }
+
+            //If there is no track in the playlist, hide the play control panel.
+            if (playlistAdapter.getCount() == 0) {
+                updatePlaybackView(null, 0);
+            }
+        }
+    }
+
+    /**
+     * Select user color. If there is only one color, use the first color in the color list.
+     */
     private void selectColor() {
+        int index = 0;
+
+        //The host and user are two clients.
+        if (ConnectivityManager.getInstance().getClientCount() > 2) {
+            index = (int) (colors.length * Math.random());
+        }
+
         //Get user color randomly.
-        String color = colors[(int) (colors.length * Math.random())];
+        String color = colors[index];
+
+        //parse color string to color value.
         userColor = Color.parseColor(color);
     }
 
     private void expand(final View v) {
-       applyAnimation(v, R.anim.expand_library);
+        applyAnimation(v, R.anim.expand_library);
     }
 
     public void collapse(final View v) {

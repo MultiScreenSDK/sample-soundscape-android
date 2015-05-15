@@ -12,7 +12,7 @@ public class Track extends Base {
     private String file;
     private String albumArt;
     private String albumArtThumbnail;
-//    private String color;
+    private String color;
     private int duration;
 
 
@@ -86,14 +86,14 @@ public class Track extends Base {
 //
 //        return intColor;
 //    }
-//
-//    public String getColor() {
-//        return color;
-//    }
-//
-//    public void setColor(String color) {
-//        this.color = color;
-//    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
 
     public int getDuration() {
         return duration;

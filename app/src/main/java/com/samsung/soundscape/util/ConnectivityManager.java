@@ -19,9 +19,13 @@ import com.samsung.soundscape.App;
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.adapter.ServiceAdapter;
 import com.samsung.soundscape.events.AddTrackEvent;
+import com.samsung.soundscape.events.AppStateEvent;
 import com.samsung.soundscape.events.ConnectionChangedEvent;
 import com.samsung.soundscape.events.ServiceChangedEvent;
 import com.samsung.soundscape.events.TrackPlaybackEvent;
+import com.samsung.soundscape.events.TrackStatusEvent;
+import com.samsung.soundscape.model.AppState;
+import com.samsung.soundscape.model.CurrentStatus;
 import com.samsung.soundscape.model.Track;
 
 import org.json.JSONException;
@@ -567,6 +571,16 @@ public class ConnectivityManager {
         }
     }
 
+    public int getClientCount() {
+        int count = 0;
+
+        if (isTVConnected()) {
+            count = mMultiscreenApp.getClients().size();
+        }
+
+        return count;
+    }
+
     public void requestAppState() {
         sendToTV(EVENT_APP_STATE_REQUEST, null, Message.TARGET_HOST);
     }
@@ -602,7 +616,8 @@ public class ConnectivityManager {
             Util.d("onAppStateListener: " + message.toString());
 
             if (message != null && message.getData() != null) {
-                //EventBus.getDefault().post(new AppStateEvent(AppState.parse(message.getData().toString())));
+                String jsonString = JSONUtil.toJSONString((HashMap)message.getData());
+                EventBus.getDefault().post(new AppStateEvent(AppState.parse(jsonString)));
             }
         }
     };
@@ -610,10 +625,12 @@ public class ConnectivityManager {
     private Channel.OnMessageListener onTrackStatusListener = new Channel.OnMessageListener() {
         @Override
         public void onMessage(Message message) {
-            Util.d("onTrackStatusListener: " + message.toString());
-
             if (message != null && message.getData() != null) {
-                //EventBus.getDefault().post(new TrackStatusEvent(CurrentStatus.parse(message.getData().toString())));
+
+                if (message.getData() instanceof HashMap) {
+                    String jsonString = JSONUtil.toJSONString((HashMap)message.getData());
+                    EventBus.getDefault().post(new TrackStatusEvent(CurrentStatus.parse(jsonString)));
+                }
             }
         }
     };

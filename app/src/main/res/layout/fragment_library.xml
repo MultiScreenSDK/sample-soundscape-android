@@ -11,7 +11,7 @@
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="0dp"
-    tools:context="com.samsung.soundscape.ui.LibraryFragment" >
+    tools:context="com.samsung.soundscape.ui.PlaylistActivity" >
 
     <RelativeLayout
         android:id="@+id/libraryHeader"

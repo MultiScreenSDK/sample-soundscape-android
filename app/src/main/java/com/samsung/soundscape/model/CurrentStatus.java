@@ -10,7 +10,7 @@ public class CurrentStatus extends Base {
     public static final String STATE_PAUSED = "paused";
 
     private String id;
-    private long time;
+    private float time;
     private String status;
 
     public CurrentStatus(String id, long time, String status) {
@@ -48,11 +48,11 @@ public class CurrentStatus extends Base {
         this.id = id;
     }
 
-    public long getTime() {
+    public float getTime() {
         return time;
     }
 
-    public void setTime(long time) {
+    public void setTime(float time) {
         this.time = time;
     }
 

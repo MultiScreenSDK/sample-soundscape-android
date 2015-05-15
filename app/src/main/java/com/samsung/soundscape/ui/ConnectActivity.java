@@ -37,7 +37,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +58,9 @@ public class ConnectActivity extends AppCompatActivity {
     /** The connectivity manager instance. */
     private ConnectivityManager mConnectivityManager;
 
+    //Totast message
+    Toast toast = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,13 +69,6 @@ public class ConnectActivity extends AppCompatActivity {
             @Override
             public void run() {
                 findViewById(R.id.connectContent).setVisibility(View.VISIBLE);
-
-                View toastLayout = getLayoutInflater().inflate(R.layout.toast, (ViewGroup)findViewById(R.id.toastLayout));
-                Toast toast = new Toast(getApplicationContext());
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.setDuration(Toast.LENGTH_LONG);
-                toast.setView(toastLayout);
-                toast.show();
             }
         }, getResources().getInteger(R.integer.splash_timeout));
 
@@ -142,6 +137,9 @@ public class ConnectActivity extends AppCompatActivity {
     // This method will be called when a MessageEvent is posted
     public void onEvent(ConnectionChangedEvent event){
         if (mConnectivityManager.isTVConnected()) {
+
+            //Cancel the toast before launch playlist
+            cancelToast();
 
             //When TV is connected, go to playlist screen.
             startActivity(new Intent(this, PlaylistActivity.class));
@@ -223,22 +221,50 @@ public class ConnectActivity extends AppCompatActivity {
         mConnectivityManager = null;
     }
 
+//    public void displayConnectingMessage(String tvName) {
+//        String message = String.format(getString(R.string.connect_to_message), Util.getFriendlyTvName(tvName));
+//        TextView textView = new TextView(this);
+//        textView.setText(message);
+//        textView.setPadding(40, 20, 40, 20);
+//        textView.setBackgroundColor(0x80000000);
+//        RelativeLayout.LayoutParams params =
+//                new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+//                        RelativeLayout.LayoutParams.WRAP_CONTENT);
+//        textView.setLayoutParams(params);
+//
+//
+//        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+//        toast.setView(textView);
+//        toast.setGravity(Gravity.CENTER, 0, 0);
+//        toast.show();
+//    }
+
+
     public void displayConnectingMessage(String tvName) {
-        String message = String.format(getString(R.string.connect_to_message), Util.getFriendlyTvName(tvName));
-        TextView textView = new TextView(this);
-        textView.setText(message);
-        textView.setPadding(40, 20, 40, 20);
-        textView.setBackgroundColor(0x80000000);
-        RelativeLayout.LayoutParams params =
-                new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-                        RelativeLayout.LayoutParams.WRAP_CONTENT);
-        textView.setLayoutParams(params);
+        //final String message = String.format(getString(R.string.connect_to_message), Util.getFriendlyTvName(tvName));
+        final String message = Util.getFriendlyTvName(tvName);
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                View toastLayout = getLayoutInflater().inflate(R.layout.toast, (ViewGroup) findViewById(R.id.toastLayout));
+                TextView serviceText = (TextView)toastLayout.findViewById(R.id.serviceText);
+                serviceText.setText(message);
 
+                toast = new Toast(getApplicationContext());
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.setDuration(Toast.LENGTH_LONG);
+                toast.setView(toastLayout);
+                toast.show();
+            }
+        });
+    }
 
-        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
-        toast.setView(textView);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
+    public void cancelToast() {
+        if (toast != null) {
+            toast.cancel();
+        }
+
+        toast = null;
     }
 
 }
