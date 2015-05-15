@@ -4,11 +4,12 @@
     android:fillAfter="true"
     android:interpolator="@android:interpolator/linear" >
 
-    <rotate
+    <scale
         android:duration="@android:integer/config_shortAnimTime"
-        android:fromDegrees="0"
-        android:pivotX="50%"
-        android:pivotY="50%"
-        android:toDegrees="45"
-        />
+        android:fromXScale="0.0"
+        android:fromYScale="0.0"
+        android:pivotX="100%"
+        android:pivotY="100%"
+        android:toXScale="1.0"
+        android:toYScale="1.0"/>
 </set>

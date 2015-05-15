@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,6 +24,7 @@ import com.google.gson.Gson;
 import com.rey.material.widget.FloatingActionButton;
 import com.samsung.multiscreen.Service;
 import com.samsung.multiscreen.util.RunUtil;
+import com.samsung.soundscape.App;
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.adapter.TracksAdapter;
 import com.samsung.soundscape.events.ConnectionChangedEvent;
@@ -33,7 +33,6 @@ import com.samsung.soundscape.util.ConnectivityManager;
 import com.samsung.soundscape.util.Util;
 
 import java.util.Arrays;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -75,7 +74,7 @@ public class PlaylistActivity extends AppCompatActivity {
         setContentView(R.layout.activity_playlist);
 
         libraryLayout = (ViewGroup)findViewById(R.id.libraryLayout);
-        libraryLayout.setVisibility(View.GONE);
+        libraryLayout.setVisibility(View.INVISIBLE);
 
         connectedToIcon = (ImageView)findViewById(R.id.connectedToIcon);
         connectedToIcon.setOnClickListener(new View.OnClickListener() {
@@ -151,40 +150,16 @@ public class PlaylistActivity extends AppCompatActivity {
         clockwise = !clockwise;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            AnimationSet animationSet = (AnimationSet) AnimationUtils.loadAnimation(getApplicationContext(), animResource);
-            List<Animation> animations = animationSet.getAnimations();
-            animations.get(0).setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    Log.d(this.getClass().getName(), "animation start");
-                    if (!show) {
-                        hideLibraryDialog();
-                    }
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    Log.d(this.getClass().getName(), "animation end");
-                    if (show) {
-                        showLibraryDialog();
-                    }
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-            v.startAnimation(animationSet);
+            applyAnimation(v, animResource);
         } else {
             // TODO: Figure out a workaround for the pre-Lollipop animation issue where
             // the final animation state is always reset, regardless of setting fillAfter.
             addButton.setIcon(getResources().getDrawable(drawResource), false);
-            if (show) {
-                showLibraryDialog();
-            } else {
-                hideLibraryDialog();
-            }
+        }
+        if (show) {
+            showLibraryDialog();
+        } else {
+            hideLibraryDialog();
         }
     }
 
@@ -321,11 +296,11 @@ public class PlaylistActivity extends AppCompatActivity {
 //        DialogFragment newFragment = LibraryFragment.newInstance(userColor);
 //        newFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_NoTitleBar);
 //        newFragment.show(ft, "libraryDialog");
-        libraryLayout.setVisibility(View.VISIBLE);
+        expand(libraryLayout);
     }
 
     private void hideLibraryDialog() {
-        libraryLayout.setVisibility(View.GONE);
+        collapse(libraryLayout);
     }
 
     private void updateUI() {
@@ -349,5 +324,18 @@ public class PlaylistActivity extends AppCompatActivity {
         //Get user color randomly.
         String color = colors[(int)(colors.length*Math.random())];
         userColor = Color.parseColor(color);
+    }
+
+    private void expand(final View v) {
+       applyAnimation(v, R.anim.expand_library);
+    }
+
+    public void collapse(final View v) {
+        applyAnimation(v, R.anim.collapse_library);
+    }
+
+    private void applyAnimation(final View v, int animationResource) {
+        Animation animation = AnimationUtils.loadAnimation(App.getInstance().getApplicationContext(), animationResource);
+        v.startAnimation(animation);
     }
 }
