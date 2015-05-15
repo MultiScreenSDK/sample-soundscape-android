@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,7 +25,6 @@ import com.google.gson.Gson;
 import com.rey.material.widget.FloatingActionButton;
 import com.samsung.multiscreen.Service;
 import com.samsung.multiscreen.util.RunUtil;
-import com.samsung.soundscape.App;
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.adapter.TracksAdapter;
 import com.samsung.soundscape.events.AddTrackEvent;
@@ -195,19 +193,25 @@ public class PlaylistActivity extends AppCompatActivity {
     private void animateLibrary(final View v) {
         int animResource = R.anim.rotate_clockwise;
         int drawResource = R.drawable.ic_action_cancel;
+        int level = 5000;
         if (!clockwise) {
             animResource = R.anim.rotate_counterclockwise;
             drawResource = R.drawable.ic_add_white;
+            level = 0;
         }
         final boolean show = clockwise;
         clockwise = !clockwise;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            applyAnimation(v, animResource);
+//            applyAnimation(v, animResource);
+//            Drawable drawable = ((FloatingActionButton)v).getIcon();
+//            drawable.setState(new int[]{android.R.attr.state_enabled, android.R.attr.state_checked});
+            ((FloatingActionButton)v).getIcon().setLevel(level);
         } else {
             // TODO: Figure out a workaround for the pre-Lollipop animation issue where
             // the final animation state is always reset, regardless of setting fillAfter.
-            addButton.setIcon(getResources().getDrawable(drawResource), false);
+//            addButton.setIcon(getResources().getDrawable(drawResource), false);
+            ((FloatingActionButton)v).getIcon().setLevel(level);
         }
         if (show) {
             showLibraryDialog();
@@ -403,11 +407,27 @@ public class PlaylistActivity extends AppCompatActivity {
 
 
     private void showLibraryDialog() {
-        expand(libraryLayout);
+        libraryLayout.setVisibility(View.INVISIBLE);
+        com.samsung.soundscape.util.AnimationUtils.expand(this, libraryLayout, null);
     }
 
     private void hideLibraryDialog() {
-        collapse(libraryLayout);
+        com.samsung.soundscape.util.AnimationUtils.collapse(this, libraryLayout, new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                libraryLayout.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
     }
 
     private void updateUI() {
@@ -506,18 +526,5 @@ public class PlaylistActivity extends AppCompatActivity {
 
         //parse color string to color value.
         userColor = Color.parseColor(color);
-    }
-
-    private void expand(final View v) {
-        applyAnimation(v, R.anim.expand_library);
-    }
-
-    public void collapse(final View v) {
-        applyAnimation(v, R.anim.collapse_library);
-    }
-
-    private void applyAnimation(final View v, int animationResource) {
-        Animation animation = AnimationUtils.loadAnimation(App.getInstance().getApplicationContext(), animationResource);
-        v.startAnimation(animation);
     }
 }

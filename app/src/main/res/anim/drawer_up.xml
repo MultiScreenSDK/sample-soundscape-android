@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true"
+    android:duration="@integer/drawerAnimtime"
+    android:interpolator="@android:interpolator/linear">
+    <translate
+        android:duration="@integer/drawerAnimtime"
+        android:fromYDelta="100%p"
+        android:toYDelta="0%p" />
+
+</set>
