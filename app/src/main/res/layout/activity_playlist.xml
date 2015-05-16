@@ -68,7 +68,6 @@
                 android:layout_height="wrap_content"
                 android:divider="#bbbbbb"
                 android:dividerHeight="1dp"
-                android:drawSelectorOnTop="true"
                 tools:listitem="@layout/playlist_list_item" />
 
         </LinearLayout>

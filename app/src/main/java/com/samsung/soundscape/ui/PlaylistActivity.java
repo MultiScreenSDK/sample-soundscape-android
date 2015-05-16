@@ -115,7 +115,7 @@ public class PlaylistActivity extends AppCompatActivity {
     private void initializeLibraryView() {
 
         libraryLayout = (ViewGroup) findViewById(R.id.libraryLayout);
-        libraryLayout.setVisibility(View.INVISIBLE);
+        libraryLayout.setVisibility(View.GONE);
 
         ListView libraryListView = (ListView) findViewById(R.id.libraryListView);
         libraryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -426,6 +426,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                libraryLayout.clearAnimation();
                 libraryLayout.setVisibility(View.GONE);
             }
 
