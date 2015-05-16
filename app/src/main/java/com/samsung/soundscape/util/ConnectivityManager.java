@@ -510,7 +510,7 @@ public class ConnectivityManager {
     public void disconnect() {
         if (service != null && mMultiscreenApp != null && mMultiscreenApp.isConnected()) {
             mMultiscreenApp.removeOnMessageListeners();
-            mMultiscreenApp.disconnect();
+            mMultiscreenApp.disconnect(false, null);
             service = null;
         }
     }
