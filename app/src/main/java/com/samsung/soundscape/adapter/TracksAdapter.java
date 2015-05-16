@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.model.Track;
-import com.samsung.soundscape.util.Util;
 import com.squareup.picasso.Picasso;
 
 public class TracksAdapter extends ArrayAdapter<Track> {
@@ -86,8 +85,6 @@ public class TracksAdapter extends ArrayAdapter<Track> {
         Picasso.with(context).load(track.getAlbumArtThumbnail().replace(" ", "%20")).fit().into(holder.albumArt);
 
         if (holder.userColor != null) {
-            Util.d("holder.userColor != null");
-            Util.d("holder.userColor int = " + track.getColorInt());
             holder.userColor.setBackgroundColor(track.getColorInt());
         }
 

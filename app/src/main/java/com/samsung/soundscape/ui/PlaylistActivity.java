@@ -123,7 +123,7 @@ public class PlaylistActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Track track = libraryAdapter.getItem(position);
                 //format to string #AARRGGBB
-                track.setColor(String.format("#%08X", (0xFFFFFF & userColor)));
+                track.setColor(String.format("#%08X", (0xFFFFFFFF & userColor)));
                 //Give a unique id for the song to be added.
                 track.setId(UUID.randomUUID().toString());
 
@@ -160,10 +160,10 @@ public class PlaylistActivity extends AppCompatActivity {
 
                 if (isPlaying()) {
                     ConnectivityManager.getInstance().pause();
-                    setPlayState(false);
+                    setPlayState(true);
                 } else {
                     ConnectivityManager.getInstance().play();
-                    setPlayState(true);
+                    setPlayState(false);
                 }
             }
         });
@@ -324,7 +324,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
             //Only update the play status when the state is changed.
             if (status.getState() != null && status.isPlaying() != isPlaying()) {
-                setPlayState(status.isPlaying());
+                setPlayState(!status.isPlaying());
             }
 
             updatePlaybackView(status.getId(), status.getTime());
@@ -337,17 +337,18 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
     private boolean isPlaying() {
-        return Arrays.equals(playControlDrawable.getState(), new int[]{android.R.attr.state_enabled});
+        //When pause button is showed, it is playing status, vice verse.
+        return !Arrays.equals(playControlDrawable.getState(), new int[]{android.R.attr.state_enabled});
     }
 
     private void setPlayState(boolean statePlaying) {
         Util.d("setPlayState, playing state = " + statePlaying);
 
         if (statePlaying) {
-            //set to playing state.
+            //show play button.
             playControlDrawable.setState(new int[]{android.R.attr.state_enabled});
         } else {
-            //set to paused state.
+            //show paused button.
             playControlDrawable.setState(new int[]{android.R.attr.state_enabled, android.R.attr.state_checked});
         }
 
@@ -454,7 +455,7 @@ public class PlaylistActivity extends AppCompatActivity {
         }
 
         //Given the initial state of the play/pause button.
-        setPlayState(true);
+        setPlayState(false);
 
         //Update the playback panel.
         updatePlaybackView(null, 0);
@@ -522,6 +523,11 @@ public class PlaylistActivity extends AppCompatActivity {
         //The host and user are two clients.
         if (ConnectivityManager.getInstance().getClientCount() > 2) {
             index = (int) (colors.length * Math.random());
+
+            //Run again it is the first color. It should already be taken by other users.
+            if (index == 0) {
+                index = (int) (colors.length * Math.random());
+            }
         }
 
         //Get user color randomly.
