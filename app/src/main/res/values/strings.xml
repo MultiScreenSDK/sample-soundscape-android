@@ -54,7 +54,7 @@
     <string name="connecting_to">Connecting to</string>
 
     <string name="connect_status_nodevice">No device is found</string>
-    <string name="connect_status_found_devices">Discovered %1$d</string>
+    <string name="connect_status_found_devices">Discovered %1$d devices</string>
     <string name="connect_status_discovered">Discovered %1$s</string>
     <string name="connect_status_on">on %1$s</string>
     <string name="connect_to_message">Connect to \n %1$s...</string>

@@ -76,10 +76,13 @@ public class ServiceListFragment extends DialogFragment {
             });
 
             LinearLayout llConnectTo = (LinearLayout)view.findViewById(R.id.selectedServiceLayout);
+            TextView connectedToText = (TextView)view.findViewById(R.id.connectedToText);
 
             if (ConnectivityManager.getInstance().isTVConnected()) {
                 //Display connected device and disconnect button.
                 llConnectTo.setVisibility(View.VISIBLE);
+                connectedToText.setText(getString(R.string.connected_to));
+
 
                 ImageView selectedServiceIcon = (ImageView)view.findViewById(R.id.selectedServiceIcon);
                 if (ConnectivityManager.getInstance().getConnectedServiceType() == ConnectivityManager.ServiceType.Speaker) {
@@ -99,6 +102,8 @@ public class ServiceListFragment extends DialogFragment {
 
                     @Override
                     public void onClick(View v) {
+                        //Make sure stop discovery
+                        ConnectivityManager.getInstance().stopDiscovery();
                         //Disconnect from application.
                         ConnectivityManager.getInstance().disconnect();
                     }
@@ -106,6 +111,7 @@ public class ServiceListFragment extends DialogFragment {
             } else {
                 //Hide connected device and disconnect button.
                 llConnectTo.setVisibility(View.GONE);
+                connectedToText.setText(getString(R.string.connect_to));
             }
         }
 

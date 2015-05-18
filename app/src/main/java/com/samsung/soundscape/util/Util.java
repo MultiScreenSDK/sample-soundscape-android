@@ -68,7 +68,7 @@ public class Util {
 
 
     public static String getWifiName() {
-        String ssid = "none";
+        String ssid = null;
         if (isWiFiConnected()) {
             WifiManager wifiManager = (WifiManager) App.getInstance().getSystemService(Context.WIFI_SERVICE);
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();

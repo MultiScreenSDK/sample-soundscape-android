@@ -40,6 +40,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.samsung.multiscreen.Service;
 import com.samsung.multiscreen.util.RunUtil;
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.adapter.ServiceAdapter;
@@ -92,23 +93,31 @@ public class ConnectActivity extends AppCompatActivity {
 
         EventBus.getDefault().unregister(this);
 
+        //Stop discovery before exit.
+        mConnectivityManager.stopDiscovery();
+
         //Clean up everything before exiting.
         cleanup();
     }
 
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
 
+        Util.d("onStart,  isDiscovering=" + mConnectivityManager.isDiscovering());
         //Start the service discovery if it is not started before.
         if (!mConnectivityManager.isDiscovering()) {
             //start discovery.
             mConnectivityManager.startDiscovery();
+        } else {
+            //If it is already discovering. Fetch the result directly.
+            onEvent(new ServiceChangedEvent());
         }
     }
 
-    public void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
 
+        Util.d("onStop,  isDiscovering=" + mConnectivityManager.isDiscovering());
         //Stop discovery when the app goes to background.
         mConnectivityManager.stopDiscovery();
     }
@@ -149,25 +158,33 @@ public class ConnectActivity extends AppCompatActivity {
     // This method will be called when a SomeOtherEvent is posted
     public void onEvent(ServiceChangedEvent event){
         int count = mConnectivityManager.getServiceAdapter().getCount();
+        String wifiName = Util.getWifiName();
+
+        String buttonTitle = null;
+        String discoveryStatus = null;
+        if (wifiName != null) {
+            discoveryStatus = String.format(getString(R.string.connect_status_on), wifiName);
+        }
+        String networkInfo = null;
 
         if (count == 0) {
-            updateUI(getString(R.string.connect_status_nodevice),
-                    String.format(getString(R.string.connect_status_on),
-                            Util.getWifiName()),
-                    getString(R.string.connect_status_information)
-            );
+            buttonTitle = getString(R.string.connect_status_information);
+            discoveryStatus = getString(R.string.connect_status_nodevice);
         } else if (count == 1) {
-            updateUI(String.format(getString(R.string.connect_status_discovered), Util.getWifiName()),
-                    null,
-                    getString(R.string.connect)
-            );
+
+            //Get the dewice name.
+            Service service = mConnectivityManager.getServiceAdapter().getItem(0);
+            String tvName = Util.getFriendlyTvName(service.getName());
+
+            discoveryStatus = String.format(getString(R.string.connect_status_discovered), tvName);
+            buttonTitle = getString(R.string.connect);
         } else {
-            updateUI(String.format(getString(R.string.connect_status_found_devices), count),
-                    String.format(getString(R.string.connect_status_on),
-                            Util.getWifiName()),
-                    getString(R.string.select_device)
-            );
+            discoveryStatus = String.format(getString(R.string.connect_status_found_devices), count);
+            buttonTitle = getString(R.string.select_device);
         }
+
+
+        updateUI(discoveryStatus, networkInfo, buttonTitle);
     }
 
 
@@ -225,7 +242,7 @@ public class ConnectActivity extends AppCompatActivity {
 
     public void displayConnectingMessage(String tvName) {
         //final String message = String.format(getString(R.string.connect_to_message), Util.getFriendlyTvName(tvName));
-        final String message = Util.getFriendlyTvName(tvName);
+        final String message = Util.getFriendlyTvName(tvName) + "...";
         new Handler().post(new Runnable() {
             @Override
             public void run() {
