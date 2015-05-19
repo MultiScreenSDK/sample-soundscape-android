@@ -61,6 +61,7 @@ public class PlaylistActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     //The library layout
+    private ViewGroup libraryLayoutWrapper;
     private ViewGroup libraryLayout;
 
     //user colors
@@ -114,8 +115,9 @@ public class PlaylistActivity extends AppCompatActivity {
 
     private void initializeLibraryView() {
 
+        libraryLayoutWrapper = (ViewGroup) findViewById(R.id.libraryLayoutWrapper);
+        libraryLayoutWrapper.setVisibility(View.GONE);
         libraryLayout = (ViewGroup) findViewById(R.id.libraryLayout);
-        libraryLayout.setVisibility(View.GONE);
 
         ListView libraryListView = (ListView) findViewById(R.id.libraryListView);
         libraryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -413,7 +415,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
 
     private void showLibraryDialog() {
-        libraryLayout.setVisibility(View.INVISIBLE);
+        libraryLayoutWrapper.setVisibility(View.VISIBLE);
         com.samsung.soundscape.util.AnimationUtils.expand(this, libraryLayout, null);
     }
 
@@ -427,7 +429,7 @@ public class PlaylistActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 libraryLayout.clearAnimation();
-                libraryLayout.setVisibility(View.GONE);
+                libraryLayoutWrapper.setVisibility(View.GONE);
             }
 
             @Override
