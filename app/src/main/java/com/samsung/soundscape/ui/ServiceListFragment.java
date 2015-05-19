@@ -77,11 +77,13 @@ public class ServiceListFragment extends DialogFragment {
 
             LinearLayout llConnectTo = (LinearLayout)view.findViewById(R.id.selectedServiceLayout);
             TextView connectedToText = (TextView)view.findViewById(R.id.connectedToText);
+            ImageView connectedToIcon = (ImageView)view.findViewById(R.id.connectedToIcon);
 
             if (ConnectivityManager.getInstance().isTVConnected()) {
                 //Display connected device and disconnect button.
                 llConnectTo.setVisibility(View.VISIBLE);
                 connectedToText.setText(getString(R.string.connected_to));
+                connectedToIcon.setImageResource(R.drawable.ic_connected_white);
 
 
                 ImageView selectedServiceIcon = (ImageView)view.findViewById(R.id.selectedServiceIcon);
@@ -90,7 +92,7 @@ public class ServiceListFragment extends DialogFragment {
                     selectedServiceIcon.setImageResource(R.drawable.ic_speaker_gray);
                 } else if (ConnectivityManager.getInstance().getConnectedServiceType() == ConnectivityManager.ServiceType.TV) {
                     //The TV or TV simulator is connected.
-                    selectedServiceIcon.setImageResource(R.drawable.ic_tv_gray);
+                    selectedServiceIcon.setImageResource(R.drawable.ic_tv_white);
                 }
                 TextView selectedServiceText = (TextView)view.findViewById(R.id.selectedServiceText);
                 selectedServiceText.setText(Util.getFriendlyTvName(ConnectivityManager.getInstance().getService().getName()));
@@ -112,6 +114,7 @@ public class ServiceListFragment extends DialogFragment {
                 //Hide connected device and disconnect button.
                 llConnectTo.setVisibility(View.GONE);
                 connectedToText.setText(getString(R.string.connect_to));
+                connectedToIcon.setImageResource(R.drawable.ic_discovered_white);
             }
         }
 

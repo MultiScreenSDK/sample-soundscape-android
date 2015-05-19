@@ -105,7 +105,7 @@ public class ConnectActivity extends AppCompatActivity {
 
         Util.d("onStart,  isDiscovering=" + mConnectivityManager.isDiscovering());
         //Start the service discovery if it is not started before.
-        if (!mConnectivityManager.isDiscovering()) {
+        if (Util.isWiFiConnected() && !mConnectivityManager.isDiscovering()) {
             //start discovery.
             mConnectivityManager.startDiscovery();
         } else {
@@ -131,12 +131,20 @@ public class ConnectActivity extends AppCompatActivity {
 
             if (count == 0) {
                 //Show information
+                showDialog(InfoFragment.newInstance());
             } else if (count == 1) {
+
+                //Get the service.
+                Service service = adapter.getItem(0);
+
+                //Show connecting message.
+                displayConnectingMessage(Util.getFriendlyTvName(service.getName()));
+
                 //Connect to the device directly.
-               mConnectivityManager.setService(adapter.getItem(0));
+               mConnectivityManager.setService(service);
             } else {
                 //show select device dialog.
-                showServiceListDialog();
+                showDialog(ServiceListFragment.newInstance(0));
             }
 
         }
@@ -212,7 +220,7 @@ public class ConnectActivity extends AppCompatActivity {
         });
     }
 
-    void showServiceListDialog() {
+    void showDialog(DialogFragment dialog) {
 
         // DialogFragment.show() will take care of adding the fragment
         // in a transaction.  We also want to remove any currently showing
@@ -225,9 +233,8 @@ public class ConnectActivity extends AppCompatActivity {
         ft.addToBackStack(null);
 
         // Create and show the dialog, only shows the connect to panel.
-        DialogFragment newFragment = ServiceListFragment.newInstance(0);
-        newFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_NoTitleBar);
-        newFragment.show(ft, "dialog");
+        dialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_NoTitleBar);
+        dialog.show(ft, "dialog");
     }
 
     /**
@@ -255,6 +262,10 @@ public class ConnectActivity extends AppCompatActivity {
                 toast.setDuration(Toast.LENGTH_LONG);
                 toast.setView(toastLayout);
                 toast.show();
+
+//                AlertDialog alertDialog = new AlertDialog.Builder(ConnectActivity.this).create();
+//                alertDialog.setView(toastLayout);
+//                alertDialog.show();
             }
         });
     }
