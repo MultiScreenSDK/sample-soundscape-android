@@ -73,6 +73,15 @@ public class ConnectActivity extends AppCompatActivity {
             }
         }, getResources().getInteger(R.integer.splash_timeout));
 
+
+        //In case there is no devices found in your network, we display message after certain seconds.
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                onEvent(new ServiceChangedEvent());
+            }
+        }, getResources().getInteger(R.integer.discoverying_timeout));
+
         actionButton = (Button) findViewById(R.id.connect_button);
         actionButton.setOnClickListener(actionButtonOnClickListener);
 

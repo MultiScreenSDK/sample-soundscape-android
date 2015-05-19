@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <integer name="discoverying_timeout">5000</integer>
     <integer name="splash_timeout">3000</integer>
     <integer name="drawerAnimtime">1500</integer>
     <integer name="drawerAnimtime2">3000</integer>
