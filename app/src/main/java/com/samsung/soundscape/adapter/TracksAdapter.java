@@ -82,7 +82,11 @@ public class TracksAdapter extends ArrayAdapter<Track> {
         final Track track = getItem(position);
         holder.songTitle.setText(track.getTitle());
         holder.songArtist.setText(track.getArtist());
-        Picasso.with(context).load(track.getAlbumArtThumbnail().replace(" ", "%20")).fit().into(holder.albumArt);
+
+        String albumArtThumbnail = track.getAlbumArtThumbnail();
+        if (albumArtThumbnail != null) {
+            Picasso.with(context).load(albumArtThumbnail.replace(" ", "%20")).fit().into(holder.albumArt);
+        }
 
         if (holder.userColor != null) {
             holder.userColor.setBackgroundColor(track.getColorInt());

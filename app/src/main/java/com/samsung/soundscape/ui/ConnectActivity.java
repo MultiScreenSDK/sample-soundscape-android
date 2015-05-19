@@ -25,6 +25,7 @@
 
 package com.samsung.soundscape.ui;
 
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -32,13 +33,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.samsung.multiscreen.Service;
 import com.samsung.multiscreen.util.RunUtil;
@@ -59,8 +58,8 @@ public class ConnectActivity extends AppCompatActivity {
     /** The connectivity manager instance. */
     private ConnectivityManager mConnectivityManager;
 
-    //Totast message
-    Toast toast = null;
+    //Show connecting message
+    AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -266,25 +265,28 @@ public class ConnectActivity extends AppCompatActivity {
                 TextView serviceText = (TextView)toastLayout.findViewById(R.id.serviceText);
                 serviceText.setText(message);
 
-                toast = new Toast(getApplicationContext());
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.setDuration(Toast.LENGTH_LONG);
-                toast.setView(toastLayout);
-                toast.show();
+//                toast = new Toast(getApplicationContext());
+//                toast.setGravity(Gravity.CENTER, 0, 0);
+//                toast.setDuration(Toast.LENGTH_LONG);
+//                toast.setView(toastLayout);
+//                toast.show();
 
-//                AlertDialog alertDialog = new AlertDialog.Builder(ConnectActivity.this).create();
-//                alertDialog.setView(toastLayout);
-//                alertDialog.show();
+                if (alertDialog != null && alertDialog.isShowing()) {
+                    cancelToast();
+                }
+                alertDialog = new AlertDialog.Builder(ConnectActivity.this).create();
+                alertDialog.setView(toastLayout);
+                alertDialog.show();
             }
         });
     }
 
     public void cancelToast() {
-        if (toast != null) {
-            toast.cancel();
+        if (alertDialog != null) {
+            alertDialog.cancel();
         }
 
-        toast = null;
+        alertDialog = null;
     }
 
 }
