@@ -120,6 +120,11 @@ public class ServiceListFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomTheme_Dialog);
         builder.setView(view);
-        return builder.show();
+
+        // Allow dismiss by clicking outside the dialog
+        AlertDialog dialog = builder.show();
+        dialog.setCanceledOnTouchOutside(true);
+
+        return dialog;
     }
 }
