@@ -80,6 +80,8 @@ public class PlaylistActivity extends AppCompatActivity {
     ListView playlistListView;
     TextView songTitle, songArtist;
 
+    LinearLayout nowPlaying;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,6 +179,8 @@ public class PlaylistActivity extends AppCompatActivity {
                 animateLibrary(v);
             }
         });
+
+        nowPlaying = (LinearLayout)findViewById(R.id.nowPlaying);
     }
 
     private void showAddTrackToastMessage() {
@@ -466,10 +470,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
     private void updatePlaybackView(String id, float time) {
         if (id != null) {
-            playControl.setVisibility(View.VISIBLE);
-            songTitle.setVisibility(View.VISIBLE);
-            songArtist.setVisibility(View.VISIBLE);
-
+            nowPlaying.setVisibility(View.VISIBLE);
             Track track = getTrackById(id);
             if (track != null) {
                 songTitle.setText(track.getTitle());
@@ -477,9 +478,7 @@ public class PlaylistActivity extends AppCompatActivity {
             }
 
         } else {
-            playControl.setVisibility(View.INVISIBLE);
-            songTitle.setVisibility(View.INVISIBLE);
-            songArtist.setVisibility(View.INVISIBLE);
+            nowPlaying.setVisibility(View.GONE);
         }
     }
 

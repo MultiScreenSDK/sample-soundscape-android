@@ -56,6 +56,7 @@ public class TracksAdapter extends ArrayAdapter<Track> {
         public TextView songArtist;
         public ImageView albumArt;
         public View userColor;
+        public ImageView nowPlayingIcon;
     }
 
     @Override
@@ -74,6 +75,7 @@ public class TracksAdapter extends ArrayAdapter<Track> {
             holder.songArtist = (TextView) row.findViewById(R.id.songArtist);
             holder.albumArt = (ImageView) row.findViewById(R.id.albumArt);
             holder.userColor = row.findViewById(R.id.userColor);
+            holder.nowPlayingIcon = (ImageView) row.findViewById(R.id.nowPlayingIcon);
             row.setTag(holder);
         }
 
@@ -90,6 +92,10 @@ public class TracksAdapter extends ArrayAdapter<Track> {
 
         if (holder.userColor != null) {
             holder.userColor.setBackgroundColor(track.getColorInt());
+        }
+
+        if (holder.nowPlayingIcon != null) {
+            holder.nowPlayingIcon.setVisibility(position == 0 ? View.VISIBLE : View.INVISIBLE);
         }
 
         return row;

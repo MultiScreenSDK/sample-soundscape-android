@@ -113,9 +113,9 @@ public class ConnectActivity extends AppCompatActivity {
 
         Util.d("onStart,  isDiscovering=" + mConnectivityManager.isDiscovering());
         //Start the service discovery if it is not started before.
-        if (Util.isWiFiConnected() && !mConnectivityManager.isDiscovering()) {
+        if (Util.isWiFiConnected()) {
             //start discovery.
-            mConnectivityManager.startDiscovery();
+            mConnectivityManager.restartDiscovery();
         } else {
             //If it is already discovering. Fetch the result directly.
             onEvent(new ServiceChangedEvent());
