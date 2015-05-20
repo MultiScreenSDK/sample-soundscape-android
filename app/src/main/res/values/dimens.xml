@@ -14,4 +14,7 @@
 
     <dimen name="elevation_low">@dimen/cardview_default_elevation</dimen>
     <dimen name="elevation_high">6dp</dimen>
+
+    <dimen name="play_controls_width">72dp</dimen>
+    <dimen name="now_playing_height">48dp</dimen>
 </resources>

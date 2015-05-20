@@ -47,6 +47,7 @@ public class PlaylistActivity extends AppCompatActivity {
     private ImageView playControl;
     private StateListDrawable playControlDrawable;
     private boolean clockwise = true;
+    private ImageView nextControl;
 
     //The S icon at the top right screen.
     private ImageView connectedToIcon;
@@ -120,6 +121,7 @@ public class PlaylistActivity extends AppCompatActivity {
         libraryLayoutWrapper = (ViewGroup) findViewById(R.id.libraryLayoutWrapper);
         libraryLayoutWrapper.setVisibility(View.GONE);
         libraryLayout = (ViewGroup) findViewById(R.id.libraryLayout);
+        libraryLayout.setVisibility(View.GONE);
 
         ListView libraryListView = (ListView) findViewById(R.id.libraryListView);
         libraryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -140,7 +142,6 @@ public class PlaylistActivity extends AppCompatActivity {
         libraryAdapter = new TracksAdapter(PlaylistActivity.this, R.layout.library_list_item);
         libraryListView.setAdapter(libraryAdapter);
     }
-
 
     private void initializePlaylistView() {
         playlistAdapter = new TracksAdapter(this, R.layout.playlist_list_item);
@@ -169,6 +170,13 @@ public class PlaylistActivity extends AppCompatActivity {
                     ConnectivityManager.getInstance().play();
                     setPlayState(false);
                 }
+            }
+        });
+        nextControl = (ImageView) findViewById(R.id.nextControl);
+        nextControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: Implement skip functionality
             }
         });
 
@@ -420,6 +428,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
     private void showLibraryDialog() {
         libraryLayoutWrapper.setVisibility(View.VISIBLE);
+        libraryLayout.setVisibility(View.INVISIBLE);
         com.samsung.soundscape.util.AnimationUtils.expand(this, libraryLayout, null);
     }
 

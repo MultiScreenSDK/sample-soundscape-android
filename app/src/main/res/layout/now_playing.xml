@@ -4,10 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nowPlaying"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
+    android:layout_height="@dimen/now_playing_height"
     android:background="@color/black"
     android:orientation="horizontal"
-    android:visibility="gone" >
+    android:visibility="visible" >
 
     <!--<com.andexert.library.RippleView-->
         <!--android:id="@+id/buttonRipple"-->
@@ -20,12 +20,19 @@
     <!--</com.andexert.library.RippleView>-->
     <ImageView
         android:id="@+id/playControl"
-        android:layout_width="64dp"
+        android:layout_width="@dimen/play_controls_width"
         android:layout_height="match_parent"
         android:clickable="true"
-        android:paddingLeft="16dp"
-        android:scaleType="centerInside"
+        android:scaleType="fitCenter"
         android:src="@drawable/play_control_dark" />
+
+    <ImageView
+        android:id="@+id/nextControl"
+        android:layout_width="@dimen/play_controls_width"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_skip_next_white" />
 
     <LinearLayout
         android:id="@+id/nowPlayingText"
