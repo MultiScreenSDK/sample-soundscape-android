@@ -9,33 +9,39 @@
     android:paddingBottom="28dp"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
-    android:paddingTop="0dp"
+    android:paddingTop="16dp"
     android:visibility="visible"
     tools:context="com.samsung.soundscape.ui.PlaylistActivity" >
 
     <RelativeLayout
-        android:id="@+id/libraryHeader"
-        android:layout_width="@dimen/library_width"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:background="@color/white"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp">
+        android:layout_centerHorizontal="true">
 
-        <TextView
-            android:id="@+id/libraryTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:gravity="center_vertical"
-            android:padding="8dp"
-            android:text="@string/title_library"
-            android:textColor="@color/black"
-            android:textSize="20sp"/>
+        <RelativeLayout
+            android:id="@+id/libraryHeader"
+            android:layout_width="@dimen/library_width"
+            android:layout_height="48dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="@color/white"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
 
-        <!--<TextView-->
+            <TextView
+                android:id="@+id/libraryTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:padding="0dp"
+                android:text="@string/title_library"
+                android:textColor="@color/black"
+                android:textSize="20sp"/>
+
+            <!--<TextView-->
             <!--android:id="@+id/addAll"-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="match_parent"-->
@@ -46,19 +52,20 @@
             <!--android:textColor="@color/user_color_1"-->
             <!--android:textSize="14sp"-->
             <!--android:textAllCaps="true" />-->
-    </RelativeLayout>
+        </RelativeLayout>
 
-    <ListView
-        android:id="@+id/libraryListView"
-        android:layout_width="@dimen/library_width"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/libraryHeader"
-        android:layout_centerHorizontal="true"
-        android:background="@color/white"
-        android:divider="#bbbbbb"
-        android:dividerHeight="1dp"
-        android:drawSelectorOnTop="true"
-        android:paddingBottom="8dp"
-        tools:listitem="@layout/library_list_item" />
+        <ListView
+            android:id="@+id/libraryListView"
+            android:layout_width="@dimen/library_width"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/libraryHeader"
+            android:layout_centerHorizontal="true"
+            android:background="@color/white"
+            android:divider="#bbbbbb"
+            android:dividerHeight="1dp"
+            android:drawSelectorOnTop="true"
+            android:paddingBottom="8dp"
+            tools:listitem="@layout/library_list_item" />
+    </RelativeLayout>
 
 </RelativeLayout>

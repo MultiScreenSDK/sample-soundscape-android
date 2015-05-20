@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="48dp"
     android:background="@color/black"
-    android:visibility="visible"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:visibility="gone" >
 
     <!--<com.andexert.library.RippleView-->
         <!--android:id="@+id/buttonRipple"-->
@@ -22,8 +22,8 @@
         android:id="@+id/playControl"
         android:layout_width="64dp"
         android:layout_height="match_parent"
-        android:paddingLeft="16dp"
         android:clickable="true"
+        android:paddingLeft="16dp"
         android:scaleType="centerInside"
         android:src="@drawable/play_control_dark" />
 
@@ -40,9 +40,12 @@
         <TextView
             android:id="@+id/songTitle"
             android:layout_width="match_parent"
-            android:layout_height="24dp"
+            android:layout_height="20dp"
             android:layout_gravity="center"
+            android:ellipsize="end"
             android:gravity="center_vertical"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
             android:text="Trap Queen"
             android:textColor="@color/white"
             android:textSize="14sp"/>
@@ -50,10 +53,13 @@
         <TextView
             android:id="@+id/songArtist"
             android:layout_width="match_parent"
-            android:layout_height="24dp"
+            android:layout_height="20dp"
             android:layout_gravity="center_vertical"
+            android:ellipsize="end"
             android:fontFamily="sans-serif-light"
             android:gravity="center_vertical"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
             android:text="Fetty Wap"
             android:textColor="@color/white"
             android:textSize="12sp"/>

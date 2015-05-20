@@ -28,7 +28,7 @@
             android:id="@+id/connectedToLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#616161"
+            android:background="#212121"
             android:orientation="vertical">
 
             <LinearLayout
@@ -37,7 +37,8 @@
                 android:layout_height="56dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:background="#616161"
+                android:background="#212121"
+                android:fontFamily="@string/font_fontFamily_medium"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -68,7 +69,7 @@
             android:id="@+id/selectedServiceLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#616161"
+            android:background="#212121"
             android:orientation="vertical"
             android:visibility="gone">
 
@@ -133,7 +134,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:background="@color/white"
+                android:background="#eeeeee"
                 android:orientation="vertical">
 
                 <LinearLayout
