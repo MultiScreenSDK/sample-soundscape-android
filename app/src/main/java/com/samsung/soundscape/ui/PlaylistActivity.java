@@ -177,7 +177,7 @@ public class PlaylistActivity extends AppCompatActivity {
         nextControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Implement skip functionality
+                ConnectivityManager.getInstance().next();
             }
         });
 
