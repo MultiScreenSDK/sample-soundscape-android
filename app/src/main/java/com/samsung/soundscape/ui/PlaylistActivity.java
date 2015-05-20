@@ -34,6 +34,7 @@ import com.samsung.soundscape.events.TrackPlaybackEvent;
 import com.samsung.soundscape.events.TrackStatusEvent;
 import com.samsung.soundscape.model.CurrentStatus;
 import com.samsung.soundscape.model.Track;
+import com.samsung.soundscape.util.AnimationUtils;
 import com.samsung.soundscape.util.ConnectivityManager;
 import com.samsung.soundscape.util.Util;
 
@@ -268,7 +269,6 @@ public class PlaylistActivity extends AppCompatActivity {
         ConnectivityManager.getInstance().disconnect();
     }
 
-
     // This method will be called when a MessageEvent is posted
     public void onEvent(ConnectionChangedEvent event) {
         if (event.errorMessage == null) {
@@ -427,13 +427,14 @@ public class PlaylistActivity extends AppCompatActivity {
 
 
     private void showLibraryDialog() {
-        libraryLayoutWrapper.setVisibility(View.VISIBLE);
+        libraryLayoutWrapper.setVisibility(View.INVISIBLE);
+        AnimationUtils.applyViewAnimation(this, libraryLayoutWrapper, R.anim.fade_in, null);
         libraryLayout.setVisibility(View.INVISIBLE);
-        com.samsung.soundscape.util.AnimationUtils.expand(this, libraryLayout, null);
+        AnimationUtils.expand(this, libraryLayout, null);
     }
 
     private void hideLibraryDialog() {
-        com.samsung.soundscape.util.AnimationUtils.collapse(this, libraryLayout, new Animation.AnimationListener() {
+        AnimationUtils.collapse(this, libraryLayout, new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
 
@@ -442,6 +443,23 @@ public class PlaylistActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 libraryLayout.clearAnimation();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        AnimationUtils.applyViewAnimation(this, libraryLayoutWrapper, R.anim.fade_out, new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                libraryLayoutWrapper.clearAnimation();
                 libraryLayoutWrapper.setVisibility(View.GONE);
             }
 
