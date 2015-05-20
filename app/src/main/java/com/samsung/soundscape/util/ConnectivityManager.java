@@ -244,30 +244,30 @@ public class ConnectivityManager {
         notifyDataChange();
     }
 
-//    public void addConnectedServerToList() {
-//        if (service == null) {
-//            return;
-//        }
-//
-//        //Add if does not exist or replace it.
-//        if (!getServiceAdapter().contains(service)) {
-//                adapter.add(service);
-//        } else {
-//            //Replace the service with new service.
-//            adapter.replace(service);
-//        }
-//
-//        //Notify listeners that service has changed. Please update UI accordingly.
-//        notifyDataChange();
-//
-//    }
-//
-//    public void removeConnectedServiceFromList() {
-//        if (service != null && adapter != null) {
-//            adapter.remove(service);
-//            adapter.notifyDataSetChanged();
-//        }
-//    }
+    public void addConnectedServerToList() {
+        if (service == null) {
+            return;
+        }
+
+        //Add if does not exist or replace it.
+        if (!getServiceAdapter().contains(service)) {
+                adapter.add(service);
+        } else {
+            //Replace the service with new service.
+            adapter.replace(service);
+        }
+
+        //Notify listeners that service has changed. Please update UI accordingly.
+        notifyDataChange();
+
+    }
+
+    public void removeConnectedServiceFromList() {
+        if (service != null && adapter != null) {
+            adapter.remove(service);
+            adapter.notifyDataSetChanged();
+        }
+    }
 
 //    /**
 //     * Notify all the service change listeners that service change happens.
@@ -442,6 +442,7 @@ public class ConnectivityManager {
         mMultiscreenApp.setOnDisconnectListener(new Channel.OnDisconnectListener() {
             @Override
             public void onDisconnect(Client client) {
+                Util.d("OnDisconnectListener");
                 if (client != null) {
 
                     //Notify service change listeners.
@@ -458,7 +459,7 @@ public class ConnectivityManager {
         mMultiscreenApp.setOnConnectListener(new Channel.OnConnectListener() {
             @Override
             public void onConnect(Client client) {
-                //Log.d(Constants.APP_TAG, "Application is connected: " + client.toString());
+                Util.d("Application is connected: " + client.toString());
 
                 //stop discovery to save battery when a service is selected.
                 stopDiscovery();

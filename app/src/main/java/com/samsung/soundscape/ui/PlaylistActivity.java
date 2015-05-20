@@ -262,8 +262,11 @@ public class PlaylistActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+        Util.d("PlaylistActivity.onDestroy");
         //Remove event monitor.
         EventBus.getDefault().unregister(this);
+
+        ConnectivityManager.getInstance().restartDiscovery();
 
         //Disconnect from multiscreen app.
         ConnectivityManager.getInstance().disconnect();

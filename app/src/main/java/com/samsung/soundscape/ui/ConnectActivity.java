@@ -122,6 +122,13 @@ public class ConnectActivity extends AppCompatActivity {
         }
     }
 
+    public void onResume() {
+        super.onResume();
+
+        //Update the UI.
+        onEvent(new ServiceChangedEvent());
+    }
+
     public void onStop() {
         super.onStop();
 

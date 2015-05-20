@@ -85,6 +85,8 @@ public class ServiceListFragment extends DialogFragment {
                 connectedToText.setText(getString(R.string.connected_to));
                 connectedToIcon.setImageResource(R.drawable.ic_connected_white);
 
+                ConnectivityManager.getInstance().removeConnectedServiceFromList();
+
 
                 ImageView selectedServiceIcon = (ImageView)view.findViewById(R.id.selectedServiceIcon);
                 if (ConnectivityManager.getInstance().getConnectedServiceType() == ConnectivityManager.ServiceType.Speaker) {
@@ -104,10 +106,8 @@ public class ServiceListFragment extends DialogFragment {
 
                     @Override
                     public void onClick(View v) {
-                        //Make sure stop discovery
-                        ConnectivityManager.getInstance().stopDiscovery();
-                        //Disconnect from application.
-                        ConnectivityManager.getInstance().disconnect();
+                        ConnectivityManager.getInstance().addConnectedServerToList();
+                        getActivity().finish();
                     }
                 });
             } else {
