@@ -8,25 +8,17 @@ import java.util.ArrayList;
  * Created by bliu on 5/13/2015.
  */
 public class AppState extends Base {
-    private CurrentStatus status;
-    private String nowPlaying;
+    private CurrentStatus currentStatus;
     private ArrayList<Track> playlist = new ArrayList<>();
 
-    public CurrentStatus getStatus() {
-        return status;
+    public CurrentStatus getCurrentStatus() {
+        return currentStatus;
     }
 
-    public void setStatus(CurrentStatus status) {
-        this.status = status;
+    public void setCurrentStatus(CurrentStatus currentStatus) {
+        this.currentStatus = currentStatus;
     }
 
-    public String getNowPlaying() {
-        return nowPlaying;
-    }
-
-    public void setNowPlaying(String nowPlaying) {
-        this.nowPlaying = nowPlaying;
-    }
 
     public ArrayList<Track> getPlaylist() {
         return playlist;

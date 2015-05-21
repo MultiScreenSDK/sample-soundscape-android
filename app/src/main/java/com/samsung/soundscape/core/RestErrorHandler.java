@@ -32,7 +32,7 @@ public class RestErrorHandler implements ErrorHandler {
         }
 
         // Example of how you'd check for a unauthorized result
-        // if (cause != null && cause.getStatus() == 401) {
+        // if (cause != null && cause.getCurrentStatus() == 401) {
         //     return new UnauthorizedException(cause);
         // }
 

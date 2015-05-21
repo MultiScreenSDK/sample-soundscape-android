@@ -189,7 +189,7 @@ public class PlaylistActivity extends AppCompatActivity {
             }
         });
 
-        nowPlaying = (LinearLayout)findViewById(R.id.nowPlaying);
+        nowPlaying = (LinearLayout) findViewById(R.id.nowPlaying);
     }
 
     private void showAddTrackToastMessage() {
@@ -218,12 +218,12 @@ public class PlaylistActivity extends AppCompatActivity {
 //            applyAnimation(v, animResource);
 //            Drawable drawable = ((FloatingActionButton)v).getIcon();
 //            drawable.setState(new int[]{android.R.attr.state_enabled, android.R.attr.state_checked});
-            ((FloatingActionButton)v).getIcon().setLevel(level);
+            ((FloatingActionButton) v).getIcon().setLevel(level);
         } else {
             // TODO: Figure out a workaround for the pre-Lollipop animation issue where
             // the final animation state is always reset, regardless of setting fillAfter.
 //            addButton.setIcon(getResources().getDrawable(drawResource), false);
-            ((FloatingActionButton)v).getIcon().setLevel(level);
+            ((FloatingActionButton) v).getIcon().setLevel(level);
         }
         if (show) {
             showLibraryDialog();
@@ -302,9 +302,11 @@ public class PlaylistActivity extends AppCompatActivity {
         playlistAdapter.addAll(event.state.getPlaylist());
         playlistAdapter.notifyDataSetChanged();
 
-        CurrentStatus state = event.state.getStatus();
+        CurrentStatus state = event.state.getCurrentStatus();
+
         //If it is playing something, update the status.
         if (state != null) {
+            setPlayState(!state.isPlaying());
             updatePlaybackView(state.getId(), state.getTime());
         }
 
