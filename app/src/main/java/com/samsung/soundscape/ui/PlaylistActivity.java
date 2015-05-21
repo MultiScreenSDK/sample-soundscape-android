@@ -55,7 +55,6 @@ import com.rey.material.widget.FloatingActionButton;
 import com.samsung.multiscreen.Service;
 import com.samsung.multiscreen.util.RunUtil;
 import com.samsung.soundscape.R;
-import com.samsung.soundscape.adapter.ArraySwipeAdapterSample;
 import com.samsung.soundscape.adapter.SwipeableTracksAdapter;
 import com.samsung.soundscape.adapter.TracksAdapter;
 import com.samsung.soundscape.events.AddTrackEvent;
