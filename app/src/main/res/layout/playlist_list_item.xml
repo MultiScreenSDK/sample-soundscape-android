@@ -1,103 +1,136 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<?xml version="1.0" encoding="utf-8" ?>
+<com.daimajia.swipe.SwipeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/playlistItem"
+    xmlns:swipe="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipe"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:background="@color/white"
-    android:orientation="horizontal" >
+    swipe:clickToClose="false" >
 
-    <View
-        android:id="@+id/userColor"
-        android:layout_width="8dp"
+    <LinearLayout
+        android:layout_width="160dp"
         android:layout_height="match_parent"
-        android:background="@color/user_color_1"/>
+        android:background="@color/LightGrey"
+        android:gravity="center"
+        android:tag="Bottom3"
+        android:weightSum="10">
 
-    <RelativeLayout
+        <Button
+            android:id="@+id/removeTrack"
+            style="@style/DefaultButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="4"
+            android:background="@color/white"
+            android:elevation="@dimen/elevation_low"
+            android:fontFamily="sans-serif-thin"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="Delete"
+            android:textColor="@color/user_color_1"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/playlistItem"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <RelativeLayout
-                android:id="@+id/albumWrapper"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_gravity="center"
-                android:gravity="center">
-
-                <ImageView
-                    android:id="@+id/albumArt"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/album_placeholder"/>
-
-                <ImageView
-                    android:id="@+id/nowPlayingIcon"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/album_nowplaying"
-                    android:visibility="invisible"/>
-
-            </RelativeLayout>
-
-            <LinearLayout
-                android:id="@+id/playlistItemText"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_gravity="center_vertical"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingLeft="8dp"
-                android:paddingRight="16dp" >
-
-                <TextView
-                    android:id="@+id/songTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:maxLines="1"
-                    android:scrollHorizontally="true"
-                    android:text="Trap Queen"
-                    android:textColor="@color/playlist_list_item"
-                    android:textSize="14sp"/>
-
-                <TextView
-                    android:id="@+id/songArtist"
-                    android:layout_width="match_parent"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center_vertical"
-                    android:ellipsize="end"
-                    android:fontFamily="sans-serif-light"
-                    android:gravity="center_vertical"
-                    android:maxLines="1"
-                    android:scrollHorizontally="true"
-                    android:text="Fetty Wap"
-                    android:textColor="@color/playlist_list_item"
-                    android:textSize="12sp"/>
-            </LinearLayout>
-        </LinearLayout>
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/white"
+        android:elevation="@dimen/elevation_high"
+        android:orientation="horizontal" >
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_alignParentBottom="true"
-            android:background="#bbbbbb"/>
-    </RelativeLayout>
+            android:id="@+id/userColor"
+            android:layout_width="8dp"
+            android:layout_height="match_parent"
+            android:background="@color/user_color_1"/>
 
-</LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:id="@+id/albumWrapper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/albumArt"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/album_placeholder"/>
+
+                    <ImageView
+                        android:id="@+id/nowPlayingIcon"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="8dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/album_nowplaying"
+                        android:visibility="invisible"/>
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/playlistItemText"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="16dp" >
+
+                    <TextView
+                        android:id="@+id/songTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical"
+                        android:maxLines="1"
+                        android:scrollHorizontally="true"
+                        android:text="Trap Queen"
+                        android:textColor="@color/playlist_list_item"
+                        android:textSize="14sp"/>
+
+                    <TextView
+                        android:id="@+id/songArtist"
+                        android:layout_width="match_parent"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical"
+                        android:ellipsize="end"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="center_vertical"
+                        android:maxLines="1"
+                        android:scrollHorizontally="true"
+                        android:text="Fetty Wap"
+                        android:textColor="@color/playlist_list_item"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:background="#bbbbbb"/>
+        </RelativeLayout>
+    </LinearLayout>
+</com.daimajia.swipe.SwipeLayout>

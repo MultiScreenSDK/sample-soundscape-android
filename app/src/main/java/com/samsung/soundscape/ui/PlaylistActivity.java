@@ -33,11 +33,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -45,11 +48,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.swipe.SwipeLayout;
+import com.daimajia.swipe.util.Attributes;
 import com.google.gson.Gson;
 import com.rey.material.widget.FloatingActionButton;
 import com.samsung.multiscreen.Service;
 import com.samsung.multiscreen.util.RunUtil;
 import com.samsung.soundscape.R;
+import com.samsung.soundscape.adapter.ArraySwipeAdapterSample;
+import com.samsung.soundscape.adapter.SwipeableTracksAdapter;
 import com.samsung.soundscape.adapter.TracksAdapter;
 import com.samsung.soundscape.events.AddTrackEvent;
 import com.samsung.soundscape.events.AppStateEvent;
@@ -106,7 +113,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
     //-------------------------The playlist view ------------------------------
     //The adapter to display playlist.
-    TracksAdapter playlistAdapter;
+    SwipeableTracksAdapter playlistAdapter;
 
     //The list view to display playlist.
     ListView playlistListView;
@@ -165,7 +172,6 @@ public class PlaylistActivity extends AppCompatActivity {
         //Update UI with color and service information.
         updateUI();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -324,9 +330,54 @@ public class PlaylistActivity extends AppCompatActivity {
 
     private void initializeOtherViews() {
         //Playlist view and adapter
-        playlistAdapter = new TracksAdapter(this, R.layout.playlist_list_item);
+        playlistAdapter = new SwipeableTracksAdapter(this, R.layout.playlist_list_item);
         playlistListView = (ListView) findViewById(R.id.playlistListView);
         playlistListView.setAdapter(playlistAdapter);
+        playlistAdapter.setMode(Attributes.Mode.Single);
+        playlistListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ((SwipeLayout) (playlistListView.getChildAt(position - playlistListView.getFirstVisiblePosition()))).open(true);
+            }
+        });
+        playlistListView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.e("ListView", "OnTouch");
+                return false;
+            }
+        });
+        playlistListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getApplicationContext(), "OnItemLongClickListener", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+        playlistListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                Log.e("ListView", "onScrollStateChanged");
+                playlistAdapter.closeAllItems();
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                Log.e("ListView", "onScroll");
+            }
+        });
+
+        playlistListView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.e("ListView", "onItemSelected:" + position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                Log.e("ListView", "onNothingSelected:");
+            }
+        });
 
         //show the speaker or TV icon depends on service type.
         connectedToIcon = (ImageView) findViewById(R.id.connectedToIcon);
@@ -627,7 +678,7 @@ public class PlaylistActivity extends AppCompatActivity {
     private Track getTrackById(String id) {
         if (id != null && playlistAdapter != null) {
             for (int i = 0; i < playlistAdapter.getCount(); i++) {
-                Track track = playlistAdapter.getItem(i);
+                Track track = (Track) playlistAdapter.getItem(i);
                 if (track.getId().equals(id)) {
                     return track;
                 }
@@ -648,7 +699,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
             //Remove all the tracks above the given track id.
             for (int i = 0; i < playlistAdapter.getCount(); i++) {
-                Track track = playlistAdapter.getItem(i);
+                Track track = (Track) playlistAdapter.getItem(i);
                 if (track.getId().equals(id)) {
 
                     //Find the track, remove it and exit.
