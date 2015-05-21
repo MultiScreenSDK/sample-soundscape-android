@@ -86,7 +86,7 @@
         android:id="@+id/libraryLayoutWrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true"
+        android:layout_above="@+id/nowPlaying"
         android:background="#80000000"
         android:visibility="gone">
 

@@ -8,7 +8,8 @@
     android:layout_gravity="center"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    app:rv_color="@color/gray">
+    app:rv_color="@color/gray"
+    app:rv_rippleDuration="@android:integer/config_shortAnimTime">
 
     <LinearLayout
         android:id="@+id/libraryItem"
