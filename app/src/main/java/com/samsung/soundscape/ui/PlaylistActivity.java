@@ -1,3 +1,27 @@
+/**
+ * ****************************************************************************
+ * Copyright (c) 2015 Samsung Electronics
+ * <p/>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * <p/>
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * <p/>
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * *****************************************************************************
+ */
+
 package com.samsung.soundscape.ui;
 
 import android.app.DialogFragment;
@@ -44,47 +68,67 @@ import java.util.UUID;
 import de.greenrobot.event.EventBus;
 
 public class PlaylistActivity extends AppCompatActivity {
-
-    private ImageView playControl;
-    private StateListDrawable playControlDrawable;
-    private boolean clockwise = true;
-    private ImageView nextControl;
-
-    //The S icon at the top right screen.
-    private ImageView connectedToIcon;
-    //The add buton at the botoom and right corner.
+    //The add button at the bottom and right corner.
     private FloatingActionButton addButton;
 
-    //The text to display the connected service name.
-    private TextView connectedToText;
-
-    //The connected to section container.
-    private LinearLayout connectedToHeader;
-    Toolbar toolbar;
-
-    //The library layout
-    private ViewGroup libraryLayoutWrapper;
-    private ViewGroup libraryLayout;
+    //The direction of the add button.
+    private boolean clockwise = true;
 
     //user colors
     private String[] colors;
+
+    //The color of current user.
     private int userColor;
 
     //The flag shows that it is switch service.
     //Do not close this activity while switching service.
     public boolean isSwitchingService = false;
 
+
+    //-------------------------The header area ------------------------------
+    //The connected to section container.
+    private LinearLayout connectedToHeader;
+    Toolbar toolbar;
+
+    //The S icon at the top right screen.
+    private ImageView connectedToIcon;
+
+    //The text to display the connected service name.
+    private TextView connectedToText;
+
+    //-------------------------The library view ------------------------------
+    //The library layout
+    private ViewGroup libraryLayoutWrapper;
+    private ViewGroup libraryLayout;
+
     //The adapter to display tracks from library.
     TracksAdapter libraryAdapter;
+
+    //-------------------------The playlist view ------------------------------
     //The adapter to display playlist.
     TracksAdapter playlistAdapter;
 
+    //The list view to display playlist.
     ListView playlistListView;
-    TextView songTitle, songArtist;
 
+
+    //-------------------------The playback view ------------------------------
+    //playback view.
     LinearLayout nowPlaying;
 
+    //The track title and artist in the playback view.
+    TextView songTitle, songArtist;
 
+    //The play/pause button
+    private ImageView playControl;
+    private StateListDrawable playControlDrawable;
+
+    //The next button in the playback view.
+    private ImageView nextControl;
+
+
+
+    //=========================Activity methods===================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,9 +141,14 @@ public class PlaylistActivity extends AppCompatActivity {
         //Load user colors resource.
         colors = getResources().getStringArray(R.array.UserColors);
 
-
+        //Initialize library view
         initializeLibraryView();
-        initializePlaylistView();
+
+        //initialize playback view.
+        initializePlaybackView();
+
+        //initialize playlist view
+        initializeOtherViews();
 
         //Register to receive events.
         EventBus.getDefault().register(this);
@@ -117,120 +166,6 @@ public class PlaylistActivity extends AppCompatActivity {
         updateUI();
     }
 
-    private void initializeLibraryView() {
-
-        libraryLayoutWrapper = (ViewGroup) findViewById(R.id.libraryLayoutWrapper);
-        libraryLayoutWrapper.setVisibility(View.GONE);
-        libraryLayout = (ViewGroup) findViewById(R.id.libraryLayout);
-        libraryLayout.setVisibility(View.GONE);
-
-        ListView libraryListView = (ListView) findViewById(R.id.libraryListView);
-        libraryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Track track = libraryAdapter.getItem(position);
-                //format to string #AARRGGBB
-                track.setColor(String.format("#%08X", (0xFFFFFFFF & userColor)));
-                //Give a unique id for the song to be added.
-                track.setId(UUID.randomUUID().toString());
-
-                ConnectivityManager.getInstance().addTrack(track);
-                showAddTrackToastMessage();
-            }
-        });
-
-        //Create library adapter.
-        libraryAdapter = new TracksAdapter(PlaylistActivity.this, R.layout.library_list_item);
-        libraryListView.setAdapter(libraryAdapter);
-    }
-
-    private void initializePlaylistView() {
-        playlistAdapter = new TracksAdapter(this, R.layout.playlist_list_item);
-        playlistListView = (ListView) findViewById(R.id.playlistListView);
-        playlistListView.setAdapter(playlistAdapter);
-
-        //show the speaker or TV icon depends on service type.
-        connectedToIcon = (ImageView) findViewById(R.id.connectedToIcon);
-
-        connectedToText = (TextView) findViewById(R.id.connectedToText);
-        connectedToHeader = (LinearLayout) findViewById(R.id.connectedToHeader);
-
-        songTitle = (TextView) findViewById(R.id.songTitle);
-        songArtist = (TextView) findViewById(R.id.songArtist);
-
-        playControl = (ImageView) findViewById(R.id.playControl);
-        playControlDrawable = (StateListDrawable) playControl.getDrawable();
-        playControl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (isPlaying()) {
-                    ConnectivityManager.getInstance().pause();
-                    setPlayState(true);
-                } else {
-                    ConnectivityManager.getInstance().play();
-                    setPlayState(false);
-                }
-            }
-        });
-        nextControl = (ImageView) findViewById(R.id.nextControl);
-        nextControl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ConnectivityManager.getInstance().next();
-            }
-        });
-
-        addButton = (FloatingActionButton) findViewById(R.id.addButton);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                animateLibrary(v);
-            }
-        });
-
-        nowPlaying = (LinearLayout) findViewById(R.id.nowPlaying);
-    }
-
-    private void showAddTrackToastMessage() {
-        View toastLayout = getLayoutInflater().inflate(R.layout.add_track, (ViewGroup) findViewById(R.id.toastLayout));
-
-        Toast toast = new Toast(getApplicationContext());
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(toastLayout);
-        toast.show();
-
-    }
-
-    private void animateLibrary(final View v) {
-        int animResource = R.anim.rotate_clockwise;
-        int drawResource = R.drawable.ic_action_cancel;
-        int level = 5000;
-        if (!clockwise) {
-            animResource = R.anim.rotate_counterclockwise;
-            drawResource = R.drawable.ic_add_white;
-            level = 0;
-        }
-        final boolean show = clockwise;
-        clockwise = !clockwise;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            applyAnimation(v, animResource);
-//            Drawable drawable = ((FloatingActionButton)v).getIcon();
-//            drawable.setState(new int[]{android.R.attr.state_enabled, android.R.attr.state_checked});
-            ((FloatingActionButton) v).getIcon().setLevel(level);
-        } else {
-            // TODO: Figure out a workaround for the pre-Lollipop animation issue where
-            // the final animation state is always reset, regardless of setting fillAfter.
-//            addButton.setIcon(getResources().getDrawable(drawResource), false);
-            ((FloatingActionButton) v).getIcon().setLevel(level);
-        }
-        if (show) {
-            showLibraryDialog();
-        } else {
-            hideLibraryDialog();
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -271,6 +206,9 @@ public class PlaylistActivity extends AppCompatActivity {
         //Disconnect from multiscreen app.
         ConnectivityManager.getInstance().disconnect();
     }
+
+
+    //=====================Events received from ConnectivityManager============================
 
     // This method will be called when a MessageEvent is posted
     public void onEvent(ConnectionChangedEvent event) {
@@ -337,6 +275,10 @@ public class PlaylistActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Triggered when track status is update.
+     * @param event
+     */
     public void onEvent(TrackStatusEvent event) {
         CurrentStatus status = event.status;
         if (status != null) {
@@ -350,16 +292,166 @@ public class PlaylistActivity extends AppCompatActivity {
         }
     }
 
-    public void addTrack(Track track) {
+
+    //====================private methods============================
+
+    private void initializeLibraryView() {
+
+        libraryLayoutWrapper = (ViewGroup) findViewById(R.id.libraryLayoutWrapper);
+        libraryLayoutWrapper.setVisibility(View.GONE);
+        libraryLayout = (ViewGroup) findViewById(R.id.libraryLayout);
+        libraryLayout.setVisibility(View.GONE);
+
+        ListView libraryListView = (ListView) findViewById(R.id.libraryListView);
+        libraryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Track track = libraryAdapter.getItem(position);
+                //format to string #AARRGGBB
+                track.setColor(String.format("#%08X", (0xFFFFFFFF & userColor)));
+                //Give a unique id for the song to be added.
+                track.setId(UUID.randomUUID().toString());
+
+                ConnectivityManager.getInstance().addTrack(track);
+                showAddTrackToastMessage();
+            }
+        });
+
+        //Create library adapter.
+        libraryAdapter = new TracksAdapter(PlaylistActivity.this, R.layout.library_list_item);
+        libraryListView.setAdapter(libraryAdapter);
+    }
+
+    private void initializeOtherViews() {
+        //Playlist view and adapter
+        playlistAdapter = new TracksAdapter(this, R.layout.playlist_list_item);
+        playlistListView = (ListView) findViewById(R.id.playlistListView);
+        playlistListView.setAdapter(playlistAdapter);
+
+        //show the speaker or TV icon depends on service type.
+        connectedToIcon = (ImageView) findViewById(R.id.connectedToIcon);
+
+        connectedToText = (TextView) findViewById(R.id.connectedToText);
+        connectedToHeader = (LinearLayout) findViewById(R.id.connectedToHeader);
+
+        //Add button
+        addButton = (FloatingActionButton) findViewById(R.id.addButton);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //Try to download the content again if something wrong before.
+                if (libraryAdapter.getCount()==0) {
+                    //Load library in background.
+                    RunUtil.runInBackground(loadLibrary);
+                }
+
+                //Display the animation.
+                animateLibrary(v);
+            }
+        });
+    }
+
+    private void initializePlaybackView() {
+        //Playback layout.
+        nowPlaying = (LinearLayout) findViewById(R.id.nowPlaying);
+
+        songTitle = (TextView) findViewById(R.id.songTitle);
+        songArtist = (TextView) findViewById(R.id.songArtist);
+
+        //Play and pause button
+        playControl = (ImageView) findViewById(R.id.playControl);
+        playControlDrawable = (StateListDrawable) playControl.getDrawable();
+        playControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (isPlaying()) {
+                    ConnectivityManager.getInstance().pause();
+                    setPlayState(true);
+                } else {
+                    ConnectivityManager.getInstance().play();
+                    setPlayState(false);
+                }
+            }
+        });
+
+        //Next button
+        nextControl = (ImageView) findViewById(R.id.nextControl);
+        nextControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ConnectivityManager.getInstance().next();
+            }
+        });
+    }
+
+    /**
+     * Show the track is added toast message.
+     */
+    private void showAddTrackToastMessage() {
+
+        //Load customized layout.
+        View toastLayout = getLayoutInflater().inflate(R.layout.add_track, (ViewGroup) findViewById(R.id.toastLayout));
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(toastLayout);
+        toast.show();
+    }
+
+    private void animateLibrary(final View v) {
+        int animResource = R.anim.rotate_clockwise;
+        int drawResource = R.drawable.ic_action_cancel;
+        int level = 5000;
+        if (!clockwise) {
+            animResource = R.anim.rotate_counterclockwise;
+            drawResource = R.drawable.ic_add_white;
+            level = 0;
+        }
+        final boolean show = clockwise;
+        clockwise = !clockwise;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            applyAnimation(v, animResource);
+//            Drawable drawable = ((FloatingActionButton)v).getIcon();
+//            drawable.setState(new int[]{android.R.attr.state_enabled, android.R.attr.state_checked});
+            ((FloatingActionButton) v).getIcon().setLevel(level);
+        } else {
+            // TODO: Figure out a workaround for the pre-Lollipop animation issue where
+            // the final animation state is always reset, regardless of setting fillAfter.
+//            addButton.setIcon(getResources().getDrawable(drawResource), false);
+            ((FloatingActionButton) v).getIcon().setLevel(level);
+        }
+        if (show) {
+            showLibraryDialog();
+        } else {
+            hideLibraryDialog();
+        }
+    }
+
+    /**
+     * Add track into playlist and update UI.
+     * @param track
+     */
+    private void addTrack(Track track) {
         playlistAdapter.add(track);
         playlistAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Whether or not it is playing track.
+     * @return true playing tracking otherwise paused.
+     */
     private boolean isPlaying() {
         //When pause button is showed, it is playing status, vice verse.
         return !Arrays.equals(playControlDrawable.getState(), new int[]{android.R.attr.state_enabled});
     }
 
+    /**
+     * Update the play/pause button
+     * @param statePlaying
+     */
     private void setPlayState(boolean statePlaying) {
         Util.d("setPlayState, playing state = " + statePlaying);
 
@@ -405,7 +497,7 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
 
-    void showServiceListDialog() {
+    private void showServiceListDialog() {
 
         // DialogFragment.show() will take care of adding the fragment
         // in a transaction.  We also want to remove any currently showing
@@ -500,20 +592,38 @@ public class PlaylistActivity extends AppCompatActivity {
         updatePlaybackView(null, 0);
     }
 
+    /**
+     * Update the playback view according to track id and time.
+     * @param id the track id which is currently playing.
+     * @param time the playback position. You may update the progress bar according to this value.
+     */
     private void updatePlaybackView(String id, float time) {
         if (id != null) {
+
+            //When some track is playing, show the playback view.
             nowPlaying.setVisibility(View.VISIBLE);
+
+            //Get the track information.
             Track track = getTrackById(id);
+
+            //If the playing track is in the playlist, update the track information.
             if (track != null) {
                 songTitle.setText(track.getTitle());
                 songArtist.setText(track.getArtist());
             }
 
         } else {
+
+            //Nothing is playing now. Hide the playback view.
             nowPlaying.setVisibility(View.GONE);
         }
     }
 
+    /**
+     * Find the track by id in the playlist.
+     * @param id the track id.
+     * @return the track.
+     */
     private Track getTrackById(String id) {
         if (id != null && playlistAdapter != null) {
             for (int i = 0; i < playlistAdapter.getCount(); i++) {
@@ -527,12 +637,21 @@ public class PlaylistActivity extends AppCompatActivity {
         return null;
     }
 
+    /**
+     * Remove the track by given track id. It removes all the tracks above the given track as well.
+     * If you just want to remove a single track, please call removeTrack.
+     *
+     * @param id the track id to be removed.
+     */
     private void removeTrackById(String id) {
         if (id != null && playlistAdapter != null) {
+
+            //Remove all the tracks above the given track id.
             for (int i = 0; i < playlistAdapter.getCount(); i++) {
                 Track track = playlistAdapter.getItem(i);
                 if (track.getId().equals(id)) {
 
+                    //Find the track, remove it and exit.
                     playlistAdapter.remove(track);
                     break;
                 } else {
@@ -546,6 +665,21 @@ public class PlaylistActivity extends AppCompatActivity {
                 updatePlaybackView(null, 0);
             }
         }
+    }
+
+    /**
+     * Remove the track from playlist and notify TV app and other clients.
+     * @param track the track to be removed.
+     */
+    private void removeTrack(Track track) {
+        //remove it from playlist
+        playlistAdapter.remove(track);
+
+        //update UI.
+        playlistAdapter.notifyDataSetChanged();
+
+        //Tell other clients and TV app to remove it as well.
+        ConnectivityManager.getInstance().removeTrack(track.getId());
     }
 
     /**
