@@ -81,14 +81,20 @@ public class ServiceListFragment extends DialogFragment {
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    //When item is clicked, get the service clicked first.
                     ServiceAdapter adapter = ConnectivityManager.getInstance().getServiceAdapter();
                     Service service = adapter.getItem(position);
 
                     Activity activity = getActivity();
                     if (activity instanceof ConnectActivity) {
+
+                        //Display connecting message if it is in connection screen.
                         ConnectActivity ca = (ConnectActivity) getActivity();
                         ca.displayConnectingMessage(service.getName());
                     } else if (activity instanceof PlaylistActivity) {
+
+                        //Switching service if it is in playlist screen.
                         PlaylistActivity pa = (PlaylistActivity) activity;
                         pa.isSwitchingService = true;
                         ConnectivityManager.getInstance().disconnect();
@@ -104,14 +110,20 @@ public class ServiceListFragment extends DialogFragment {
             ImageView connectedToIcon = (ImageView)view.findViewById(R.id.connectedToIcon);
 
             if (ConnectivityManager.getInstance().isTVConnected()) {
+
                 //Display connected device and disconnect button.
                 llConnectTo.setVisibility(View.VISIBLE);
+
+                //Update the dialog title
                 connectedToText.setText(getString(R.string.connected_to));
+
+                //Update the dialog icon
                 connectedToIcon.setImageResource(R.drawable.ic_connected_white);
 
+                //Remove the connected service from service list.
                 ConnectivityManager.getInstance().removeConnectedServiceFromList();
 
-
+                //Update the service icon according to service type.
                 ImageView selectedServiceIcon = (ImageView)view.findViewById(R.id.selectedServiceIcon);
                 if (ConnectivityManager.getInstance().getConnectedServiceType() == ConnectivityManager.ServiceType.Speaker) {
                     //The speaker is connected
@@ -120,12 +132,16 @@ public class ServiceListFragment extends DialogFragment {
                     //The TV or TV simulator is connected.
                     selectedServiceIcon.setImageResource(R.drawable.ic_tv_white);
                 }
+
+                //Display the connected service name
                 TextView selectedServiceText = (TextView)view.findViewById(R.id.selectedServiceText);
                 selectedServiceText.setText(Util.getFriendlyTvName(ConnectivityManager.getInstance().getService().getName()));
 
+                //Update the disconnect button with user color.
                 Button btnDisconnect = (Button) view.findViewById(R.id.disconnectButton);
                 btnDisconnect.setTextColor(mColor);
 
+                //When disconnect button is clicked, close the activity and returns to connection screen.
                 btnDisconnect.setOnClickListener(new View.OnClickListener() {
 
                     @Override
@@ -135,13 +151,19 @@ public class ServiceListFragment extends DialogFragment {
                     }
                 });
             } else {
+
                 //Hide connected device and disconnect button.
                 llConnectTo.setVisibility(View.GONE);
+
+                //Update the dialog title.
                 connectedToText.setText(getString(R.string.connect_to));
+
+                //Update the dialog icon.
                 connectedToIcon.setImageResource(R.drawable.ic_discovered_white);
             }
         }
 
+        //Create a alert dialog with customized style.
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomTheme_Dialog);
         builder.setView(view);
 

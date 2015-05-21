@@ -65,7 +65,12 @@ import de.greenrobot.event.EventBus;
  */
 public class ConnectivityManager {
     public enum ServiceType {
-        Other, TV, Speaker
+        //Other unknown type
+        Other,
+        //Samsung smart TV.
+        TV,
+        //Samsung smart speaker.
+        Speaker
     }
 
     public static final String EVENT_ADD_TRACK = "addTrack";
@@ -293,21 +298,6 @@ public class ConnectivityManager {
         }
     }
 
-//    /**
-//     * Notify all the service change listeners that service change happens.
-//     */
-//    private void notifyListeners(boolean serviceChanged) {
-//        for (ServiceChangedListener listener : listeners) {
-//            if (listener != null) {
-//                if (serviceChanged) {
-//                    listener.onServiceChanged();
-//                } else {
-//                    listener.onConnectionChanged();
-//                }
-//            }
-//        }
-//    }
-
     /**
      * Notify TV list adapter that data set is changed.
      */
@@ -425,10 +415,19 @@ public class ConnectivityManager {
     }
 
 
+    /**
+     * Return the service type of the connected service.
+     * @return
+     */
     public ServiceType getConnectedServiceType() {
         return getServiceType(this.service);
     }
 
+    /**
+     * Return the service type of given service.
+     * @param service
+     * @return
+     */
     public ServiceType getServiceType(Service service) {
         if (service == null) {
             return ServiceType.Other;
@@ -532,6 +531,9 @@ public class ConnectivityManager {
         });
     }
 
+    /**
+     * Disconnect the multiscreen web application.
+     */
     public void disconnect() {
         if (service != null && mMultiscreenApp != null && mMultiscreenApp.isConnected()) {
             mMultiscreenApp.removeOnMessageListeners();
@@ -539,21 +541,6 @@ public class ConnectivityManager {
             service = null;
         }
     }
-
-//
-//    /**
-//     * Sent the byte array to TV.
-//     *
-//     * @param event   the channel event.
-//     * @param data    the object to sent to TV.
-//     * @param payload payload data in format of byte array.
-//     */
-//    public void sendToTV(String event, Object data, byte[] payload) {
-//        if (mMultiscreenApp != null && mMultiscreenApp.isConnected()) {
-//            mMultiscreenApp.publish(event, data, payload);
-//        }
-//    }
-
 
     /**
      * Set the discovery stop listener called when discovery is stopped.
@@ -596,6 +583,10 @@ public class ConnectivityManager {
         }
     }
 
+    /**
+     * Get the clients amount.
+     * @return
+     */
     public int getClientCount() {
         int count = 0;
 
@@ -606,10 +597,17 @@ public class ConnectivityManager {
         return count;
     }
 
+    /**
+     * Send the app state reqeust.
+     */
     public void requestAppState() {
         sendToTV(EVENT_APP_STATE_REQUEST, null, Message.TARGET_HOST);
     }
 
+    /**
+     * broadcast the add track event.
+     * @param track
+     */
     public void addTrack(Track track) {
         try {
             JSONObject obj = new JSONObject(track.toJsonString());
@@ -619,22 +617,38 @@ public class ConnectivityManager {
         }
     }
 
+    /**
+     * Broadcast the remove track event.
+     * @param trackId
+     */
     public void removeTrack(String trackId) {
         sendToTV(EVENT_REMOVE_TRACK, trackId, Message.TARGET_BROADCAST);
     }
 
+    /**
+     * Pause the playing track.
+     */
     public void pause() {
         sendToTV(EVENT_PAUSE, null, Message.TARGET_BROADCAST);
     }
 
+    /**
+     * Play the track.
+     */
     public void play() {
         sendToTV(EVENT_PLAY, null, Message.TARGET_BROADCAST);
     }
 
+    /**
+     * Skip the song at the top of the playlist.
+     */
     public void next() {
         sendToTV(EVENT_NEXT, null, Message.TARGET_BROADCAST);
     }
 
+    /**
+     * Receive the response data of app state request.
+     */
     private Channel.OnMessageListener onAppStateListener = new Channel.OnMessageListener() {
         @Override
         public void onMessage(Message message) {
@@ -647,6 +661,9 @@ public class ConnectivityManager {
         }
     };
 
+    /**
+     * Receive the update of track status.
+     */
     private Channel.OnMessageListener onTrackStatusListener = new Channel.OnMessageListener() {
         @Override
         public void onMessage(Message message) {
@@ -661,6 +678,9 @@ public class ConnectivityManager {
         }
     };
 
+    /**
+     * Receive the track start event.
+     */
     private Channel.OnMessageListener onTrackStartListener = new Channel.OnMessageListener() {
         @Override
         public void onMessage(Message message) {
@@ -673,6 +693,9 @@ public class ConnectivityManager {
         }
     };
 
+    /**
+     * Receive the track end event.
+     */
     private Channel.OnMessageListener onTrackEndListener = new Channel.OnMessageListener() {
         @Override
         public void onMessage(Message message) {
@@ -686,6 +709,9 @@ public class ConnectivityManager {
     };
 
 
+    /**
+     * Receive the add track event.
+     */
     private Channel.OnMessageListener onAddTrackListener = new Channel.OnMessageListener() {
         @Override
         public void onMessage(Message message) {

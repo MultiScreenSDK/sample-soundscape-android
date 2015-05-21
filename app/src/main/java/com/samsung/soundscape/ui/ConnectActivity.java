@@ -30,6 +30,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -55,7 +56,9 @@ public class ConnectActivity extends AppCompatActivity {
     TextView discoveryMessage;
     TextView wifiMessage;
 
-    /** The connectivity manager instance. */
+    /**
+     * The connectivity manager instance.
+     */
     private ConnectivityManager mConnectivityManager;
 
     //Show connecting message
@@ -65,6 +68,8 @@ public class ConnectActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.connect_activity);
+
+        //Display the message panel after certain seconds.
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -77,7 +82,7 @@ public class ConnectActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                onEvent(new ServiceChangedEvent());
+                updateUI();
             }
         }, getResources().getInteger(R.integer.discoverying_timeout));
 
@@ -99,6 +104,7 @@ public class ConnectActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+        //Unregister the events.
         EventBus.getDefault().unregister(this);
 
         //Stop discovery before exit.
@@ -112,13 +118,14 @@ public class ConnectActivity extends AppCompatActivity {
         super.onStart();
 
         Util.d("onStart,  isDiscovering=" + mConnectivityManager.isDiscovering());
+
         //Start the service discovery if it is not started before.
         if (Util.isWiFiConnected()) {
             //start discovery.
             mConnectivityManager.restartDiscovery();
         } else {
             //If it is already discovering. Fetch the result directly.
-            onEvent(new ServiceChangedEvent());
+            updateUI();
         }
     }
 
@@ -126,13 +133,14 @@ public class ConnectActivity extends AppCompatActivity {
         super.onResume();
 
         //Update the UI.
-        onEvent(new ServiceChangedEvent());
+        updateUI();
     }
 
     public void onStop() {
         super.onStop();
 
         Util.d("onStop,  isDiscovering=" + mConnectivityManager.isDiscovering());
+
         //Stop discovery when the app goes to background.
         mConnectivityManager.stopDiscovery();
     }
@@ -141,33 +149,39 @@ public class ConnectActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            ServiceAdapter adapter = mConnectivityManager.getServiceAdapter();
-            int count = adapter.getCount();
 
-            if (count == 0) {
+            //We will handle the different action according to button title.
+            String buttonTitle = ((Button) v).getText().toString();
+            if (buttonTitle.equals(getString(R.string.connect_status_information))) {
+
                 //Show information
                 showDialog(InfoFragment.newInstance());
-            } else if (count == 1) {
+            } else if (buttonTitle.equals(getString(R.string.connect))) {
+                ServiceAdapter adapter = mConnectivityManager.getServiceAdapter();
+                if (adapter != null && adapter.getCount()>0) {
 
-                //Get the service.
-                Service service = adapter.getItem(0);
+                    //Get the service.
+                    Service service = adapter.getItem(0);
 
-                //Show connecting message.
-                displayConnectingMessage(Util.getFriendlyTvName(service.getName()));
+                    //Show connecting message.
+                    displayConnectingMessage(Util.getFriendlyTvName(service.getName()));
 
-                //Connect to the device directly.
-               mConnectivityManager.setService(service);
+                    //Connect to the device directly.
+                    mConnectivityManager.setService(service);
+                }
+            } else if (buttonTitle.equals(getString(R.string.turn_on_wifi))) {
+                startActivity(new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK));
             } else {
+
                 //show select device dialog.
                 showDialog(ServiceListFragment.newInstance(0));
             }
-
         }
     };
 
 
     // This method will be called when a MessageEvent is posted
-    public void onEvent(ConnectionChangedEvent event){
+    public void onEvent(ConnectionChangedEvent event) {
         if (mConnectivityManager.isTVConnected()) {
 
             //Cancel the toast before launch playlist
@@ -178,40 +192,55 @@ public class ConnectActivity extends AppCompatActivity {
         }
     }
 
-    // This method will be called when a SomeOtherEvent is posted
-    public void onEvent(ServiceChangedEvent event){
-        int count = mConnectivityManager.getServiceAdapter().getCount();
-        String wifiName = Util.getWifiName();
-
-        String buttonTitle = null;
-        String discoveryStatus = null;
-        if (wifiName != null) {
-            discoveryStatus = String.format(getString(R.string.connect_status_on), wifiName);
-        }
-        String networkInfo = null;
-
-        if (count == 0) {
-            buttonTitle = getString(R.string.connect_status_information);
-            discoveryStatus = getString(R.string.connect_status_nodevice);
-        } else if (count == 1) {
-
-            //Get the dewice name.
-            Service service = mConnectivityManager.getServiceAdapter().getItem(0);
-            String tvName = Util.getFriendlyTvName(service.getName());
-
-            discoveryStatus = String.format(getString(R.string.connect_status_discovered), tvName);
-            buttonTitle = getString(R.string.connect);
-        } else {
-            discoveryStatus = String.format(getString(R.string.connect_status_found_devices), count);
-            buttonTitle = getString(R.string.select_device);
-        }
-
-
-        updateUI(discoveryStatus, networkInfo, buttonTitle);
+    // This method will be called when a service is changed.
+    public void onEvent(ServiceChangedEvent event) {
+        updateUI();
     }
 
 
-    public void updateUI(final String firstMsg, final String secondMsg, final String buttonCaption) {
+    /**
+     * Update the UI according to the service count and network condition.
+     */
+    private void updateUI() {
+        String buttonTitle = null;
+        String discoveryStatus = null;
+        String networkInfo = null;
+
+        if (Util.isWiFiConnected()) {
+            int count = mConnectivityManager.getServiceAdapter().getCount();
+            String wifiName = Util.getWifiName();
+
+            //When we can get the WiFi network name, we will show the WiFi name.
+            if (wifiName != null) {
+                networkInfo = String.format(getString(R.string.connect_status_on), wifiName);
+            }
+
+            if (count == 0) {
+                buttonTitle = getString(R.string.connect_status_information);
+                discoveryStatus = getString(R.string.connect_status_nodevice);
+            } else if (count == 1) {
+
+                //Get the device name.
+                Service service = mConnectivityManager.getServiceAdapter().getItem(0);
+                String tvName = Util.getFriendlyTvName(service.getName());
+
+                discoveryStatus = String.format(getString(R.string.connect_status_discovered), tvName);
+                buttonTitle = getString(R.string.connect);
+            } else {
+                discoveryStatus = String.format(getString(R.string.connect_status_found_devices), count);
+                buttonTitle = getString(R.string.select_device);
+            }
+        } else {
+            discoveryStatus = getString(R.string.no_wifi);
+            buttonTitle = getString(R.string.turn_on_wifi);
+        }
+
+
+        //Update the UI views.
+        updateViews(discoveryStatus, networkInfo, buttonTitle);
+    }
+
+    private void updateViews(final String firstMsg, final String secondMsg, final String buttonCaption) {
         RunUtil.runOnUI(new Runnable() {
             @Override
             public void run() {
@@ -269,14 +298,8 @@ public class ConnectActivity extends AppCompatActivity {
             @Override
             public void run() {
                 View toastLayout = getLayoutInflater().inflate(R.layout.toast, (ViewGroup) findViewById(R.id.toastLayout));
-                TextView serviceText = (TextView)toastLayout.findViewById(R.id.serviceText);
+                TextView serviceText = (TextView) toastLayout.findViewById(R.id.serviceText);
                 serviceText.setText(message);
-
-//                toast = new Toast(getApplicationContext());
-//                toast.setGravity(Gravity.CENTER, 0, 0);
-//                toast.setDuration(Toast.LENGTH_LONG);
-//                toast.setView(toastLayout);
-//                toast.show();
 
                 if (alertDialog != null && alertDialog.isShowing()) {
                     cancelToast();
@@ -288,6 +311,9 @@ public class ConnectActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Dismiss the connecting message dialog.
+     */
     public void cancelToast() {
         if (alertDialog != null) {
             alertDialog.cancel();

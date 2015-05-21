@@ -108,10 +108,6 @@ public class ServiceAdapter extends ArrayAdapter<Service> {
             holder.serviceIcon.setImageResource(R.drawable.ic_tv_gray);
         }
 
-        //TODO: remove the font???
-        //holder.deviceName.setTypeface(Util.customFont(context));
-
-
         return row;
     }
 
