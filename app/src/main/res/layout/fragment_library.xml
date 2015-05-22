@@ -10,7 +10,7 @@
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="16dp"
-    android:visibility="visible"
+    android:visibility="invisible"
     tools:context="com.samsung.soundscape.ui.PlaylistActivity" >
 
     <RelativeLayout

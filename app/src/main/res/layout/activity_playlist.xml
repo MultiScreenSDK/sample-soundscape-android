@@ -110,6 +110,7 @@
         app:fab_iconSrc="@drawable/rotate"
         app:fab_radius="24dp"
         app:rd_enable="true"
+        app:rd_rippleAnimDuration="@android:integer/config_shortAnimTime"
         app:rd_rippleColor="@color/gray"
         app:rd_rippleType="touch"/>
 

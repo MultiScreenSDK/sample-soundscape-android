@@ -9,15 +9,6 @@
     android:orientation="horizontal"
     android:visibility="visible" >
 
-    <!--<com.andexert.library.RippleView-->
-        <!--android:id="@+id/buttonRipple"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center_horizontal"-->
-        <!--android:padding="0dp"-->
-        <!--app:rv_color="@color/white">-->
-
-    <!--</com.andexert.library.RippleView>-->
     <ImageView
         android:id="@+id/playControl"
         android:layout_width="@dimen/play_controls_width"
@@ -26,18 +17,26 @@
         android:scaleType="fitCenter"
         android:src="@drawable/play_control_dark" />
 
-    <ImageView
-        android:id="@+id/nextControl"
+    <com.andexert.library.RippleView
         android:layout_width="@dimen/play_controls_width"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_skip_next_white" />
+        android:layout_height="@dimen/now_playing_height"
+        android:layout_gravity="center"
+        app:rv_color="@color/white"
+        app:rv_rippleDuration="@android:integer/config_shortAnimTime" >
+
+        <ImageView
+            android:id="@+id/nextControl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_skip_next_white" />
+    </com.andexert.library.RippleView>
 
     <LinearLayout
         android:id="@+id/nowPlayingText"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:gravity="center"
         android:orientation="vertical"
