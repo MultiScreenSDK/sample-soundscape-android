@@ -23,7 +23,6 @@
 package com.samsung.soundscape.adapter;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +34,6 @@ import com.samsung.soundscape.R;
 import com.samsung.soundscape.model.Track;
 import com.samsung.soundscape.util.Util;
 import com.squareup.picasso.Picasso;
-
-import java.net.MalformedURLException;
 
 public class TracksAdapter extends ArrayAdapter<Track> {
 
@@ -113,15 +110,9 @@ public class TracksAdapter extends ArrayAdapter<Track> {
         holder.songArtist.setText(track.getArtist());
 
         String albumArtThumbnail = track.getAlbumArtThumbnail();
-        Uri uri = null;
-        try {
-            uri = Util.getUriFromUrl(albumArtThumbnail);
-        } catch (MalformedURLException e) {
-            Util.e("Could not convert album thumbnail url into correcnt format.");
-        }
 
-        if (uri != null) {
-            Picasso.with(context).load(uri.toString()).fit().
+        if (albumArtThumbnail != null) {
+            Picasso.with(context).load(Util.getUriFromUrl(albumArtThumbnail)).fit().
                     error(R.drawable.album_placeholder).into(holder.albumArt);
         }
 
