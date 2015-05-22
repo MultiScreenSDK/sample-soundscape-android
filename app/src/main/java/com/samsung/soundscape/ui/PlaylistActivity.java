@@ -137,8 +137,6 @@ public class PlaylistActivity extends AppCompatActivity {
     //=========================Activity methods===================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(this.getClass().getName(), "onCreate");
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
 
@@ -172,12 +170,6 @@ public class PlaylistActivity extends AppCompatActivity {
 
         //Update UI with color and service information.
         updateUI();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.d(this.getClass().getName(), "onResume");
-        super.onResume();
     }
 
     @Override
