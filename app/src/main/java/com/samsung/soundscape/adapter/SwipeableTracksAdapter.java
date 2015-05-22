@@ -71,12 +71,15 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
+        boolean convertViewIsNull = (convertView == null);
         View row = convertView;
 
-        final Track track = (Track) getItem(position);
+        Track track = (Track) getItem(position);
 
-        if (row == null) {
+        ImageView trash = null;
+
+        if (convertViewIsNull) {
             row = inflater.inflate(layoutResourceId, parent, false);
             ViewHolder holder = new ViewHolder();
             holder.songTitle = (TextView) row.findViewById(R.id.songTitle);
@@ -86,12 +89,22 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
             holder.nowPlayingIcon = (ImageView) row.findViewById(R.id.nowPlayingIcon);
             row.setTag(holder);
             this.mItemManger.initialize(row, position);
+        } else {
+            this.mItemManger.updateConvertView(row, position);
+        }
 
-            ImageView trash = (ImageView) row.findViewById(R.id.trash);
+        trash = (ImageView) row.findViewById(R.id.trash);
+        trash.setTag(track);
+
+        if (convertViewIsNull) {
             trash.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Track track = (Track) v.getTag();
+                    int position = getPosition(track);
+
                     Log.d(this.getClass().getName(), "Remove track: " + track.toJsonString());
+                    Log.d(this.getClass().getName(), "position " + position + ": " + track.getTitle());
                     Log.d(this.getClass().getName(), "num tracks: " + SwipeableTracksAdapter.this.getCount());
                     closeAllItems();
                     Activity activity = (Activity) getContext();
@@ -100,13 +113,11 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
                         if (position == 0) {
                             ConnectivityManager.getInstance().next();
                         } else {
-                            ((PlaylistActivity)activity).removeTrack((Track)getItem(position));
+                            ((PlaylistActivity)activity).removeTrack(track);
                         }
                     }
                 }
             });
-        } else {
-            this.mItemManger.updateConvertView(row, position);
         }
 
         final ViewHolder holder = (ViewHolder) row.getTag();
