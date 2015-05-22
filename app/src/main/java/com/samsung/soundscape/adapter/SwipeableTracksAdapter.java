@@ -1,6 +1,8 @@
 package com.samsung.soundscape.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,8 @@ import com.daimajia.swipe.implments.SwipeItemAdapterMangerImpl;
 import com.daimajia.swipe.util.Attributes;
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.model.Track;
+import com.samsung.soundscape.ui.PlaylistActivity;
+import com.samsung.soundscape.util.ConnectivityManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -67,8 +71,10 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         View row = convertView;
+
+        final Track track = (Track) getItem(position);
 
         if (row == null) {
             row = inflater.inflate(layoutResourceId, parent, false);
@@ -80,13 +86,31 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
             holder.nowPlayingIcon = (ImageView) row.findViewById(R.id.nowPlayingIcon);
             row.setTag(holder);
             this.mItemManger.initialize(row, position);
+
+            ImageView trash = (ImageView) row.findViewById(R.id.trash);
+            trash.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(this.getClass().getName(), "Remove track: " + track.toJsonString());
+                    Log.d(this.getClass().getName(), "num tracks: " + SwipeableTracksAdapter.this.getCount());
+                    closeAllItems();
+                    Activity activity = (Activity) getContext();
+
+                    if (activity instanceof PlaylistActivity) {
+                        if (position == 0) {
+                            ConnectivityManager.getInstance().next();
+                        } else {
+                            ((PlaylistActivity)activity).removeTrack((Track)getItem(position));
+                        }
+                    }
+                }
+            });
         } else {
             this.mItemManger.updateConvertView(row, position);
         }
 
         final ViewHolder holder = (ViewHolder) row.getTag();
 
-        final Track track = (Track) getItem(position);
         holder.songTitle.setText(track.getTitle());
         holder.songArtist.setText(track.getArtist());
 

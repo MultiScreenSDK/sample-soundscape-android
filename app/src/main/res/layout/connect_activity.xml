@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_speaker"
+    android:clipToPadding="false"
+    android:clipChildren="false"
     android:orientation="vertical" >
 
     <RelativeLayout
@@ -66,4 +68,22 @@
         </com.andexert.library.RippleView>
     </RelativeLayout>
 
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="HELLO"-->
+        <!--android:elevation="20dp"-->
+        <!--android:background="@color/LightGrey"-->
+        <!--android:layout_centerInParent="true"/>-->
+    <!--<ImageView-->
+        <!--android:id="@+id/removeTrack"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="@color/LightGrey"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:clickable="true"-->
+        <!--android:scaleType="centerInside"-->
+        <!--android:src="@drawable/ic_delete_dark"-->
+        <!--android:stateListAnimator="@anim/button_elevation"/>-->
 </RelativeLayout>

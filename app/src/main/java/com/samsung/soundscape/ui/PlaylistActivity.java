@@ -451,26 +451,18 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
     private void animateLibrary(final View v) {
-        int animResource = R.anim.rotate_clockwise;
-        int drawResource = R.drawable.ic_action_cancel;
         int level = 5000;
         if (!clockwise) {
-            animResource = R.anim.rotate_counterclockwise;
-            drawResource = R.drawable.ic_add_white;
             level = 0;
         }
         final boolean show = clockwise;
         clockwise = !clockwise;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            applyAnimation(v, animResource);
-//            Drawable drawable = ((FloatingActionButton)v).getIcon();
-//            drawable.setState(new int[]{android.R.attr.state_enabled, android.R.attr.state_checked});
             ((FloatingActionButton) v).getIcon().setLevel(level);
         } else {
             // TODO: Figure out a workaround for the pre-Lollipop animation issue where
             // the final animation state is always reset, regardless of setting fillAfter.
-//            addButton.setIcon(getResources().getDrawable(drawResource), false);
             ((FloatingActionButton) v).getIcon().setLevel(level);
         }
         if (show) {
@@ -721,7 +713,7 @@ public class PlaylistActivity extends AppCompatActivity {
      * Remove the track from playlist and notify TV app and other clients.
      * @param track the track to be removed.
      */
-    private void removeTrack(Track track) {
+    public void removeTrack(Track track) {
         //remove it from playlist
         playlistAdapter.remove(track);
 
