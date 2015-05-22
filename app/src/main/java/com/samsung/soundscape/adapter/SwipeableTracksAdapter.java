@@ -2,6 +2,7 @@ package com.samsung.soundscape.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -127,7 +128,16 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
 
         String albumArtThumbnail = track.getAlbumArtThumbnail();
         if (albumArtThumbnail != null) {
-            Picasso.with(getContext()).load(albumArtThumbnail.replace(" ", "%20")).fit().into(holder.albumArt);
+            Uri uri = Uri.parse(albumArtThumbnail);
+
+            Uri.Builder builder = uri.buildUpon();
+            builder.scheme(uri.getScheme())
+                    .authority(uri.getAuthority())
+                    .path(uri.getPath())
+                    .query(uri.getQuery())
+                    .fragment(uri.getFragment());
+
+            Picasso.with(getContext()).load(builder.toString()).fit().into(holder.albumArt);
         }
 
         if (holder.userColor != null) {

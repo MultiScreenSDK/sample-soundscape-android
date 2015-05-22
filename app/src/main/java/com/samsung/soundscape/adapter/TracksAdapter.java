@@ -23,6 +23,7 @@
 package com.samsung.soundscape.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -109,7 +110,15 @@ public class TracksAdapter extends ArrayAdapter<Track> {
 
         String albumArtThumbnail = track.getAlbumArtThumbnail();
         if (albumArtThumbnail != null) {
-            Picasso.with(context).load(albumArtThumbnail.replace(" ", "%20")).fit().into(holder.albumArt);
+            Uri uri = Uri.parse(albumArtThumbnail);
+
+            Uri.Builder builder = uri.buildUpon();
+            builder.scheme(uri.getScheme())
+                    .authority(uri.getAuthority())
+                    .path(uri.getPath())
+                    .query(uri.getQuery())
+                    .fragment(uri.getFragment());
+            Picasso.with(context).load(builder.toString()).fit().into(holder.albumArt);
         }
 
         if (holder.userColor != null) {
