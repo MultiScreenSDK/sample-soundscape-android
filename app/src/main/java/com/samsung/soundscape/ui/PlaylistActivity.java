@@ -137,6 +137,8 @@ public class PlaylistActivity extends AppCompatActivity {
     //=========================Activity methods===================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(this.getClass().getName(), "onCreate");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
 
@@ -173,6 +175,12 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        Log.d(this.getClass().getName(), "onResume");
+        super.onResume();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
@@ -203,6 +211,11 @@ public class PlaylistActivity extends AppCompatActivity {
         super.onDestroy();
 
         Util.d("PlaylistActivity.onDestroy");
+
+        // Reset add button and close library in case it is open
+        clockwise = false;
+        animateLibrary(addButton);
+
         //Remove event monitor.
         EventBus.getDefault().unregister(this);
 
@@ -563,7 +576,6 @@ public class PlaylistActivity extends AppCompatActivity {
 
         // Create and show the dialog, only shows the connect to panel.
         DialogFragment newFragment = ServiceListFragment.newInstance(userColor);
-        newFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_NoTitleBar);
         newFragment.show(ft, "dialog");
     }
 

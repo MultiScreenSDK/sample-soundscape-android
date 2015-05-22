@@ -277,7 +277,6 @@ public class ConnectActivity extends AppCompatActivity {
         ft.addToBackStack(null);
 
         // Create and show the dialog, only shows the connect to panel.
-        dialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_NoTitleBar);
         dialog.show(ft, "dialog");
     }
 
@@ -304,8 +303,9 @@ public class ConnectActivity extends AppCompatActivity {
                 if (alertDialog != null && alertDialog.isShowing()) {
                     cancelToast();
                 }
-                alertDialog = new AlertDialog.Builder(ConnectActivity.this).create();
+                alertDialog = new AlertDialog.Builder(ConnectActivity.this, R.style.CustomTheme_Dialog).create();
                 alertDialog.setView(toastLayout);
+                alertDialog.setCanceledOnTouchOutside(false);
                 alertDialog.show();
             }
         });

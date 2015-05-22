@@ -16,7 +16,6 @@
         android:tag="Bottom3"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:clipToPadding="false"
         android:weightSum="10">
 
         <ImageView

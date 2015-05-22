@@ -31,6 +31,7 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -168,8 +169,15 @@ public class ServiceListFragment extends DialogFragment {
         builder.setView(view);
 
         // Allow dismiss by clicking outside the dialog
-        AlertDialog dialog = builder.show();
+        AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
+
+        // Set window size
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = getResources().getDimensionPixelSize(R.dimen.connect_width);
+        dialog.getWindow().setAttributes(lp);
 
         return dialog;
     }
