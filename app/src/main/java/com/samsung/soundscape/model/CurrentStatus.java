@@ -33,6 +33,7 @@ public class CurrentStatus extends Base {
     private String id;
     private float time;
     private String state;
+    private float volume;
 
     public CurrentStatus(String id, float time, String state) {
         this.id = id;
@@ -83,5 +84,13 @@ public class CurrentStatus extends Base {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public float getVolume() {
+        return volume;
+    }
+
+    public void setVolume(float volume) {
+        this.volume = volume;
     }
 }

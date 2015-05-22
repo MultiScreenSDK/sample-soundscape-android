@@ -34,6 +34,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -59,6 +60,7 @@ import com.samsung.soundscape.adapter.SwipeableTracksAdapter;
 import com.samsung.soundscape.adapter.TracksAdapter;
 import com.samsung.soundscape.events.AddTrackEvent;
 import com.samsung.soundscape.events.AppStateEvent;
+import com.samsung.soundscape.events.AssignColorEvent;
 import com.samsung.soundscape.events.ConnectionChangedEvent;
 import com.samsung.soundscape.events.TrackPlaybackEvent;
 import com.samsung.soundscape.events.TrackStatusEvent;
@@ -133,7 +135,6 @@ public class PlaylistActivity extends AppCompatActivity {
     private ImageView nextControl;
 
 
-
     //=========================Activity methods===================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,6 +148,9 @@ public class PlaylistActivity extends AppCompatActivity {
         //Load user colors resource.
         colors = getResources().getStringArray(R.array.UserColors);
 
+        //select user color.
+        selectColor(null);
+
         //Initialize library view
         initializeLibraryView();
 
@@ -159,8 +163,6 @@ public class PlaylistActivity extends AppCompatActivity {
         //Register to receive events.
         EventBus.getDefault().register(this);
 
-        //select user color.
-        selectColor();
 
         //Request multiscreen app state.
         ConnectivityManager.getInstance().requestAppState();
@@ -218,6 +220,22 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            Util.d("KEYCODE_VOLUME_DOWN is pressed.");
+            ConnectivityManager.getInstance().volDown();
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            Util.d("KEYCODE_VOLUME_UP is pressed.");
+            ConnectivityManager.getInstance().volUp();
+            return true;
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
+
+
     //=====================Events received from ConnectivityManager============================
 
     // This method will be called when a MessageEvent is posted
@@ -233,8 +251,10 @@ public class PlaylistActivity extends AppCompatActivity {
                 //Reset the flag when it is connected;
                 isSwitchingService = false;
 
-                //Happens when switch service.
-                selectColor();
+                //Request multiscreen app state.
+                ConnectivityManager.getInstance().requestAppState();
+
+                //Update UI such as user color.
                 updateUI();
             }
         } else {
@@ -290,6 +310,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
     /**
      * Triggered when track status is update.
+     *
      * @param event
      */
     public void onEvent(TrackStatusEvent event) {
@@ -305,6 +326,15 @@ public class PlaylistActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Triggered when user color is assigned.
+     *
+     * @param event
+     */
+    public void onEvent(AssignColorEvent event) {
+        selectColor(event.color);
+        updateUI();
+    }
 
     //====================private methods============================
 
@@ -325,7 +355,13 @@ public class PlaylistActivity extends AppCompatActivity {
                 //Give a unique id for the song to be added.
                 track.setId(UUID.randomUUID().toString());
 
+                //Add track to the playlist.
+                addTrack(track);
+
+                //Broadcast the addtrach event.
                 ConnectivityManager.getInstance().addTrack(track);
+
+                //Show track is added message.
                 showAddTrackToastMessage();
             }
         });
@@ -399,7 +435,7 @@ public class PlaylistActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 //Try to download the content again if something wrong before.
-                if (libraryAdapter.getCount()==0) {
+                if (libraryAdapter.getCount() == 0) {
                     //Load library in background.
                     RunUtil.runInBackground(loadLibrary);
                 }
@@ -482,15 +518,16 @@ public class PlaylistActivity extends AppCompatActivity {
 
     /**
      * Add track into playlist and update UI.
+     *
      * @param track
      */
     private void addTrack(Track track) {
         playlistAdapter.add(track);
-        playlistAdapter.notifyDataSetChanged();
     }
 
     /**
      * Whether or not it is playing track.
+     *
      * @return true playing tracking otherwise paused.
      */
     private boolean isPlaying() {
@@ -500,6 +537,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
     /**
      * Update the play/pause button
+     *
      * @param statePlaying
      */
     private void setPlayState(boolean statePlaying) {
@@ -643,7 +681,8 @@ public class PlaylistActivity extends AppCompatActivity {
 
     /**
      * Update the playback view according to track id and time.
-     * @param id the track id which is currently playing.
+     *
+     * @param id   the track id which is currently playing.
      * @param time the playback position. You may update the progress bar according to this value.
      */
     private void updatePlaybackView(String id, float time) {
@@ -670,6 +709,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
     /**
      * Find the track by id in the playlist.
+     *
      * @param id the track id.
      * @return the track.
      */
@@ -718,6 +758,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
     /**
      * Remove the track from playlist and notify TV app and other clients.
+     *
      * @param track the track to be removed.
      */
     public void removeTrack(Track track) {
@@ -729,23 +770,14 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
     /**
-     * Select user color. If there is only one color, use the first color in the color list.
+     * Select user color.
      */
-    private void selectColor() {
-        int index = 0;
+    private void selectColor(String newColor) {
+        String color = newColor;
 
-        //The host and user are two clients.
-        if (ConnectivityManager.getInstance().getClientCount() > 2) {
-            index = (int) (colors.length * Math.random());
-
-            //Run again it is the first color. It should already be taken by other users.
-            if (index == 0) {
-                index = (int) (colors.length * Math.random());
-            }
+        if (color == null) {
+            color = colors[0];
         }
-
-        //Get user color randomly.
-        String color = colors[index];
 
         //parse color string to color value.
         userColor = Color.parseColor(color);

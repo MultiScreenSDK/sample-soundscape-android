@@ -28,6 +28,7 @@ package com.samsung.soundscape.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
@@ -36,6 +37,7 @@ import com.samsung.soundscape.App;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Util {
@@ -135,5 +137,14 @@ public class Util {
         }
 
         return name;
+    }
+
+    public static Uri getUriFromUrl(String thisUrl) throws MalformedURLException {
+        URL url = new URL(thisUrl);
+        Uri.Builder builder =  new Uri.Builder()
+                .scheme(url.getProtocol())
+                .authority(url.getAuthority())
+                .appendPath(url.getPath());
+        return builder.build();
     }
 }

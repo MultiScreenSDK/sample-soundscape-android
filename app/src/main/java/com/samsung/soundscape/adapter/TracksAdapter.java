@@ -33,7 +33,10 @@ import android.widget.TextView;
 
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.model.Track;
+import com.samsung.soundscape.util.Util;
 import com.squareup.picasso.Picasso;
+
+import java.net.MalformedURLException;
 
 public class TracksAdapter extends ArrayAdapter<Track> {
 
@@ -87,6 +90,7 @@ public class TracksAdapter extends ArrayAdapter<Track> {
         return position;
     }
 
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
@@ -109,16 +113,16 @@ public class TracksAdapter extends ArrayAdapter<Track> {
         holder.songArtist.setText(track.getArtist());
 
         String albumArtThumbnail = track.getAlbumArtThumbnail();
-        if (albumArtThumbnail != null) {
-            Uri uri = Uri.parse(albumArtThumbnail);
+        Uri uri = null;
+        try {
+            uri = Util.getUriFromUrl(albumArtThumbnail);
+        } catch (MalformedURLException e) {
+            Util.e("Could not convert album thumbnail url into correcnt format.");
+        }
 
-            Uri.Builder builder = uri.buildUpon();
-            builder.scheme(uri.getScheme())
-                    .authority(uri.getAuthority())
-                    .path(uri.getPath())
-                    .query(uri.getQuery())
-                    .fragment(uri.getFragment());
-            Picasso.with(context).load(builder.toString()).fit().into(holder.albumArt);
+        if (uri != null) {
+            Picasso.with(context).load(uri.toString()).fit().
+                    error(R.drawable.album_placeholder).into(holder.albumArt);
         }
 
         if (holder.userColor != null) {

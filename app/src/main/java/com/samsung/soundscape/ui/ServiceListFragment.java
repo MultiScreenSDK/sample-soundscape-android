@@ -110,6 +110,8 @@ public class ServiceListFragment extends DialogFragment {
             TextView connectedToText = (TextView)view.findViewById(R.id.connectedToText);
             ImageView connectedToIcon = (ImageView)view.findViewById(R.id.connectedToIcon);
 
+            LinearLayout switchToLayout = (LinearLayout)view.findViewById(R.id.switchToLayout);
+
             if (ConnectivityManager.getInstance().isTVConnected()) {
 
                 //Display connected device and disconnect button.
@@ -151,6 +153,8 @@ public class ServiceListFragment extends DialogFragment {
                         getActivity().finish();
                     }
                 });
+
+                switchToLayout.setVisibility(ConnectivityManager.getInstance().getServiceAdapter().getCount()==0?View.GONE:View.VISIBLE);
             } else {
 
                 //Hide connected device and disconnect button.

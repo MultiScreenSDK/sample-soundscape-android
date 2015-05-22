@@ -44,6 +44,7 @@ import com.samsung.soundscape.R;
 import com.samsung.soundscape.adapter.ServiceAdapter;
 import com.samsung.soundscape.events.AddTrackEvent;
 import com.samsung.soundscape.events.AppStateEvent;
+import com.samsung.soundscape.events.AssignColorEvent;
 import com.samsung.soundscape.events.ConnectionChangedEvent;
 import com.samsung.soundscape.events.ServiceChangedEvent;
 import com.samsung.soundscape.events.TrackPlaybackEvent;
@@ -83,6 +84,9 @@ public class ConnectivityManager {
     public static final String EVENT_PLAY = "play";
     public static final String EVENT_PAUSE = "pause";
     public static final String EVENT_NEXT = "next";
+    public static final String EVENT_ASSIGN_COLOR = "assignColor";
+    public static final String EVENT_VOL_DOWN = "volDown";
+    public static final String EVENT_VOL_UP = "volUp";
 
     /**
      * An singleton instance of this class
@@ -513,6 +517,7 @@ public class ConnectivityManager {
         mMultiscreenApp.addOnMessageListener(EVENT_ADD_TRACK, onAddTrackListener);
         mMultiscreenApp.addOnMessageListener(EVENT_TRACK_START, onTrackStartListener);
         mMultiscreenApp.addOnMessageListener(EVENT_TRACK_END, onTrackEndListener);
+        mMultiscreenApp.addOnMessageListener(EVENT_ASSIGN_COLOR, onAssignColorListener);
 
         //Connect and launch the TV application.
         mMultiscreenApp.connect(new Result<Client>() {
@@ -611,11 +616,12 @@ public class ConnectivityManager {
     public void addTrack(Track track) {
         try {
             JSONObject obj = new JSONObject(track.toJsonString());
-            sendToTV(EVENT_ADD_TRACK, obj, Message.TARGET_ALL);
+            sendToTV(EVENT_ADD_TRACK, obj, Message.TARGET_BROADCAST);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
 
     /**
      * Broadcast the remove track event.
@@ -644,6 +650,21 @@ public class ConnectivityManager {
      */
     public void next() {
         sendToTV(EVENT_NEXT, null, Message.TARGET_BROADCAST);
+    }
+
+    /**
+     * Increase VOL.
+     */
+    public void volUp() {
+        sendToTV(EVENT_VOL_UP, null, Message.TARGET_BROADCAST);
+    }
+
+
+    /**
+     * Decrease VOL
+     */
+    public void volDown() {
+        sendToTV(EVENT_VOL_DOWN, null, Message.TARGET_BROADCAST);
     }
 
     /**
@@ -725,6 +746,21 @@ public class ConnectivityManager {
             }
         }
     };
+
+    /**
+     * Receive the add track event.
+     */
+    private Channel.OnMessageListener onAssignColorListener = new Channel.OnMessageListener() {
+        @Override
+        public void onMessage(Message message) {
+            Util.d("onAssignColorListener: " + message.toString());
+
+            if (message != null && message.getData() != null) {
+                EventBus.getDefault().post(new AssignColorEvent(message.getData().toString()));
+            }
+        }
+    };
+
 
     /**
      * Sent the data to TV.
