@@ -232,6 +232,9 @@ public class PlaylistActivity extends AppCompatActivity {
                 selectColor();
                 updateUI();
             }
+        } else {
+            //Error happens, go back to connect screen.
+            finish();
         }
     }
 
@@ -724,9 +727,6 @@ public class PlaylistActivity extends AppCompatActivity {
     private void removeTrack(Track track) {
         //remove it from playlist
         playlistAdapter.remove(track);
-
-        //update UI.
-        playlistAdapter.notifyDataSetChanged();
 
         //Tell other clients and TV app to remove it as well.
         ConnectivityManager.getInstance().removeTrack(track.getId());
