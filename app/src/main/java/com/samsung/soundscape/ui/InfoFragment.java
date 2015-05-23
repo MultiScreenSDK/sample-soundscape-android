@@ -9,8 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebView;
+import android.widget.Button;
 
 import com.samsung.soundscape.R;
+import com.samsung.soundscape.util.ConnectivityManager;
 import com.samsung.soundscape.util.Util;
 
 import java.io.IOException;
@@ -43,6 +45,17 @@ public class InfoFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.information, null);
+
+        Button retry = (Button)view.findViewById(R.id.retry_button);
+        retry.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                ConnectivityManager.getInstance().restartDiscovery();
+                getDialog().dismiss();
+            }
+        });
+
 
         WebView wv = (WebView) view.findViewById(R.id.infoText);
         String data = "";
