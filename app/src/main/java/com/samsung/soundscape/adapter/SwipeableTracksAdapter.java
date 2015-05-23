@@ -2,7 +2,6 @@ package com.samsung.soundscape.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +17,7 @@ import com.samsung.soundscape.R;
 import com.samsung.soundscape.model.Track;
 import com.samsung.soundscape.ui.PlaylistActivity;
 import com.samsung.soundscape.util.ConnectivityManager;
+import com.samsung.soundscape.util.Util;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -131,16 +131,8 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
 
         String albumArtThumbnail = track.getAlbumArtThumbnail();
         if (albumArtThumbnail != null) {
-            Uri uri = Uri.parse(albumArtThumbnail);
-
-            Uri.Builder builder = uri.buildUpon();
-            builder.scheme(uri.getScheme())
-                    .authority(uri.getAuthority())
-                    .path(uri.getPath())
-                    .query(uri.getQuery())
-                    .fragment(uri.getFragment());
-
-            Picasso.with(getContext()).load(builder.toString()).fit().into(holder.albumArt);
+            Picasso.with(getContext()).load(Util.getUriFromUrl(albumArtThumbnail)).fit().
+                    error(R.drawable.album_placeholder).into(holder.albumArt);
         }
 
         if (holder.userColor != null) {

@@ -5,7 +5,7 @@
     android:id="@+id/swipe"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    swipe:clickToClose="false"
+    swipe:clickToClose="true"
     swipe:show_mode="lay_down" >
 
     <LinearLayout

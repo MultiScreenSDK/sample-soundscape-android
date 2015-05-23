@@ -26,12 +26,15 @@
 package com.samsung.soundscape.util;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 import com.samsung.soundscape.App;
 
@@ -139,12 +142,52 @@ public class Util {
         return name;
     }
 
-    public static Uri getUriFromUrl(String thisUrl) throws MalformedURLException {
-        URL url = new URL(thisUrl);
-        Uri.Builder builder =  new Uri.Builder()
-                .scheme(url.getProtocol())
-                .authority(url.getAuthority())
-                .appendPath(url.getPath());
+    public static Uri getUriFromUrl(String thisUrl) {
+        Uri uri = Uri.parse(thisUrl);
+        Uri.Builder builder = uri.buildUpon();
+        builder.scheme(uri.getScheme())
+                .authority(uri.getAuthority())
+                .path(uri.getPath())
+                .query(uri.getQuery())
+                .fragment(uri.getFragment());
+
         return builder.build();
+    }
+
+    /**
+     * Get the dimensions of the display.
+     *
+     * @param context   the context
+     * @return  the point holding the display dimensions
+     */
+    public static Point getDisplayDimensions(Context context) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+
+        return point;
+    }
+
+    /**
+     * Get the width of the display.
+     *
+     * @param context   the context
+     * @return  the width of the display
+     */
+    public static int getDisplayWidth(Context context) {
+        Point point = getDisplayDimensions(context);
+        return point.x;
+    }
+
+    /**
+     * Get the height of the display.
+     *
+     * @param context   the context
+     * @return  the height of the display
+     */
+    public static int getDisplayHeight(Context context) {
+        Point point = getDisplayDimensions(context);
+        return point.y;
     }
 }
