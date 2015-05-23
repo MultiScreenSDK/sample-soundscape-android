@@ -46,6 +46,7 @@ import com.samsung.soundscape.events.AddTrackEvent;
 import com.samsung.soundscape.events.AppStateEvent;
 import com.samsung.soundscape.events.AssignColorEvent;
 import com.samsung.soundscape.events.ConnectionChangedEvent;
+import com.samsung.soundscape.events.RemoveTrackEvent;
 import com.samsung.soundscape.events.ServiceChangedEvent;
 import com.samsung.soundscape.events.TrackPlaybackEvent;
 import com.samsung.soundscape.events.TrackStatusEvent;
@@ -518,6 +519,7 @@ public class ConnectivityManager {
         mMultiscreenApp.addOnMessageListener(EVENT_TRACK_START, onTrackStartListener);
         mMultiscreenApp.addOnMessageListener(EVENT_TRACK_END, onTrackEndListener);
         mMultiscreenApp.addOnMessageListener(EVENT_ASSIGN_COLOR, onAssignColorListener);
+        mMultiscreenApp.addOnMessageListener(EVENT_REMOVE_TRACK, onRemoveTrackColorListener);
 
         //Connect and launch the TV application.
         mMultiscreenApp.connect(new Result<Client>() {
@@ -757,6 +759,20 @@ public class ConnectivityManager {
 
             if (message != null && message.getData() != null) {
                 EventBus.getDefault().post(new AssignColorEvent(message.getData().toString()));
+            }
+        }
+    };
+
+    /**
+     * Receive the add track event.
+     */
+    private Channel.OnMessageListener onRemoveTrackColorListener = new Channel.OnMessageListener() {
+        @Override
+        public void onMessage(Message message) {
+            Util.d("onRemoveTrackColorListener: " + message.toString());
+
+            if (message != null && message.getData() != null) {
+                EventBus.getDefault().post(new RemoveTrackEvent(message.getData().toString()));
             }
         }
     };

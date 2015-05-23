@@ -62,6 +62,7 @@ import com.samsung.soundscape.events.AddTrackEvent;
 import com.samsung.soundscape.events.AppStateEvent;
 import com.samsung.soundscape.events.AssignColorEvent;
 import com.samsung.soundscape.events.ConnectionChangedEvent;
+import com.samsung.soundscape.events.RemoveTrackEvent;
 import com.samsung.soundscape.events.TrackPlaybackEvent;
 import com.samsung.soundscape.events.TrackStatusEvent;
 import com.samsung.soundscape.model.CurrentStatus;
@@ -133,6 +134,9 @@ public class PlaylistActivity extends AppCompatActivity {
 
     //The next button in the playback view.
     private ImageView nextControl;
+
+    private Toast toastShowAddTrack;
+    private  View toastLayout;
 
 
     //=========================Activity methods===================================
@@ -290,6 +294,16 @@ public class PlaylistActivity extends AppCompatActivity {
      */
     public void onEvent(AddTrackEvent event) {
         addTrack(event.track);
+    }
+
+    /**
+     * Triggered when a track is removed.
+     *
+     * @param event
+     */
+    public void onEvent(RemoveTrackEvent event) {
+        Track track = getTrackById(event.id);
+        removeTrack(track);
     }
 
     /**
@@ -486,12 +500,19 @@ public class PlaylistActivity extends AppCompatActivity {
     private void showAddTrackToastMessage() {
 
         //Load customized layout.
-        View toastLayout = getLayoutInflater().inflate(R.layout.add_track, (ViewGroup) findViewById(R.id.toastLayout));
+        if (toastLayout == null) {
+            toastLayout = getLayoutInflater().inflate(R.layout.add_track, (ViewGroup) findViewById(R.id.toastLayout));
+        }
 
-        Toast toast = new Toast(getApplicationContext());
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(toastLayout);
-        toast.show();
+        if (toastShowAddTrack != null) {
+            toastShowAddTrack.cancel();
+        }
+        toastShowAddTrack = null;
+
+        toastShowAddTrack = new Toast(getApplicationContext());
+        toastShowAddTrack.setDuration(Toast.LENGTH_SHORT);
+        toastShowAddTrack.setView(toastLayout);
+        toastShowAddTrack.show();
     }
 
     private void animateLibrary(final View v) {
@@ -764,9 +785,6 @@ public class PlaylistActivity extends AppCompatActivity {
     public void removeTrack(Track track) {
         //remove it from playlist
         playlistAdapter.remove(track);
-
-        //Tell other clients and TV app to remove it as well.
-        ConnectivityManager.getInstance().removeTrack(track.getId());
     }
 
     /**
