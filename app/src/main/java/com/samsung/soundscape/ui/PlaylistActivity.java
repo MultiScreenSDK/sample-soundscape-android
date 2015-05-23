@@ -72,7 +72,6 @@ import com.samsung.soundscape.util.ConnectivityManager;
 import com.samsung.soundscape.util.Util;
 
 import java.util.Arrays;
-import java.util.UUID;
 
 import de.greenrobot.event.EventBus;
 
@@ -303,7 +302,9 @@ public class PlaylistActivity extends AppCompatActivity {
      */
     public void onEvent(RemoveTrackEvent event) {
         Track track = getTrackById(event.id);
-        removeTrack(track);
+
+        //remove it from playlist
+        playlistAdapter.remove(track);
     }
 
     /**
@@ -367,7 +368,8 @@ public class PlaylistActivity extends AppCompatActivity {
                 //format to string #AARRGGBB
                 track.setColor(String.format("#%08X", (0xFFFFFFFF & userColor)));
                 //Give a unique id for the song to be added.
-                track.setId(UUID.randomUUID().toString());
+                //track.setId(UUID.randomUUID().toString());
+                track.setId(Util.getRandomId());
 
                 //Add track to the playlist.
                 addTrack(track);
@@ -777,15 +779,6 @@ public class PlaylistActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Remove the track from playlist and notify TV app and other clients.
-     *
-     * @param track the track to be removed.
-     */
-    public void removeTrack(Track track) {
-        //remove it from playlist
-        playlistAdapter.remove(track);
-    }
 
     /**
      * Select user color.

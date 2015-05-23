@@ -114,7 +114,7 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
                         if (position == 0) {
                             ConnectivityManager.getInstance().next();
                         } else {
-                            ((PlaylistActivity)activity).removeTrack(track);
+                            remove(track);
 
                             //Tell other clients and TV app to remove it as well.
                             ConnectivityManager.getInstance().removeTrack(track.getId());

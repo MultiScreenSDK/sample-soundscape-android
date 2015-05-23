@@ -140,9 +140,40 @@ public class Track extends Base {
 
         try {
             result = gson.fromJson(data, Track.class);
-        }catch (Exception e) {
+        } catch (Exception e) {
             Util.e("Error parsing string to class: " + e.toString());
         }
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // Return true if the objects are identical.
+        if (this == object) {
+            return true;
+        }
+
+        if (object == null || !(object instanceof Track)) {
+            return false;
+        }
+
+        Track track = (Track) object;
+
+        if (this.id.equals(track.getId()) && this.title.equals(track.getTitle()) &&
+                this.artist.equals(track.getArtist())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        // Start with a non-zero constant.
+        int result = 17;
+
+        final int PRIME = 31;
+        result = PRIME * result + id.hashCode();
         return result;
     }
 }

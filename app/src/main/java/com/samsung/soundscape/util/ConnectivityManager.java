@@ -187,6 +187,9 @@ public class ConnectivityManager {
                 //Clear the TV list.
                 if (adapter != null) {
                     adapter.clear();
+
+                    //Notify UI to update cast icon.
+                    EventBus.getDefault().post(new ServiceChangedEvent());
                 }
 
                 //Start discovery.

@@ -40,8 +40,8 @@ import com.samsung.soundscape.App;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 
 public class Util {
     //The debug tag.
@@ -189,5 +189,12 @@ public class Util {
     public static int getDisplayHeight(Context context) {
         Point point = getDisplayDimensions(context);
         return point.y;
+    }
+
+    public static String getRandomId() {
+        long timestamp = new Date().getTime();
+        timestamp += (int)(Integer.MAX_VALUE * Math.random());
+
+        return String.valueOf(timestamp);
     }
 }
