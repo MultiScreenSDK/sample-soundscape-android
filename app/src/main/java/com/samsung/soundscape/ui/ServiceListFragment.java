@@ -29,6 +29,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -177,12 +178,19 @@ public class ServiceListFragment extends DialogFragment {
         dialog.setCanceledOnTouchOutside(true);
         dialog.show();
 
-        // Set window size
+        // Set window width
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.gravity = Gravity.TOP;
         lp.width = getResources().getDimensionPixelSize(R.dimen.connect_width);
-        dialog.getWindow().setAttributes(lp);
 
+        // Set window height
+        int displayHeight = Util.getDisplayHeight(getActivity());
+        int maxHeight = Math.round((float)displayHeight * 75 / 100);
+        lp.y = Math.round((float)(displayHeight - maxHeight) / 2);
+        lp.height = maxHeight;
+
+        dialog.getWindow().setAttributes(lp);
         return dialog;
     }
 }
