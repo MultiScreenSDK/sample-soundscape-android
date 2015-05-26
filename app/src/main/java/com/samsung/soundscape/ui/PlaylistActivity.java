@@ -34,7 +34,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -186,8 +185,12 @@ public class PlaylistActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (!clockwise) {
+
+            //If library list is shown, close the dialog instead of exit activity.
             animateLibrary(addButton);
         } else {
+
+            //Exit activity.
             super.onBackPressed();
         }
     }
@@ -221,23 +224,6 @@ public class PlaylistActivity extends AppCompatActivity {
         //Disconnect from multiscreen app.
         ConnectivityManager.getInstance().disconnect();
     }
-
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            Util.d("KEYCODE_VOLUME_DOWN is pressed.");
-            ConnectivityManager.getInstance().volDown();
-            return true;
-        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            Util.d("KEYCODE_VOLUME_UP is pressed.");
-            ConnectivityManager.getInstance().volUp();
-            return true;
-        } else {
-            return super.onKeyDown(keyCode, event);
-        }
-    }
-
 
     //=====================Events received from ConnectivityManager============================
 

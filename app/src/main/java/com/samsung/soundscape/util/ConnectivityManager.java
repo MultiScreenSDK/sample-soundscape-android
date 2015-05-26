@@ -658,21 +658,6 @@ public class ConnectivityManager {
     }
 
     /**
-     * Increase VOL.
-     */
-    public void volUp() {
-        sendToTV(EVENT_VOL_UP, null, Message.TARGET_BROADCAST);
-    }
-
-
-    /**
-     * Decrease VOL
-     */
-    public void volDown() {
-        sendToTV(EVENT_VOL_DOWN, null, Message.TARGET_BROADCAST);
-    }
-
-    /**
      * Receive the response data of app state request.
      */
     private Channel.OnMessageListener onAppStateListener = new Channel.OnMessageListener() {
