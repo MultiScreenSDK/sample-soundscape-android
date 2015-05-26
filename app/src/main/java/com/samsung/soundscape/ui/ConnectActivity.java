@@ -206,8 +206,27 @@ public class ConnectActivity extends AppCompatActivity {
         String discoveryStatus = null;
         String networkInfo = null;
 
+        //Do nothing if connectivity manager is null.
+        if (mConnectivityManager == null) {
+            return;
+        }
+
+        //Check if the WIFI is connected.
         if (Util.isWiFiConnected()) {
-            int count = mConnectivityManager.getServiceAdapter().getCount();
+
+            //Get the service adapter.
+            ServiceAdapter serviceAdapter = mConnectivityManager.getServiceAdapter();
+
+            //Make sure service adapter is not null.
+            if (serviceAdapter == null) {
+                return;
+            }
+
+
+            //Get the stored service.
+            int count = serviceAdapter.getCount();
+
+            //GEt the Wifi network name.
             String wifiName = Util.getWifiName();
 
             //When we can get the WiFi network name, we will show the WiFi name.
@@ -215,10 +234,10 @@ public class ConnectActivity extends AppCompatActivity {
                 networkInfo = String.format(getString(R.string.connect_status_on), wifiName);
             }
 
-            if (count == 0) {
+            if (count == 0) {//When there is no device found.
                 buttonTitle = getString(R.string.connect_status_information);
                 discoveryStatus = getString(R.string.connect_status_nodevice);
-            } else if (count == 1) {
+            } else if (count == 1) {//When there is only one device.
 
                 //Get the device name.
                 Service service = mConnectivityManager.getServiceAdapter().getItem(0);
