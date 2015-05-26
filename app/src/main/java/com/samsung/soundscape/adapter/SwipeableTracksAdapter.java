@@ -2,6 +2,7 @@ package com.samsung.soundscape.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -131,19 +132,37 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
 
         final ViewHolder holder = (ViewHolder) row.getTag();
 
+        //Set the track title.
         holder.songTitle.setText(track.getTitle());
+
+        //Get black color
+        int colorBlack = getContext().getResources().getColor(R.color.black);
+
+        //Get normal item color
+        int colorItem = getContext().getResources().getColor(R.color.playlist_list_item);
+
+        //Set the first item to black.
+        holder.songTitle.setTextColor(position==0?colorBlack:colorItem);
+
+        //Set the first track bold.
+        holder.songTitle.setTypeface(null, position==0?Typeface.BOLD:Typeface.NORMAL);
+
+        //Update the artist.
         holder.songArtist.setText(track.getArtist());
 
+        //Load the thumbnail.
         String albumArtThumbnail = track.getAlbumArtThumbnail();
         if (albumArtThumbnail != null) {
             Picasso.with(getContext()).load(Util.getUriFromUrl(albumArtThumbnail)).fit().
                     error(R.drawable.album_placeholder).into(holder.albumArt);
         }
 
+        //Update user color
         if (holder.userColor != null) {
             holder.userColor.setBackgroundColor(track.getColorInt());
         }
 
+        //Show now playing icon on top of thumbnail for the first song.
         if (holder.nowPlayingIcon != null) {
             holder.nowPlayingIcon.setVisibility(position == 0 ? View.VISIBLE : View.INVISIBLE);
         }

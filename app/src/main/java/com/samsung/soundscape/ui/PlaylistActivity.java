@@ -136,6 +136,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
     private Toast toastShowAddTrack;
     private  View toastLayout;
+    private TextView addTrackText;
 
 
     //=========================Activity methods===================================
@@ -291,7 +292,7 @@ public class PlaylistActivity extends AppCompatActivity {
         Track track = getTrackById(event.id);
 
         //remove it from playlist
-        playlistAdapter.remove(track);
+        removeTrack(track);
     }
 
     /**
@@ -306,7 +307,7 @@ public class PlaylistActivity extends AppCompatActivity {
             updatePlaybackView(event.id, 0);
         } else {
             //Track is end. Remove the track from playlist.
-            removeTrackById(event.id);
+           removeTrack(event.id);
         }
     }
 
@@ -365,7 +366,7 @@ public class PlaylistActivity extends AppCompatActivity {
                 ConnectivityManager.getInstance().addTrack(copyTrack);
 
                 //Show track is added message.
-                showAddTrackToastMessage();
+                showAddTrackToastMessage(copyTrack.getTitle());
             }
         });
 
@@ -478,7 +479,10 @@ public class PlaylistActivity extends AppCompatActivity {
         nextControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ConnectivityManager.getInstance().next();
+                if (playlistAdapter.getCount()>0) {
+                    removeTrack((Track)playlistAdapter.getItem(0));
+                    ConnectivityManager.getInstance().next();
+                }
             }
         });
     }
@@ -486,11 +490,12 @@ public class PlaylistActivity extends AppCompatActivity {
     /**
      * Show the track is added toast message.
      */
-    private void showAddTrackToastMessage() {
+    private void showAddTrackToastMessage(String title) {
 
         //Load customized layout.
-        if (toastLayout == null) {
+        if (toastLayout == null || addTrackText==null) {
             toastLayout = getLayoutInflater().inflate(R.layout.add_track, (ViewGroup) findViewById(R.id.toastLayout));
+            addTrackText = (TextView)toastLayout.findViewById(R.id.addTrackText);
         }
 
         if (toastShowAddTrack != null) {
@@ -498,6 +503,7 @@ public class PlaylistActivity extends AppCompatActivity {
         }
         toastShowAddTrack = null;
 
+        addTrackText.setText("\"" + title + "\" added");
         toastShowAddTrack = new Toast(getApplicationContext());
         toastShowAddTrack.setDuration(Toast.LENGTH_SHORT);
         toastShowAddTrack.setView(toastLayout);
@@ -749,27 +755,22 @@ public class PlaylistActivity extends AppCompatActivity {
      *
      * @param id the track id to be removed.
      */
-    private void removeTrackById(String id) {
+    private void removeTrack(String id) {
         if (id != null && playlistAdapter != null) {
+            removeTrack(getTrackById(id));
+        }
+    }
 
-            //Remove all the tracks above the given track id.
-            for (int i = 0; i < playlistAdapter.getCount(); i++) {
-                Track track = (Track) playlistAdapter.getItem(i);
-                if (track.getId().equals(id)) {
+    private void removeTrack(Track track) {
+        if (track == null || playlistAdapter == null) {
+            return;
+        }
 
-                    //Find the track, remove it and exit.
-                    playlistAdapter.remove(track);
-                    break;
-                } else {
-                    //Remove the tracks before the song with given id.
-                    playlistAdapter.remove(track);
-                }
-            }
+        playlistAdapter.remove(track);
 
-            //If there is no track in the playlist, hide the play control panel.
-            if (playlistAdapter.getCount() == 0) {
-                updatePlaybackView(null, 0);
-            }
+        //If there is no track in the playlist, hide the play control panel.
+        if (playlistAdapter.getCount() == 0) {
+            updatePlaybackView(null, 0);
         }
     }
 
