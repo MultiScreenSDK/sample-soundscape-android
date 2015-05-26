@@ -93,9 +93,14 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
         } else {
             this.mItemManger.updateConvertView(row, position);
         }
+        SwipeLayout sl = (SwipeLayout)row;
+        sl.setLeftSwipeEnabled(false);
+        sl.setTopSwipeEnabled(false);
+        sl.setBottomSwipeEnabled(false);
 
         trash = (ImageView) row.findViewById(R.id.trash);
         trash.setTag(track);
+        Log.v(this.getClass().getName(), "position: " + position + ", track: " + track.toJsonString());
 
         if (convertViewIsNull) {
             trash.setOnClickListener(new View.OnClickListener() {

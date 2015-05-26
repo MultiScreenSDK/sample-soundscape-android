@@ -30,7 +30,7 @@ import android.graphics.Color;
 import com.google.gson.Gson;
 import com.samsung.soundscape.util.Util;
 
-public class Track extends Base {
+public class Track extends Base implements Cloneable {
     private String id;
     private String artist;
     private String album;
@@ -147,24 +147,31 @@ public class Track extends Base {
     }
 
     @Override
-    public boolean equals(Object object) {
-        // Return true if the objects are identical.
-        if (this == object) {
-            return true;
+    public Object clone() {
+        Object o = null;
+        try {
+            o = super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
         }
 
-        if (object == null || !(object instanceof Track)) {
-            return false;
-        }
+        return o;
+    }
 
-        Track track = (Track) object;
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (!(o instanceof Track)) return false;
+        final Track other = (Track)o;
+        if (!other.canEqual((java.lang.Object)this)) return false;
+        final java.lang.Object this$id = this.getId();
+        final java.lang.Object other$id = other.getId();
+        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
+        return true;
+    }
 
-        if (this.id.equals(track.getId()) && this.title.equals(track.getTitle()) &&
-                this.artist.equals(track.getArtist())) {
-            return true;
-        }
-
-        return false;
+    protected boolean canEqual(final java.lang.Object other) {
+        return other instanceof Track;
     }
 
     @Override

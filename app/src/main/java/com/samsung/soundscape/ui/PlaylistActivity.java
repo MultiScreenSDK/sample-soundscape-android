@@ -71,6 +71,7 @@ import com.samsung.soundscape.util.ConnectivityManager;
 import com.samsung.soundscape.util.Util;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 import de.greenrobot.event.EventBus;
 
@@ -351,16 +352,16 @@ public class PlaylistActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Track track = libraryAdapter.getItem(position);
-                //format to string #AARRGGBB
-                track.setColor(String.format("#%08X", (0xFFFFFFFF & userColor)));
-                //Give a unique id for the song to be added.
-                //track.setId(UUID.randomUUID().toString());
-                track.setId(Util.getRandomId());
+                Log.d(this.getClass().getName(), "addTrack: " + track.toJsonString());
+
+                Track copyTrack = (Track)libraryAdapter.getItem(position).clone();
+                copyTrack.setColor(String.format("#%08X", (0xFFFFFFFF & userColor)));
+                copyTrack.setId(UUID.randomUUID().toString());
 
                 //Add track to the playlist.
-                addTrack(track);
+                addTrack(copyTrack);
 
-                //Broadcast the addtrach event.
+                //Broadcast the addtrack event.
                 ConnectivityManager.getInstance().addTrack(track);
 
                 //Show track is added message.
@@ -577,7 +578,14 @@ public class PlaylistActivity extends AppCompatActivity {
             if (data != null) {
                 Gson gson = new Gson();
                 //Parse string to track array, then add into library list.
-                addTracksIntoLibrary(gson.fromJson(data, Track[].class));
+                Track[] tracks = gson.fromJson(data, Track[].class);
+                if (tracks != null) {
+                    int len = tracks.length;
+                    for (int i = 0; i < len; i++) {
+                        tracks[i].setId(UUID.randomUUID().toString());
+                    }
+                    addTracksIntoLibrary(gson.fromJson(data, Track[].class));
+                }
             }
         }
     };
