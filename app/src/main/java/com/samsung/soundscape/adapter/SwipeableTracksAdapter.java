@@ -2,7 +2,6 @@ package com.samsung.soundscape.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +27,16 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
     private int layoutResourceId;
     private LayoutInflater inflater;
 
+    private static int colorBlack;
+    private static int colorItem;
+
     public SwipeableTracksAdapter(Context context, int resource) {
         super(context, resource);
         this.layoutResourceId = resource;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        colorBlack = getContext().getResources().getColor(R.color.black);
+        colorItem = getContext().getResources().getColor(R.color.playlist_list_item);
     }
 
     public boolean contains(Track track) {
@@ -135,17 +140,8 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
         //Set the track title.
         holder.songTitle.setText(track.getTitle());
 
-        //Get black color
-        int colorBlack = getContext().getResources().getColor(R.color.black);
-
-        //Get normal item color
-        int colorItem = getContext().getResources().getColor(R.color.playlist_list_item);
-
         //Set the first item to black.
-        holder.songTitle.setTextColor(position==0?colorBlack:colorItem);
-
-        //Set the first track bold.
-        holder.songTitle.setTypeface(null, position==0?Typeface.BOLD:Typeface.NORMAL);
+        holder.songTitle.setTextColor((position == 0)?colorBlack:colorItem);
 
         //Update the artist.
         holder.songArtist.setText(track.getArtist());
