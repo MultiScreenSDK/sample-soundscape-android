@@ -362,7 +362,7 @@ public class PlaylistActivity extends AppCompatActivity {
                 addTrack(copyTrack);
 
                 //Broadcast the addtrack event.
-                ConnectivityManager.getInstance().addTrack(track);
+                ConnectivityManager.getInstance().addTrack(copyTrack);
 
                 //Show track is added message.
                 showAddTrackToastMessage();
