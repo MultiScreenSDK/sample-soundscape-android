@@ -22,7 +22,7 @@ public class InfoFragment extends DialogFragment {
 //    int mColor;
 
     /**
-     * Create a new instance of MyDialogFragment, providing dialog type
+     * Create a new instance of InfoFragment, providing dialog type
      * as an argument.
      */
     static InfoFragment newInstance() {
