@@ -2,7 +2,6 @@ package com.samsung.soundscape.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,7 +105,6 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
 
         trash = (ImageView) row.findViewById(R.id.trash);
         trash.setTag(track);
-        Log.v(this.getClass().getName(), "position: " + position + ", track: " + track.toJsonString());
 
         if (convertViewIsNull) {
             trash.setOnClickListener(new View.OnClickListener() {
@@ -115,21 +113,14 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
                     Track track = (Track) v.getTag();
                     int position = getPosition(track);
 
-                    Log.d(this.getClass().getName(), "Remove track: " + track.toJsonString());
-                    Log.d(this.getClass().getName(), "position " + position + ": " + track.getTitle());
-                    Log.d(this.getClass().getName(), "num tracks: " + SwipeableTracksAdapter.this.getCount());
                     closeAllItems();
                     Activity activity = (Activity) getContext();
 
                     if (activity instanceof PlaylistActivity) {
-                        if (position == 0) {
-                            ConnectivityManager.getInstance().next();
-                        } else {
-                            remove(track);
+                        remove(track);
 
-                            //Tell other clients and TV app to remove it as well.
-                            ConnectivityManager.getInstance().removeTrack(track.getId());
-                        }
+                        //Tell other clients and TV app to remove it as well.
+                        ConnectivityManager.getInstance().removeTrack(track.getId());
                     }
                 }
             });

@@ -442,7 +442,7 @@ public class ConnectivityManager {
         }
 
         String type = service.getType();
-        if (type.endsWith(" speaker") || type.endsWith("Speaker")) {
+        if (type.toLowerCase().endsWith(" speaker")) {
             return ServiceType.Speaker;
         }
 
