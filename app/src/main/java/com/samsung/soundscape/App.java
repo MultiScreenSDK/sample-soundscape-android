@@ -43,7 +43,6 @@ public class App extends Application {
         instance = this;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onCreate() {
         super.onCreate();

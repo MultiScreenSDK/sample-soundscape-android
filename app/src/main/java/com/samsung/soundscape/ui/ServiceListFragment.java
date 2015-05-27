@@ -47,6 +47,7 @@ import com.samsung.soundscape.util.ConnectivityManager;
 import com.samsung.soundscape.util.Util;
 
 public class ServiceListFragment extends DialogFragment {
+    //The user color.
     int mColor;
 
     /**
@@ -67,6 +68,8 @@ public class ServiceListFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Read user color.
         mColor = getArguments().getInt("color");
     }
 

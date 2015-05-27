@@ -450,6 +450,9 @@ public class PlaylistActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initialize the playback view located at the bottom of the screen.
+     */
     private void initializePlaybackView() {
         //Playback layout.
         nowPlaying = (LinearLayout) findViewById(R.id.nowPlaying);
@@ -570,6 +573,9 @@ public class PlaylistActivity extends AppCompatActivity {
         playControl.setImageDrawable(playControlDrawable.getCurrent());
     }
 
+    /**
+     * The background thread to load playlist from server.
+     */
     private Runnable loadLibrary = new Runnable() {
         @Override
         public void run() {
@@ -596,6 +602,10 @@ public class PlaylistActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * Add tracks into library.
+     * @param tracks
+     */
     private void addTracksIntoLibrary(final Track[] tracks) {
         RunUtil.runOnUI(new Runnable() {
             @Override
@@ -608,6 +618,9 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Show service list dialog.
+     */
     private void showServiceListDialog() {
 
         // DialogFragment.show() will take care of adding the fragment
@@ -633,6 +646,9 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Display library list dialog.
+     */
     private void showLibraryDialog() {
         libraryLayoutWrapper.setVisibility(View.INVISIBLE);
         AnimationUtils.applyViewAnimation(this, libraryLayoutWrapper, R.anim.fade_in, null);
@@ -750,8 +766,7 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
     /**
-     * Remove the track by given track id. It removes all the tracks above the given track as well.
-     * If you just want to remove a single track, please call removeTrack.
+     * Remove the track by given track id.
      *
      * @param id the track id to be removed.
      */
@@ -761,6 +776,10 @@ public class PlaylistActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Remove the given track.
+     * @param track the track to remove.
+     */
     private void removeTrack(Track track) {
         if (track == null || playlistAdapter == null) {
             return;

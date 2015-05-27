@@ -76,7 +76,6 @@ public class ServiceAdapter extends ArrayAdapter<Service> {
     static class ViewHolder {
         public TextView deviceName;
         public ImageView serviceIcon;
-        public int position;
     }
 
 	@Override
@@ -99,9 +98,11 @@ public class ServiceAdapter extends ArrayAdapter<Service> {
         final ViewHolder holder = (ViewHolder) row.getTag();
 
         final Service service = getItem(position);
-        holder.position = position;
+
+        //Set the service name.
         holder.deviceName.setText(Util.getFriendlyTvName(service.getName()));
 
+        //Set the service icon according to the service type.
         if (ConnectivityManager.getInstance().getServiceType(service) == ConnectivityManager.ServiceType.Speaker) {
             holder.serviceIcon.setImageResource(R.drawable.ic_speaker_gray);
         } else {

@@ -30,7 +30,10 @@ import com.samsung.soundscape.util.ConnectivityManager;
  * The track playback state event such as playing or paused.
  */
 public class TrackPlaybackEvent {
+    //The track id.
     public String id;
+
+    //The event of the track.
     public String event;
 
     public TrackPlaybackEvent(String id, String event) {

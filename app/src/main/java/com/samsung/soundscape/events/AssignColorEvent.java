@@ -28,6 +28,7 @@ package com.samsung.soundscape.events;
  * The assign color event triggered when a user color is assigned by TV app.
  */
 public class AssignColorEvent {
+    //The color assigned by server.
     public String color;
     public AssignColorEvent(String color) {
         this.color = color;

@@ -41,7 +41,6 @@ import com.samsung.soundscape.App;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Date;
 
 public class Util {
     //The debug tag.
@@ -142,6 +141,11 @@ public class Util {
         return name;
     }
 
+    /**
+     * Get Uri object from url string.
+     * @param thisUrl the url string.
+     * @return Uri object.
+     */
     public static Uri getUriFromUrl(String thisUrl) {
         Uri uri = Uri.parse(thisUrl);
         Uri.Builder builder = uri.buildUpon();
@@ -189,12 +193,5 @@ public class Util {
     public static int getDisplayHeight(Context context) {
         Point point = getDisplayDimensions(context);
         return point.y;
-    }
-
-    public static String getRandomId() {
-        long timestamp = new Date().getTime();
-        timestamp += (int)(Integer.MAX_VALUE * Math.random());
-
-        return String.valueOf(timestamp);
     }
 }
