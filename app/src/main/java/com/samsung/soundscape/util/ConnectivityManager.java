@@ -676,7 +676,7 @@ public class ConnectivityManager {
     private Channel.OnMessageListener onTrackStatusListener = new Channel.OnMessageListener() {
         @Override
         public void onMessage(Message message) {
-            //Util.d("onTrackStatusListener: " + message.toString());
+            Util.d("onTrackStatusListener: " + message.toString());
             if (message != null && message.getData() != null) {
 
                 if (message.getData() instanceof HashMap) {

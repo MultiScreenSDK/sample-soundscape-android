@@ -174,6 +174,13 @@ public class PlaylistActivity extends AppCompatActivity {
 
         //Update UI with color and service information.
         updateUI();
+
+
+        //Given the initial state of the play/pause button.
+        setPlayState(false);
+
+        //Hide the playback panel.
+        updatePlaybackView(null, 0);
     }
 
     @Override
@@ -709,11 +716,6 @@ public class PlaylistActivity extends AppCompatActivity {
             connectedToText.setText(Util.getFriendlyTvName(service.getName()));
         }
 
-        //Given the initial state of the play/pause button.
-        setPlayState(false);
-
-        //Update the playback panel.
-        updatePlaybackView(null, 0);
     }
 
     /**
