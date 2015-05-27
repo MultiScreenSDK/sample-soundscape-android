@@ -27,11 +27,23 @@ package com.samsung.soundscape.model;
 import com.google.gson.Gson;
 
 public class CurrentStatus extends Base {
+    /**
+     * The playback state - playing.
+     */
     public static final String STATE_PLAYING = "playing";
+
+    /**
+     * The playback state - paused.
+     */
     public static final String STATE_PAUSED = "paused";
 
+    //Track id
     private String id;
+
+    //The playback position
     private float time;
+
+    //The current playback state either STATE_PLAYING or STATE_PAUSED
     private String state;
 
     public CurrentStatus(String id, float time, String state) {
@@ -40,18 +52,20 @@ public class CurrentStatus extends Base {
         this.state = state;
     }
 
+    /**
+     * Check if the track is playing.
+     * @return true if tracking is playing, otherwise false.
+     */
     public boolean isPlaying() {
         return (state != null && state.equals(STATE_PLAYING));
     }
 
-    public boolean isPaused() {
-        return (state != null && state.equals(STATE_PLAYING));
-    }
 
-    public static boolean isPlaying(String state) {
-        return (state != null && state.equals(STATE_PLAYING));
-    }
-
+    /**
+     * Parse the given json string into CurrentStatus instance.
+     * @param data the json string.
+     * @return the CurrentStatus instance.
+     */
     public static CurrentStatus parse(String data) {
         if (data == null) {
             return null;
@@ -61,26 +75,50 @@ public class CurrentStatus extends Base {
         return gson.fromJson(data, CurrentStatus.class);
     }
 
+    /**
+     * Get the track id.
+     * @return
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Set the track id.
+     * @param id
+     */
     public void setId(String id) {
         this.id = id;
     }
 
+    /**
+     * Get the playback position.
+     * @return
+     */
     public float getTime() {
         return time;
     }
 
+    /**
+     * Set the playback position.
+     * @param time
+     */
     public void setTime(float time) {
         this.time = time;
     }
 
+    /**
+     * Get the playback state.
+     * @return
+     */
     public String getState() {
         return state;
     }
 
+    /**
+     * Set the playback state.
+     * @param state
+     */
     public void setState(String state) {
         this.state = state;
     }

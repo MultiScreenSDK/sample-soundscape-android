@@ -693,7 +693,7 @@ public class ConnectivityManager {
     private Channel.OnMessageListener onTrackStartListener = new Channel.OnMessageListener() {
         @Override
         public void onMessage(Message message) {
-            Util.d("onTrackStartListener: " + message.toString());
+            //Util.d("onTrackStartListener: " + message.toString());
 
             if (message != null && message.getData() != null) {
                 EventBus.getDefault().post(new TrackPlaybackEvent(message.getData().toString(),

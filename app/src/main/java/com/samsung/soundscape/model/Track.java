@@ -30,6 +30,9 @@ import android.graphics.Color;
 import com.google.gson.Gson;
 import com.samsung.soundscape.util.Util;
 
+/**
+ * The track model.
+ */
 public class Track extends Base implements Cloneable {
     private String id;
     private String artist;
@@ -129,7 +132,11 @@ public class Track extends Base implements Cloneable {
         this.duration = duration;
     }
 
-
+    /**
+     * Parse the given json string into Track instance.
+     * @param data the json string.
+     * @return the Track instance.
+     */
     public static Track parse(String data) {
         if (data == null) {
             return null;
@@ -162,8 +169,8 @@ public class Track extends Base implements Cloneable {
     public boolean equals(Object o) {
         if (o == this) return true;
         if (!(o instanceof Track)) return false;
-        final Track other = (Track)o;
-        if (!other.canEqual((java.lang.Object)this)) return false;
+        final Track other = (Track) o;
+        if (!other.canEqual((java.lang.Object) this)) return false;
         final java.lang.Object this$id = this.getId();
         final java.lang.Object other$id = other.getId();
         if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;

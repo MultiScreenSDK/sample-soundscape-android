@@ -29,22 +29,38 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 
 public class AppState extends Base {
+    //The current status.
     private CurrentStatus currentStatus;
+
+    //The tracks list.
     private ArrayList<Track> playlist = new ArrayList<>();
 
     public CurrentStatus getCurrentStatus() {
         return currentStatus;
     }
 
+
+    /**
+     * Set the current status.
+     * @param currentStatus the new status.
+     */
     public void setCurrentStatus(CurrentStatus currentStatus) {
         this.currentStatus = currentStatus;
     }
 
 
+    /**
+     * Get the play list.
+     * @return
+     */
     public ArrayList<Track> getPlaylist() {
         return playlist;
     }
 
+    /**
+     * Set the play list.
+     * @param playlist the new playlist to be used.
+     */
     public void setPlaylist(ArrayList<Track> playlist) {
         this.playlist = playlist;
     }

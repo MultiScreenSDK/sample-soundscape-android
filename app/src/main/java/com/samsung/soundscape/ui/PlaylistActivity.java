@@ -708,9 +708,16 @@ public class PlaylistActivity extends AppCompatActivity {
         }
 
 
+        //Update the toolbar background color.
         toolbar.setBackgroundColor(userColor);
+
+        //Update the connected to header background color.
         connectedToHeader.setBackgroundColor(userColor);
+
+        //Set the plus button color.
         addButton.setBackgroundColor(userColor);
+
+        //Display the service name.
         Service service = ConnectivityManager.getInstance().getService();
         if (service != null) {
             connectedToText.setText(Util.getFriendlyTvName(service.getName()));
