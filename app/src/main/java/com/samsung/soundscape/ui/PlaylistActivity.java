@@ -261,6 +261,9 @@ public class PlaylistActivity extends AppCompatActivity {
                 //Reset the flag when it is connected;
                 isSwitchingService = false;
 
+                //Request user color from server.
+                ConnectivityManager.getInstance().assignColor();
+
                 //Request multiscreen app state.
                 ConnectivityManager.getInstance().requestAppState();
 

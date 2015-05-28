@@ -656,6 +656,13 @@ public class ConnectivityManager {
     }
 
     /**
+     * Request color assigned by server.
+     */
+    public void assignColor() {
+        sendToTV(EVENT_ASSIGN_COLOR, null, Message.TARGET_HOST);
+    }
+
+    /**
      * Receive the response data of app state request.
      */
     private Channel.OnMessageListener onAppStateListener = new Channel.OnMessageListener() {
