@@ -61,13 +61,16 @@ public class ConnectActivity extends AppCompatActivity {
     //Show connecting message
     AlertDialog alertDialog;
 
+    //Handler
+    Handler handler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.connect_activity);
 
         //Display the message panel after certain seconds.
-        new Handler().postDelayed(new Runnable() {
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 findViewById(R.id.connectContent).setVisibility(View.VISIBLE);
@@ -76,7 +79,7 @@ public class ConnectActivity extends AppCompatActivity {
 
 
         //In case there is no devices found in your network, we display message after certain seconds.
-        new Handler().postDelayed(new Runnable() {
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 updateUI();
@@ -186,6 +189,12 @@ public class ConnectActivity extends AppCompatActivity {
 
             //When TV is connected, go to playlist screen.
             startActivity(new Intent(this, PlaylistActivity.class));
+        } else if (event.errorMessage != null) {
+            //Error happens.
+            Util.e(event.errorMessage);
+
+            //Show the error message to user.
+            displayErrorMessage(event.errorMessage);
         }
     }
 
@@ -309,10 +318,12 @@ public class ConnectActivity extends AppCompatActivity {
     public void displayConnectingMessage(String tvName) {
         //final String message = String.format(getString(R.string.connect_to_message), Util.getFriendlyTvName(tvName));
         final String message = Util.getFriendlyTvName(tvName) + "...";
-        new Handler().post(new Runnable() {
+        handler.post(new Runnable() {
             @Override
             public void run() {
                 View toastLayout = getLayoutInflater().inflate(R.layout.toast, (ViewGroup) findViewById(R.id.toastLayout));
+                TextView connectingTo = (TextView) toastLayout.findViewById(R.id.connectingTo);
+                connectingTo.setVisibility(View.VISIBLE);
                 TextView serviceText = (TextView) toastLayout.findViewById(R.id.serviceText);
                 serviceText.setText(message);
 
@@ -326,6 +337,33 @@ public class ConnectActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    /**
+     * Display an error message.
+     * @param errorMsg
+     */
+    public void displayErrorMessage(final String errorMsg) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                View toastLayout = getLayoutInflater().inflate(R.layout.toast, (ViewGroup) findViewById(R.id.toastLayout));
+                TextView connectingTo = (TextView) toastLayout.findViewById(R.id.connectingTo);
+                connectingTo.setVisibility(View.GONE);
+                TextView serviceText = (TextView) toastLayout.findViewById(R.id.serviceText);
+                serviceText.setText(errorMsg);
+
+                if (alertDialog != null && alertDialog.isShowing()) {
+                    cancelToast();
+                }
+                alertDialog = new AlertDialog.Builder(ConnectActivity.this, R.style.CustomTheme_Dialog).create();
+                alertDialog.setView(toastLayout);
+                alertDialog.setCanceledOnTouchOutside(false);
+                alertDialog.show();
+            }
+        });
+    }
+
 
     /**
      * Dismiss the connecting message dialog.

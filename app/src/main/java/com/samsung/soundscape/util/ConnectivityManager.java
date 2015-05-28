@@ -534,7 +534,7 @@ public class ConnectivityManager {
                 Util.e("connect onError: " + error.toString());
 
                 //failed to launch TV application. Notify TV service changes.
-                EventBus.getDefault().post(new ConnectionChangedEvent(error.toString()));
+                EventBus.getDefault().post(new ConnectionChangedEvent(error.getMessage()));
             }
         });
     }
