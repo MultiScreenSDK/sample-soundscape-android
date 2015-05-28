@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -62,6 +63,7 @@ import com.samsung.soundscape.events.ConnectionChangedEvent;
 import com.samsung.soundscape.events.RemoveTrackEvent;
 import com.samsung.soundscape.events.TrackPlaybackEvent;
 import com.samsung.soundscape.events.TrackStatusEvent;
+import com.samsung.soundscape.interceptor.AppCompatActivityMenuKeyInterceptor;
 import com.samsung.soundscape.model.CurrentStatus;
 import com.samsung.soundscape.model.Track;
 import com.samsung.soundscape.util.AnimationUtils;
@@ -143,6 +145,9 @@ public class PlaylistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
 
+        //Initialize the interceptor
+        AppCompatActivityMenuKeyInterceptor.intercept(this);
+
         //Add toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -187,6 +192,15 @@ public class PlaylistActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d(this.getClass().getName(), "onKeyDown: " + event.toString());
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -361,7 +375,7 @@ public class PlaylistActivity extends AppCompatActivity {
                 Log.d(this.getClass().getName(), "addTrack: " + track.toJsonString());
 
                 Track copyTrack = (Track)libraryAdapter.getItem(position).clone();
-                copyTrack.setColor(String.format("#%08X", (0xFFFFFFFF & userColor)));
+                copyTrack.setColor(String.format("#%06X", (0xFFFFFF & userColor)));
                 copyTrack.setId(UUID.randomUUID().toString());
 
                 //Add track to the playlist.
