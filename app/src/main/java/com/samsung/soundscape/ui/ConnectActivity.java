@@ -322,8 +322,6 @@ public class ConnectActivity extends AppCompatActivity {
             @Override
             public void run() {
                 View toastLayout = getLayoutInflater().inflate(R.layout.toast, (ViewGroup) findViewById(R.id.toastLayout));
-                TextView connectingTo = (TextView) toastLayout.findViewById(R.id.connectingTo);
-                connectingTo.setVisibility(View.VISIBLE);
                 TextView serviceText = (TextView) toastLayout.findViewById(R.id.serviceText);
                 serviceText.setText(message);
 
@@ -347,11 +345,9 @@ public class ConnectActivity extends AppCompatActivity {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                View toastLayout = getLayoutInflater().inflate(R.layout.toast, (ViewGroup) findViewById(R.id.toastLayout));
-                TextView connectingTo = (TextView) toastLayout.findViewById(R.id.connectingTo);
-                connectingTo.setVisibility(View.GONE);
-                TextView serviceText = (TextView) toastLayout.findViewById(R.id.serviceText);
-                serviceText.setText(errorMsg);
+                View toastLayout = getLayoutInflater().inflate(R.layout.multiline_toast, (ViewGroup) findViewById(R.id.toastLayout));
+                TextView mesgText = (TextView) toastLayout.findViewById(R.id.mesgText);
+                mesgText.setText(errorMsg);
 
                 if (alertDialog != null && alertDialog.isShowing()) {
                     cancelToast();
