@@ -263,8 +263,6 @@ public class ConnectivityManager {
             return;
         }
 
-        Util.d("updateTVList: " + service.toString());
-
         //Add if does not exist or replace it.
         if (!adapter.contains(service)) {
             //Do not add it to the list when the service is connected already.
@@ -472,7 +470,6 @@ public class ConnectivityManager {
         mMultiscreenApp.setOnDisconnectListener(new Channel.OnDisconnectListener() {
             @Override
             public void onDisconnect(Client client) {
-                Util.d("OnDisconnectListener");
                 if (client != null) {
 
                     //Notify service change listeners.
@@ -489,15 +486,8 @@ public class ConnectivityManager {
         mMultiscreenApp.setOnConnectListener(new Channel.OnConnectListener() {
             @Override
             public void onConnect(Client client) {
-                Util.d("Application is connected: " + client.toString());
-
                 //stop discovery to save battery when a service is selected.
                 stopDiscovery();
-
-                //Update Service list.
-                //Remove the connected service from switch to list.
-                //adapter.remove(getService());
-                //adapter.notifyDataSetChanged();
 
                 //Notify to update UI.
                 EventBus.getDefault().post(new ConnectionChangedEvent(null));
@@ -669,8 +659,6 @@ public class ConnectivityManager {
     private Channel.OnMessageListener onAppStateListener = new Channel.OnMessageListener() {
         @Override
         public void onMessage(Message message) {
-            Util.d("onAppStateListener: " + message.toString());
-
             if (message != null && message.getData() != null) {
                 String jsonString = JSONUtil.toJSONString((HashMap)message.getData());
                 EventBus.getDefault().post(new AppStateEvent(AppState.parse(jsonString)));
@@ -715,8 +703,6 @@ public class ConnectivityManager {
     private Channel.OnMessageListener onTrackEndListener = new Channel.OnMessageListener() {
         @Override
         public void onMessage(Message message) {
-            Util.d("onTrackEndListener: " + message.toString());
-
             if (message != null && message.getData() != null) {
                 EventBus.getDefault().post(new TrackPlaybackEvent(message.getData().toString(),
                         message.getEvent()));
@@ -731,8 +717,6 @@ public class ConnectivityManager {
     private Channel.OnMessageListener onAddTrackListener = new Channel.OnMessageListener() {
         @Override
         public void onMessage(Message message) {
-            Util.d("onAddTrackListener: " + message.toString());
-
             if (message != null && message.getData() != null) {
                 if (message.getData() instanceof HashMap) {
                     String jsonString = JSONUtil.toJSONString((HashMap)message.getData());
@@ -748,8 +732,6 @@ public class ConnectivityManager {
     private Channel.OnMessageListener onAssignColorListener = new Channel.OnMessageListener() {
         @Override
         public void onMessage(Message message) {
-            Util.d("onAssignColorListener: " + message.toString());
-
             if (message != null && message.getData() != null) {
                 EventBus.getDefault().post(new AssignColorEvent(message.getData().toString()));
             }
@@ -762,8 +744,6 @@ public class ConnectivityManager {
     private Channel.OnMessageListener onRemoveTrackColorListener = new Channel.OnMessageListener() {
         @Override
         public void onMessage(Message message) {
-            Util.d("onRemoveTrackColorListener: " + message.toString());
-
             if (message != null && message.getData() != null) {
                 EventBus.getDefault().post(new RemoveTrackEvent(message.getData().toString()));
             }
@@ -780,7 +760,6 @@ public class ConnectivityManager {
      */
     private void sendToTV(String event, Object data, String target) {
         if (mMultiscreenApp != null && mMultiscreenApp.isConnected()) {
-            Util.d("Send to TV: event=" + event + "  data=" + data);
             mMultiscreenApp.publish(event, data, target);
         }
     }
