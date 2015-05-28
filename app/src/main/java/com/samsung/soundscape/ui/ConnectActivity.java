@@ -38,7 +38,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.samsung.multiscreen.Service;
-import com.samsung.multiscreen.util.RunUtil;
 import com.samsung.soundscape.R;
 import com.samsung.soundscape.adapter.ServiceAdapter;
 import com.samsung.soundscape.events.ConnectionChangedEvent;
@@ -266,22 +265,26 @@ public class ConnectActivity extends AppCompatActivity {
     }
 
     private void updateViews(final String firstMsg, final String secondMsg, final String buttonCaption) {
-        RunUtil.runOnUI(new Runnable() {
+        handler.post(new Runnable() {
             @Override
             public void run() {
 
+                //Display or hide views.
                 discoveryMessage.setVisibility(firstMsg != null ? View.VISIBLE : View.INVISIBLE);
                 wifiMessage.setVisibility(secondMsg != null ? View.VISIBLE : View.INVISIBLE);
                 actionButton.setVisibility(buttonCaption != null ? View.VISIBLE : View.INVISIBLE);
 
+                //Update the first line of the text.
                 if (firstMsg != null) {
                     discoveryMessage.setText(firstMsg);
                 }
 
+                //Update the second line of the text.
                 if (secondMsg != null) {
                     wifiMessage.setText(secondMsg);
                 }
 
+                //Update the button caption
                 if (buttonCaption != null) {
                     actionButton.setText(buttonCaption);
                 }
@@ -325,9 +328,12 @@ public class ConnectActivity extends AppCompatActivity {
                 TextView serviceText = (TextView) toastLayout.findViewById(R.id.serviceText);
                 serviceText.setText(message);
 
+                //Dismiss the dialog if it is showing.
                 if (alertDialog != null && alertDialog.isShowing()) {
                     cancelToast();
                 }
+
+                //Display alert dialog with customized layout.
                 alertDialog = new AlertDialog.Builder(ConnectActivity.this, R.style.CustomTheme_Dialog).create();
                 alertDialog.setView(toastLayout);
                 alertDialog.setCanceledOnTouchOutside(false);
@@ -349,9 +355,12 @@ public class ConnectActivity extends AppCompatActivity {
                 TextView mesgText = (TextView) toastLayout.findViewById(R.id.mesgText);
                 mesgText.setText(errorMsg);
 
+                //Dismiss the dialog if it is showing.
                 if (alertDialog != null && alertDialog.isShowing()) {
                     cancelToast();
                 }
+
+                //Display alert dialog with customized layout.
                 alertDialog = new AlertDialog.Builder(ConnectActivity.this, R.style.CustomTheme_Dialog).create();
                 alertDialog.setView(toastLayout);
                 alertDialog.setCanceledOnTouchOutside(false);
