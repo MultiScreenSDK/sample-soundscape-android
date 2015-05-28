@@ -170,6 +170,8 @@ public class PlaylistActivity extends AppCompatActivity {
         //Register to receive events.
         EventBus.getDefault().register(this);
 
+        //Request user color.
+        ConnectivityManager.getInstance().requestAssignColor();
 
         //Request multiscreen app state.
         ConnectivityManager.getInstance().requestAppState();
@@ -262,7 +264,7 @@ public class PlaylistActivity extends AppCompatActivity {
                 isSwitchingService = false;
 
                 //Request user color from server.
-                ConnectivityManager.getInstance().assignColor();
+                ConnectivityManager.getInstance().requestAssignColor();
 
                 //Request multiscreen app state.
                 ConnectivityManager.getInstance().requestAppState();

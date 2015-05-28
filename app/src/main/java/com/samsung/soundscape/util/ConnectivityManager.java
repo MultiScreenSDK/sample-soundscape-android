@@ -84,6 +84,7 @@ public class ConnectivityManager {
     public static final String EVENT_PAUSE = "pause";
     public static final String EVENT_NEXT = "next";
     public static final String EVENT_ASSIGN_COLOR = "assignColor";
+    public static final String EVENT_ASSIGN_COLOR_REQUEST = "assignColorRequest";
     public static final String EVENT_VOL_DOWN = "volDown";
     public static final String EVENT_VOL_UP = "volUp";
 
@@ -658,8 +659,8 @@ public class ConnectivityManager {
     /**
      * Request color assigned by server.
      */
-    public void assignColor() {
-        sendToTV(EVENT_ASSIGN_COLOR, null, Message.TARGET_HOST);
+    public void requestAssignColor() {
+        sendToTV(EVENT_ASSIGN_COLOR_REQUEST, null, Message.TARGET_HOST);
     }
 
     /**
@@ -683,7 +684,6 @@ public class ConnectivityManager {
     private Channel.OnMessageListener onTrackStatusListener = new Channel.OnMessageListener() {
         @Override
         public void onMessage(Message message) {
-            Util.d("onTrackStatusListener: " + message.toString());
             if (message != null && message.getData() != null) {
 
                 if (message.getData() instanceof HashMap) {
