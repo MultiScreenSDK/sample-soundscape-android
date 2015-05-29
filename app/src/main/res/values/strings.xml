@@ -45,7 +45,7 @@
     <string name="title_home">Home</string>
 
     <!-- Connect Activity -->
-    <string name="no_wifi">WiFi is needed</string>
+    <string name="no_wifi">WiFi is not connected</string>
     <string name="turn_on_wifi">WiFi Settings</string>
     <string name="connect">Connect</string>
     <string name="select_device">Select Device</string>
