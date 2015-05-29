@@ -13,6 +13,13 @@ repositories {
     mavenCentral()
 }
 
+version = '1.0'
+ext {
+    appName = parent.name
+    apkOutputDir = "${buildDir}/outputs/apk"
+    distDir = '../dist'
+}
+
 dependencies {
     compile 'com.android.support:appcompat-v7:22.1.+'
     compile 'de.greenrobot:eventbus:2.4.0'
@@ -31,10 +38,11 @@ android {
     compileSdkVersion 21
     buildToolsVersion '22.0.1'
     defaultConfig {
+        applicationId "com.samsung.soundscape"
         minSdkVersion 15
         targetSdkVersion 21
         versionCode 102
-        versionName '1.0'
+        versionName version
     }
     packagingOptions {
         // Exclude file to avoid
@@ -69,4 +77,32 @@ android {
     }
     productFlavors {
     }
+    applicationVariants.all { variant ->
+        //Check if an applicationName property is supplied; if not use the name of the parent project.
+        if (project.hasProperty("applicationName")) {
+            appName = applicationName
+        } else {
+            appName = parent.name
+        }
+
+        def apkName
+        variant.outputs.each { output ->
+            //If there's no ZipAlign task it means that our artifact will be unaligned and we need to mark it as such.
+            if (output.zipAlign) {
+                apkName = "${appName}-${output.baseName}-${variant.versionName}.apk"
+            } else {
+                apkName = "${appName}-${output.baseName}-${variant.versionName}-unaligned.apk"
+            }
+            output.outputFile = new File(output.outputFile.parent, apkName)
+        }
+    }
 }
+
+task dist(type: Copy) {
+    from(apkOutputDir) {
+        include "${appName}*.apk"
+    }
+    into distDir
+}
+
+dist.dependsOn assembleDebug
