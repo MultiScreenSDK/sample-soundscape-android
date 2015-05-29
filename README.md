@@ -17,9 +17,7 @@ the `ANDROID_HOME` environment variable to the location of your SDK:
 After satisfying those requirements, the build is pretty simple:
 
 * Run `gradlew` or `gradle assembleDebug` or `gradle assembleRelease` from the `app` directory to build the APK only
-* Run one of the commands above from the root directory to build the app and also run
-  the integration tests, this requires a connected Android device or running
-  emulator.
+* Run one of the commands above from the root directory to build the app
 
 You might find that your device doesn't let you install your build if you
 already have the version from the Android Market installed.  This is standard
