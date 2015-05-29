@@ -28,6 +28,10 @@ package com.samsung.soundscape.events;
  * The connection change event send when service connection is changed (connected, disconnected).
  */
 public class ConnectionChangedEvent {
+    /**
+     * The error message if some error happens. When it is null, the event is just for connected or
+     * disconnected.
+     */
     public final String errorMessage;
 
     public ConnectionChangedEvent(String errorMessage) {
