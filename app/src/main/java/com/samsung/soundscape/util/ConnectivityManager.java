@@ -499,7 +499,7 @@ public class ConnectivityManager {
             @Override
             public void onError(com.samsung.multiscreen.Error error) {
                 Util.e("setOnErrorListener: " + error.toString());
-                EventBus.getDefault().post(new ConnectionChangedEvent(error.toString()));
+                EventBus.getDefault().post(new ConnectionChangedEvent(error.getMessage()));
 
                 if (!isExisting) startDiscovery();
             }
@@ -514,7 +514,7 @@ public class ConnectivityManager {
         mMultiscreenApp.addOnMessageListener(EVENT_REMOVE_TRACK, onRemoveTrackColorListener);
 
         //Connect and launch the TV application.
-        mMultiscreenApp.connect(new Result<Client>() {
+        mMultiscreenApp.connect(null, 30000, new Result<Client>() {
 
             @Override
             public void onSuccess(Client client) {

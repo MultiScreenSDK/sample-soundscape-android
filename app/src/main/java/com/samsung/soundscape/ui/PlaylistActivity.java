@@ -198,7 +198,6 @@ public class PlaylistActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Log.d(this.getClass().getName(), "onKeyDown: " + event.toString());
         if (keyCode == KeyEvent.KEYCODE_MENU) {
             return true;
         }
@@ -377,7 +376,6 @@ public class PlaylistActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Track track = libraryAdapter.getItem(position);
-                Log.d(this.getClass().getName(), "addTrack: " + track.toJsonString());
 
                 Track copyTrack = (Track)libraryAdapter.getItem(position).clone();
                 copyTrack.setColor(String.format("#%06X", (0xFFFFFF & userColor)));

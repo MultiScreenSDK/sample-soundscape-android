@@ -31,6 +31,8 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextPaint;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -352,8 +354,22 @@ public class ConnectActivity extends AppCompatActivity {
             @Override
             public void run() {
                 View toastLayout = getLayoutInflater().inflate(R.layout.multiline_toast, (ViewGroup) findViewById(R.id.toastLayout));
-                TextView mesgText = (TextView) toastLayout.findViewById(R.id.mesgText);
+                final TextView mesgText = (TextView) toastLayout.findViewById(R.id.mesgText);
                 mesgText.setText(errorMsg);
+
+                // If the error message width is greater than the view width, then change the
+                // content gravity.
+                mesgText.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                    @Override
+                    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                        mesgText.removeOnLayoutChangeListener(this);
+                        final TextPaint textPaint = mesgText.getPaint();
+                        float width = textPaint.measureText(errorMsg);
+                        if ((int) width > mesgText.getWidth()) {
+                            mesgText.setGravity(Gravity.CENTER_VERTICAL);
+                        }
+                    }
+                });
 
                 //Dismiss the dialog if it is showing.
                 if (alertDialog != null && alertDialog.isShowing()) {
@@ -363,7 +379,7 @@ public class ConnectActivity extends AppCompatActivity {
                 //Display alert dialog with customized layout.
                 alertDialog = new AlertDialog.Builder(ConnectActivity.this, R.style.CustomTheme_Dialog).create();
                 alertDialog.setView(toastLayout);
-                alertDialog.setCanceledOnTouchOutside(false);
+                alertDialog.setCanceledOnTouchOutside(true);
                 alertDialog.show();
             }
         });
