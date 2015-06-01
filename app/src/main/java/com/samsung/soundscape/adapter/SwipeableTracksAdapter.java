@@ -43,6 +43,10 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+/**
+ * A swipeable adapter for playlist tracks that supports swiping to reveal a trash icon
+ * to remove tracks.
+ */
 public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
     private SwipeItemAdapterMangerImpl mItemManger = new SwipeItemAdapterMangerImpl(this);
     private int layoutResourceId;

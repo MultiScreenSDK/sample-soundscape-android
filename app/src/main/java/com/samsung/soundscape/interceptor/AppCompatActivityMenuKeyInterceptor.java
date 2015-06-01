@@ -32,7 +32,8 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 
 /**
- * Created by plin on 5/28/15.
+ * A hardware key interceptor to intercept the menu key which has been disabled from handling by
+ * default in the latest appcompat library in Android.
  */
 public class AppCompatActivityMenuKeyInterceptor {
 

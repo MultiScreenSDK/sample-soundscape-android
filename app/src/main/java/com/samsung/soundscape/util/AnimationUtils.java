@@ -29,7 +29,7 @@ import android.view.animation.Animation;
 import com.samsung.soundscape.R;
 
 /**
- * Created by plin on 5/15/15.
+ * A utility class to handle basic view animations defined in resources.
  */
 public class AnimationUtils {
 
