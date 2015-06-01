@@ -5,33 +5,7 @@
     <integer name="drawerAnimtime">1500</integer>
     <integer name="drawerAnimtime2">3000</integer>
 
-    <!--<string name="app_url">http://localhost:3000/tv/</string>-->
-    <!--<string name="app_url">http://s3-us-west-1.amazonaws.com/dev-multiscreen-examples/examples/soundscape/tester/index.html</string>-->
     <string name="app_url">http://s3-us-west-1.amazonaws.com/dev-multiscreen-examples/examples/soundscape/tv/index.html</string>
-
     <string name="channel_id">com.samsung.soundscape</string>
     <string name="playlist_url">https://s3-us-west-1.amazonaws.com/dev-multiscreen-music-library/library.json</string>
-
-    <string-array name="UserColors">
-        <item>#EF6C00</item>
-        <item>#1A237E</item>
-        <item>#689F38</item>
-        <item>#E91E63</item>
-        <item>#2196F3</item>
-        <item>#B71C1C</item>
-        <item>#01579B</item>
-        <item>#009688</item>
-        <item>#673AB7</item>
-        <item>#607D8B</item>
-        <item>#880E4F</item>
-        <item>#3F51B5</item>
-        <item>#827717</item>
-        <item>#9C27B0</item>
-        <item>#3E2723</item>
-        <item>#E65100</item>
-        <item>#006064</item>
-        <item>#1B5E20</item>
-        <item>#4A148C</item>
-        <item>#795548</item>
-    </string-array>
 </resources>
