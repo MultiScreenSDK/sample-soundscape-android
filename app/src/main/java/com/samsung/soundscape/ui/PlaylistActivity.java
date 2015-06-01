@@ -368,6 +368,13 @@ public class PlaylistActivity extends AppCompatActivity {
 
         libraryLayoutWrapper = (ViewGroup) findViewById(R.id.libraryLayoutWrapper);
         libraryLayoutWrapper.setVisibility(View.GONE);
+        libraryLayoutWrapper.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // Prevent touch events from bubbling to other views
+                return true;
+            }
+        });
         libraryLayout = (ViewGroup) findViewById(R.id.libraryLayout);
         libraryLayout.setVisibility(View.GONE);
 
