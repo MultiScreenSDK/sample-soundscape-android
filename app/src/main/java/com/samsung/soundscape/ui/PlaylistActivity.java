@@ -80,9 +80,6 @@ public class PlaylistActivity extends AppCompatActivity {
     //The direction of the add button.
     private boolean clockwise = true;
 
-    //user colors
-    private String[] colors;
-
     //The color of current user.
     private int userColor;
 
@@ -149,9 +146,6 @@ public class PlaylistActivity extends AppCompatActivity {
         //Add toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        //Load user colors resource.
-        colors = getResources().getStringArray(R.array.UserColors);
 
         //select user color.
         selectColor(null);
@@ -805,11 +799,12 @@ public class PlaylistActivity extends AppCompatActivity {
     private void selectColor(String newColor) {
         String color = newColor;
 
-        if (color == null) {
-            color = colors[0];
+        if (color != null) {
+            //parse color string to color value.
+            userColor = Color.parseColor(color);
+        } else {
+            //Use default color.
+            userColor = getResources().getColor(R.color.user_color_1);
         }
-
-        //parse color string to color value.
-        userColor = Color.parseColor(color);
     }
 }
