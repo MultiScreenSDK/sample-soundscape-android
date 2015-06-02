@@ -103,7 +103,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="28dp"
         android:layout_marginRight="16dp"
         app:fab_backgroundColor="@color/user_color_1"
         app:fab_elevation="@dimen/elevation_low"
