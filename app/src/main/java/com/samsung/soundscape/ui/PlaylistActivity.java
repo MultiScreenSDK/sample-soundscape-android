@@ -510,6 +510,11 @@ public class PlaylistActivity extends AppCompatActivity {
         toastShowAddTrack.show();
     }
 
+    /**
+     * Animate showing and hiding the music library view.
+     *
+     * @param v the view to animate
+     */
     private void animateLibrary(final View v) {
         int level = 5000;
         if (!clockwise) {
@@ -653,6 +658,9 @@ public class PlaylistActivity extends AppCompatActivity {
         AnimationUtils.expand(this, libraryLayout, null);
     }
 
+    /**
+     * Hide the library list dialog.
+     */
     private void hideLibraryDialog() {
         AnimationUtils.collapse(this, libraryLayout, new Animation.AnimationListener() {
             @Override
