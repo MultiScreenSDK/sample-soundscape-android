@@ -137,7 +137,6 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
                 @Override
                 public void onClick(View v) {
                     Track track = (Track) v.getTag();
-                    int position = getPosition(track);
 
                     closeAllItems();
                     Activity activity = (Activity) getContext();
