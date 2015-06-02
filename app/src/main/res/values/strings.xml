@@ -2,7 +2,7 @@
 
 <resources>
 
-    <string name="app_name">Sound Scape</string>
+    <string name="app_name">SoundScape</string>
 
     <!-- Connect Activity -->
     <string name="no_wifi">WiFi is not connected</string>
