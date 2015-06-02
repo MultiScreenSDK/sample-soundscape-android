@@ -48,7 +48,7 @@ import java.util.List;
  * to remove tracks.
  */
 public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
-    private SwipeItemAdapterMangerImpl mItemManger = new SwipeItemAdapterMangerImpl(this);
+    private SwipeItemAdapterMangerImpl mItemManager = new SwipeItemAdapterMangerImpl(this);
     private int layoutResourceId;
     private LayoutInflater inflater;
 
@@ -120,9 +120,9 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
             holder.userColor = row.findViewById(R.id.userColor);
             holder.nowPlayingIcon = (ImageView) row.findViewById(R.id.nowPlayingIcon);
             row.setTag(holder);
-            this.mItemManger.initialize(row, position);
+            this.mItemManager.initialize(row, position);
         } else {
-            this.mItemManger.updateConvertView(row, position);
+            this.mItemManager.updateConvertView(row, position);
         }
         SwipeLayout sl = (SwipeLayout)row;
         sl.setLeftSwipeEnabled(false);
@@ -184,51 +184,51 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
 
     @Override
     public void openItem(int position) {
-        this.mItemManger.openItem(position);
+        this.mItemManager.openItem(position);
     }
 
     @Override
     public void closeItem(int position) {
-        this.mItemManger.closeItem(position);
+        this.mItemManager.closeItem(position);
     }
 
     @Override
     public void closeAllExcept(SwipeLayout layout) {
-        this.mItemManger.closeAllExcept(layout);
+        this.mItemManager.closeAllExcept(layout);
     }
 
     @Override
     public void closeAllItems() {
-        this.mItemManger.closeAllItems();
+        this.mItemManager.closeAllItems();
     }
 
     @Override
     public List<Integer> getOpenItems() {
-        return this.mItemManger.getOpenItems();
+        return this.mItemManager.getOpenItems();
     }
 
     @Override
     public List<SwipeLayout> getOpenLayouts() {
-        return this.mItemManger.getOpenLayouts();
+        return this.mItemManager.getOpenLayouts();
     }
 
     @Override
     public void removeShownLayouts(SwipeLayout layout) {
-        this.mItemManger.removeShownLayouts(layout);
+        this.mItemManager.removeShownLayouts(layout);
     }
 
     @Override
     public boolean isOpen(int position) {
-        return this.mItemManger.isOpen(position);
+        return this.mItemManager.isOpen(position);
     }
 
     @Override
     public Attributes.Mode getMode() {
-        return this.mItemManger.getMode();
+        return this.mItemManager.getMode();
     }
 
     @Override
     public void setMode(Attributes.Mode mode) {
-        this.mItemManger.setMode(mode);
+        this.mItemManager.setMode(mode);
     }
 }
