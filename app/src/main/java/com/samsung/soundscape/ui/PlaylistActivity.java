@@ -31,7 +31,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,7 +46,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.util.Attributes;
 import com.google.gson.Gson;
 import com.rey.material.widget.FloatingActionButton;
@@ -410,48 +408,24 @@ public class PlaylistActivity extends AppCompatActivity {
         playlistListView = (ListView) findViewById(R.id.playlistListView);
         playlistListView.setAdapter(playlistAdapter);
         playlistAdapter.setMode(Attributes.Mode.Single);
-        playlistListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ((SwipeLayout) (playlistListView.getChildAt(position - playlistListView.getFirstVisiblePosition()))).open(true);
-            }
-        });
-        playlistListView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Log.e("ListView", "OnTouch");
-                return false;
-            }
-        });
-        playlistListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), "OnItemLongClickListener", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });
+
+        // Reveal the trash can to remove tracks onItemClick
+//        playlistListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                ((SwipeLayout) (playlistListView.getChildAt(position - playlistListView.getFirstVisiblePosition()))).open(true);
+//            }
+//        });
+
+        // Hide any revealed trash can when the playlist is scrolled
         playlistListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                Log.e("ListView", "onScrollStateChanged");
                 playlistAdapter.closeAllItems();
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                Log.e("ListView", "onScroll");
-            }
-        });
-
-        playlistListView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.e("ListView", "onItemSelected:" + position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                Log.e("ListView", "onNothingSelected:");
             }
         });
 
