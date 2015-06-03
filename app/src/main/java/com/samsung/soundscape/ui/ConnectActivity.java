@@ -322,7 +322,7 @@ public class ConnectActivity extends AppCompatActivity {
 
     public void displayConnectingMessage(String tvName) {
         //final String message = String.format(getString(R.string.connect_to_message), Util.getFriendlyTvName(tvName));
-        final String message = Util.getFriendlyTvName(tvName) + "...";
+        final String message = Util.getFriendlyTvName(tvName) + "\u2026";
         handler.post(new Runnable() {
             @Override
             public void run() {

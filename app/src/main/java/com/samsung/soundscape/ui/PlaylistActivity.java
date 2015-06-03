@@ -503,7 +503,7 @@ public class PlaylistActivity extends AppCompatActivity {
         }
         toastShowAddTrack = null;
 
-        addTrackText.setText("\"" + title + "\" added");
+        addTrackText.setText("\"" + title + "\"");
         toastShowAddTrack = new Toast(getApplicationContext());
         toastShowAddTrack.setDuration(Toast.LENGTH_SHORT);
         toastShowAddTrack.setView(toastLayout);

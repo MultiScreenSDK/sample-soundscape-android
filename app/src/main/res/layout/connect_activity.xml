@@ -22,7 +22,7 @@
             android:layout_centerHorizontal="true"
             android:layout_margin="0dp"
             android:fontFamily="sans-serif-light"
-            android:text="Searching for devices..."
+            android:text="Searching for devices&#8230;"
             android:textColor="@color/white"
             android:textSize="20sp"/>
 
