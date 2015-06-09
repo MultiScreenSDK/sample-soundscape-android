@@ -1,6 +1,6 @@
 # SoundScape
 
-SoundScape is a demo app to demonstrate the how to integrate with MultiScreen-enabled Samsung
+SoundScape is a demo app to demonstrate how to integrate with MultiScreen-enabled Samsung
 speakers using the MultiScreen Framework API. More information, including the application
 communication protocol can be found [here](https://github.com/MultiScreenSDK/webapp-audioplayer/blob/master/soundscape.md).
 
