@@ -594,11 +594,7 @@ public class PlaylistActivity extends AppCompatActivity {
                 //Parse string to track array, then add into library list.
                 Track[] tracks = gson.fromJson(data, Track[].class);
                 if (tracks != null) {
-                    int len = tracks.length;
-                    for (int i = 0; i < len; i++) {
-                        tracks[i].setId(UUID.randomUUID().toString());
-                    }
-                    addTracksIntoLibrary(gson.fromJson(data, Track[].class));
+                    addTracksIntoLibrary(tracks);
                 }
             }
         }
