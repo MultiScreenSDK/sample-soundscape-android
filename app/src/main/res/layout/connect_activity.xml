@@ -12,6 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:visibility="invisible">
 
         <TextView
@@ -21,7 +23,10 @@
             android:layout_above="@+id/wifi_message"
             android:layout_centerHorizontal="true"
             android:layout_margin="0dp"
+            android:ellipsize="end"
             android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:maxLines="1"
             android:text="Searching for devices&#8230;"
             android:textColor="@color/white"
             android:textSize="20sp"/>
@@ -33,7 +38,10 @@
             android:layout_above="@+id/buttonRipple"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="24dp"
+            android:ellipsize="end"
             android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:maxLines="1"
             android:text="on your current WiFi network"
             android:textColor="@color/white"
             android:textSize="20sp"
