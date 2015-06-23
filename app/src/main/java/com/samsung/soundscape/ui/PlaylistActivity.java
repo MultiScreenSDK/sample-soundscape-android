@@ -31,6 +31,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -503,10 +504,18 @@ public class PlaylistActivity extends AppCompatActivity {
         }
         toastShowAddTrack = null;
 
+
+        //Get the add button position in the window.
+        int[] locationInWindow = new int[2];
+        addButton.getLocationInWindow(locationInWindow);
+
         addTrackText.setText("\"" + title + "\"");
         toastShowAddTrack = new Toast(getApplicationContext());
         toastShowAddTrack.setDuration(Toast.LENGTH_SHORT);
         toastShowAddTrack.setView(toastLayout);
+
+        // Move the message above add button with offset 30
+        toastShowAddTrack.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, Util.getDisplayHeight(this) - locationInWindow[1] + 30);
         toastShowAddTrack.show();
     }
 
