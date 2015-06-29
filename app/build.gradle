@@ -18,7 +18,6 @@ ext {
     appName = parent.name
     apkOutputDir = "${buildDir}/outputs/apk"
     distDir = '../dist'
-    releaseDir = '../download'
 }
 
 dependencies {
@@ -102,25 +101,28 @@ android {
 }
 
 task dist(type: Copy) {
+    println "copy APK to dist folder"
+
     from(apkOutputDir) {
         include "${appName}*.apk"
     }
     into distDir
 }
 
+dist.dependsOn assembleDebug
+
+
 task release(type: Copy) {
+    println "copy APK and rename"
+
     from(apkOutputDir) {
         include "${appName}*.apk"
     }
-    into releaseDir
-//    rename ("${appName}*.apk", "${appName}.apk")
-
-    println "------------Rename the APK---------------"
-    println "${appName}.apk"
+    into distDir
 
     rename { String fileName ->
-        "${appName}.apk"
+        "${appName}-latest.apk"
     }
 }
+release.dependsOn assembleDebug
 
-dist.dependsOn assembleDebug
