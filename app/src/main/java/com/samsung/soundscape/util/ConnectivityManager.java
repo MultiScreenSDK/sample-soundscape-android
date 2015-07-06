@@ -83,6 +83,7 @@ public class ConnectivityManager {
     public static final String EVENT_PLAY = "play";
     public static final String EVENT_PAUSE = "pause";
     public static final String EVENT_NEXT = "next";
+    public static final String EVENT_SEEK = "seek";
     public static final String EVENT_ASSIGN_COLOR = "assignColor";
     public static final String EVENT_ASSIGN_COLOR_REQUEST = "assignColorRequest";
     public static final String EVENT_VOL_DOWN = "volDown";
@@ -644,6 +645,13 @@ public class ConnectivityManager {
      */
     public void next() {
         sendToTV(EVENT_NEXT, null, Message.TARGET_BROADCAST);
+    }
+
+    /**
+     * Seek to target position.
+     */
+    public void seek(int position) {
+        sendToTV(EVENT_SEEK, position, Message.TARGET_BROADCAST);
     }
 
     /**
