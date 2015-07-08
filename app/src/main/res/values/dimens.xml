@@ -17,4 +17,7 @@
 
     <dimen name="play_controls_width">72dp</dimen>
     <dimen name="now_playing_height">56dp</dimen>
+
+    <dimen name="add_button_bottom_margin">28dp</dimen>
+    <dimen name="add_button_right_margin">16dp</dimen>
 </resources>

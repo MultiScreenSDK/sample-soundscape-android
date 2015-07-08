@@ -29,6 +29,7 @@ import android.graphics.Color;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
@@ -44,6 +45,8 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -127,8 +130,25 @@ public class PlaylistActivity extends AppCompatActivity {
     private ImageView playControl;
     private StateListDrawable playControlDrawable;
 
+    //The media time panel.
+    private View mediaTime;
+
     //The next button in the playback view.
     private ImageView nextControl;
+
+    //The seek bar in playback control.
+    SeekBar seekBar;
+
+    //The media playback position.
+    private TextView postionTextView;
+
+    //The video duration.
+    private TextView durationTextView;
+
+    //The flag shows it is seeking to a new position. The video status event will be ignored during seeking.
+    boolean isSeeking = false;
+
+    private Handler handler = new Handler();
 
     private Toast toastShowAddTrack;
     private  View toastLayout;
@@ -305,6 +325,8 @@ public class PlaylistActivity extends AppCompatActivity {
      * @param event
      */
     public void onEvent(RemoveTrackEvent event) {
+        Util.d("RemoveTrackEvent: " + event.id);
+
         Track track = getTrackById(event.id);
 
         //remove it from playlist
@@ -317,10 +339,13 @@ public class PlaylistActivity extends AppCompatActivity {
      * @param event the playback event.
      */
     public void onEvent(TrackPlaybackEvent event) {
+        Util.d("TrackPlaybackEvent: " + event.event);
 
         if (event.isStart()) {
-            //Update the songs information in control panel.
-            updatePlaybackView(event.id, 0);
+            //Update the songs information in control panel when there is track in the playlist.
+            if (playlistAdapter.getCount()>0) {
+                updatePlaybackView(event.id, 0);
+            }
         } else {
             //Track is end. Remove the track from playlist.
            removeTrack(event.id);
@@ -333,6 +358,8 @@ public class PlaylistActivity extends AppCompatActivity {
      * @param event
      */
     public void onEvent(TrackStatusEvent event) {
+        Util.d("TrackStatusEvent: " + event.status.toJsonString());
+
         CurrentStatus status = event.status;
         if (status != null) {
 
@@ -341,7 +368,10 @@ public class PlaylistActivity extends AppCompatActivity {
                 setPlayState(!status.isPlaying());
             }
 
-            updatePlaybackView(status.getId(), status.getTime());
+            //Only update view when there is track in the playlist.
+            if (playlistAdapter.getCount()>0) {
+                updatePlaybackView(status.getId(), status.getTime());
+            }
         }
     }
 
@@ -486,6 +516,45 @@ public class PlaylistActivity extends AppCompatActivity {
                 }
             }
         });
+
+        mediaTime = findViewById(R.id.mediaTime);
+
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+                // Seek bar is changed.
+                isSeeking = true;
+                postionTextView.setText(Util.formatTimeString(seekBar.getProgress() * 1000));
+                ConnectivityManager.getInstance().seek(seekBar.getProgress());
+
+                // Give some time to located to new position.
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Seeking is done now.
+                        isSeeking = false;
+                    }
+                }, 2000);
+            }
+        });
+
+        //Media position view.
+        postionTextView = (TextView) findViewById(R.id.positionTextView);
+
+        //Track duration view.
+        durationTextView = (TextView) findViewById(R.id.durationTextView);
     }
 
     /**
@@ -737,10 +806,18 @@ public class PlaylistActivity extends AppCompatActivity {
      * @param time the playback position. You may update the progress bar according to this value.
      */
     private void updatePlaybackView(String id, float time) {
+        int marginBottom = (int) getResources().getDimension(R.dimen.add_button_bottom_margin);
+
         if (id != null) {
 
             //When some track is playing, show the playback view.
             nowPlaying.setVisibility(View.VISIBLE);
+
+            //Show seek bar.
+            seekBar.setVisibility(View.VISIBLE);
+
+            //Show the media time panel.
+            mediaTime.setVisibility(View.VISIBLE);
 
             //Get the track information.
             Track track = getTrackById(id);
@@ -749,13 +826,38 @@ public class PlaylistActivity extends AppCompatActivity {
             if (track != null) {
                 songTitle.setText(track.getTitle());
                 songArtist.setText(track.getArtist());
+
+                seekBar.setMax(track.getDuration());
+                seekBar.setProgress((int)time);
+                postionTextView.setText(Util.formatTimeString((int)(time * 1000)));
+                durationTextView.setText(Util.formatTimeString(track.getDuration() * 1000));
             }
+
+            //Move the add button
+            setAddButtonBottomMargin(marginBottom*3);
 
         } else {
 
             //Nothing is playing now. Hide the playback view.
             nowPlaying.setVisibility(View.GONE);
+
+            //Hide seek bar.
+            seekBar.setVisibility(View.GONE);
+
+            //Hide the media time panel.
+            mediaTime.setVisibility(View.GONE);
+
+            //Move the add button
+            setAddButtonBottomMargin(marginBottom);
         }
+    }
+
+    private void setAddButtonBottomMargin(int margin) {
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)addButton.getLayoutParams();
+        params.setMargins(0, 0,
+                (int) getResources().getDimension(R.dimen.add_button_right_margin),
+                margin);
+        addButton.setLayoutParams(params);
     }
 
     /**

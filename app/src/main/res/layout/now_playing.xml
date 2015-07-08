@@ -1,76 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nowPlaying"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/now_playing_height"
+    android:layout_height="wrap_content"
     android:background="@color/black"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:orientation="horizontal"
-    android:visibility="visible" >
+    android:orientation="vertical"
+    android:visibility="visible">
 
-    <ImageView
-        android:id="@+id/playControl"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:scaleType="fitCenter"
-        android:layout_marginRight="4dp"
-        android:src="@drawable/play_control_dark" />
-
-    <com.andexert.library.RippleView
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/now_playing_height"
-        android:layout_gravity="center"
-        app:rv_color="@color/white"
-        app:rv_rippleDuration="@android:integer/config_shortAnimTime" >
-
-        <ImageView
-            android:id="@+id/nextControl"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:clickable="true"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_skip_next_white" />
-    </com.andexert.library.RippleView>
 
     <LinearLayout
-        android:id="@+id/nowPlayingText"
+        android:id="@+id/nowPlaying"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingLeft="16dp" >
+        android:layout_height="@dimen/now_playing_height"
+        android:background="@color/black"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:visibility="visible">
 
-        <TextView
-            android:id="@+id/songTitle"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
+        <ImageView
+            android:id="@+id/playControl"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="4dp"
+            android:clickable="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/play_control_dark" />
+
+        <com.andexert.library.RippleView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/now_playing_height"
             android:layout_gravity="center"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:maxLines="1"
-            android:scrollHorizontally="true"
-            android:text="Trap Queen"
-            android:textColor="@color/white"
-            android:textSize="14sp"/>
+            app:rv_color="@color/white"
+            app:rv_rippleDuration="@android:integer/config_shortAnimTime">
 
-        <TextView
-            android:id="@+id/songArtist"
+            <ImageView
+                android:id="@+id/nextControl"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_skip_next_white" />
+        </com.andexert.library.RippleView>
+
+        <LinearLayout
+            android:id="@+id/nowPlayingText"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-light"
-            android:gravity="center_vertical"
-            android:maxLines="1"
-            android:scrollHorizontally="true"
-            android:text="Fetty Wap"
-            android:textColor="@color/white"
-            android:textSize="12sp"/>
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingLeft="16dp">
+
+            <TextView
+                android:id="@+id/songTitle"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:scrollHorizontally="true"
+                android:text="Trap Queen"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/songArtist"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:scrollHorizontally="true"
+                android:text="Fetty Wap"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+        </LinearLayout>
     </LinearLayout>
 
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:progress="0" />
+
+    <RelativeLayout
+        android:id="@+id/mediaTime"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:minHeight="@dimen/now_playing_height">
+
+        <TextView
+            android:id="@+id/positionTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:text="00:00:00"/>
+        <TextView
+            android:id="@+id/durationTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:text="00:00:00"/>
+    </RelativeLayout>
 </LinearLayout>
