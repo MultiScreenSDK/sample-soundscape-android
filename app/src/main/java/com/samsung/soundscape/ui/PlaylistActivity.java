@@ -148,6 +148,9 @@ public class PlaylistActivity extends AppCompatActivity {
     //The flag shows it is seeking to a new position. The video status event will be ignored during seeking.
     boolean isSeeking = false;
 
+    //When is seeking, we will not update the seek bar until this value is reached.
+    int expectedSeekbarValue;
+
     private Handler handler = new Handler();
 
     private Toast toastShowAddTrack;
@@ -368,6 +371,15 @@ public class PlaylistActivity extends AppCompatActivity {
                 setPlayState(!status.isPlaying());
             }
 
+            if (isSeeking) {
+                if ((int) status.getTime() == expectedSeekbarValue) {
+                    isSeeking = false;
+                } else {
+                    Util.d("MainActivity  in the seeking mode, ignore the status update.");
+                    return;
+                }
+            }
+
             //Only update view when there is track in the playlist.
             if (playlistAdapter.getCount()>0) {
                 updatePlaybackView(status.getId(), status.getTime());
@@ -536,17 +548,9 @@ public class PlaylistActivity extends AppCompatActivity {
 
                 // Seek bar is changed.
                 isSeeking = true;
-                postionTextView.setText(Util.formatTimeString(seekBar.getProgress() * 1000));
-                ConnectivityManager.getInstance().seek(seekBar.getProgress());
-
-                // Give some time to located to new position.
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Seeking is done now.
-                        isSeeking = false;
-                    }
-                }, 2000);
+                expectedSeekbarValue = seekBar.getProgress();
+                postionTextView.setText(Util.formatTimeString(expectedSeekbarValue * 1000));
+                ConnectivityManager.getInstance().seek(expectedSeekbarValue);
             }
         });
 
