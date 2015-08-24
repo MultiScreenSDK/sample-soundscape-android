@@ -43,6 +43,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+//import com.caverock.androidsvg.SVGImageView;
+
 /**
  * A swipeable adapter for playlist tracks that supports swiping to reveal a trash icon
  * to remove tracks.
@@ -52,6 +54,7 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
     private int layoutResourceId;
     private LayoutInflater inflater;
 
+//    private static SVG nowPlayingSVG;
     private static int colorBlack;
     private static int colorItem;
 
@@ -59,6 +62,12 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
         super(context, resource);
         this.layoutResourceId = resource;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+//        try {
+//            nowPlayingSVG = SVG.getFromResource(context, R.raw.analog);
+//        } catch (SVGParseException e) {
+//            e.printStackTrace();
+//        }
 
         colorBlack = getContext().getResources().getColor(R.color.black);
         colorItem = getContext().getResources().getColor(R.color.playlist_list_item);
@@ -119,6 +128,20 @@ public class SwipeableTracksAdapter extends ArraySwipeAdapter<Track> {
             holder.albumArt = (ImageView) row.findViewById(R.id.albumArt);
             holder.userColor = row.findViewById(R.id.userColor);
             holder.nowPlayingIcon = (ImageView) row.findViewById(R.id.nowPlayingIcon);
+////            if (nowPlayingSVG != null) {
+////                holder.nowPlayingIcon.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+////                Drawable drawable = new PictureDrawable(nowPlayingSVG.renderToPicture());
+////                holder.nowPlayingIcon.setImageDrawable(drawable);
+//                RelativeLayout layout = (RelativeLayout) row.findViewById(R.id.albumWrapper);
+//                SVGImageView svgImageView = new SVGImageView(getContext());
+//                svgImageView.setImageAsset("analog.svg");
+//            int width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,48,getContext().getResources().getDisplayMetrics());
+//            int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,48,getContext().getResources().getDisplayMetrics());
+//                ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(width,height);
+//                svgImageView.setLayoutParams(lp);
+//                svgImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//                layout.addView(svgImageView);
+////            }
             row.setTag(holder);
             this.mItemManager.initialize(row, position);
         } else {

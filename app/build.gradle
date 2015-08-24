@@ -13,7 +13,7 @@ repositories {
     mavenCentral()
 }
 
-version = '1.0'
+version = '1.1.1'
 ext {
     appName = parent.name
     apkOutputDir = "${buildDir}/outputs/apk"
@@ -43,7 +43,7 @@ android {
         applicationId "com.samsung.soundscape"
         minSdkVersion 15
         targetSdkVersion 21
-        versionCode 102
+        versionCode 103
         versionName version
     }
     packagingOptions {

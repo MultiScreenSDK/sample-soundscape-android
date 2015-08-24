@@ -346,7 +346,7 @@ public class ConnectivityManager {
 
                 //If different TV is selected, disconnect the previous application.
                 if (mMultiscreenApp != null && mMultiscreenApp.isConnected()) {
-                    mMultiscreenApp.disconnect(new Result<Client>() {
+                    mMultiscreenApp.disconnect(true, new Result<Client>() {
                         @Override
                         public void onSuccess(Client client) {
                             //disconnect onSuccess, update service.
@@ -537,7 +537,7 @@ public class ConnectivityManager {
     public void disconnect() {
         if (service != null && mMultiscreenApp != null && mMultiscreenApp.isConnected()) {
             mMultiscreenApp.removeOnMessageListeners();
-            mMultiscreenApp.disconnect(false, null);
+            mMultiscreenApp.disconnect(true, null);
             service = null;
         }
     }
