@@ -32,7 +32,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -72,14 +71,137 @@ public class ServiceListFragment extends DialogFragment {
     }
 
     @Override
+//    public Dialog onCreateDialog(Bundle savedInstanceState) {
+//
+//        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_connect_service, null);
+//
+//
+//        if (view != null) {
+//            ListView listView = (ListView)view.findViewById(R.id.deviceListView);
+//            listView.setAdapter(ConnectivityManager.getInstance().getServiceAdapter());
+//            listView.setOnItemClickListener(new ListView.OnItemClickListener() {
+//
+//                @Override
+//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                    //When item is clicked, get the service clicked first.
+//                    ServiceAdapter adapter = ConnectivityManager.getInstance().getServiceAdapter();
+//                    Service service = adapter.getItem(position);
+//
+//                    Activity activity = getActivity();
+//                    if (activity instanceof ConnectActivity) {
+//
+//                        //Display connecting message if it is in connection screen.
+//                        ConnectActivity ca = (ConnectActivity) getActivity();
+//                        ca.displayConnectingMessage(service.getName());
+//                    } else if (activity instanceof PlaylistActivity) {
+//
+//                        //Switching service if it is in playlist screen.
+//                        PlaylistActivity pa = (PlaylistActivity) activity;
+//                        pa.isSwitchingService = true;
+//                        ConnectivityManager.getInstance().disconnect();
+//                    }
+//
+//                    ConnectivityManager.getInstance().setService(service);
+//                    ServiceListFragment.this.getDialog().dismiss();
+//                }
+//            });
+//
+//            LinearLayout llConnectTo = (LinearLayout)view.findViewById(R.id.selectedServiceLayout);
+//            TextView connectedToText = (TextView)view.findViewById(R.id.connectedToText);
+//            ImageView connectedToIcon = (ImageView)view.findViewById(R.id.connectedToIcon);
+//
+//            LinearLayout switchToLayout = (LinearLayout)view.findViewById(R.id.switchToLayout);
+//
+//            if (ConnectivityManager.getInstance().isTVConnected()) {
+//
+//                //Display connected device and disconnect button.
+//                llConnectTo.setVisibility(View.VISIBLE);
+//
+//                //Update the dialog title
+//                connectedToText.setText(getString(R.string.connected_to));
+//
+//                //Update the dialog icon
+//                connectedToIcon.setImageResource(R.drawable.ic_connected_white);
+//
+//                //Remove the connected service from service list.
+//                ConnectivityManager.getInstance().removeConnectedServiceFromList();
+//
+//                //Update the service icon according to service type.
+//                ImageView selectedServiceIcon = (ImageView)view.findViewById(R.id.selectedServiceIcon);
+//                if (ConnectivityManager.getInstance().getConnectedServiceType() == ConnectivityManager.ServiceType.Speaker) {
+//                    //The speaker is connected
+//                    selectedServiceIcon.setImageResource(R.drawable.ic_speaker_gray);
+//                } else if (ConnectivityManager.getInstance().getConnectedServiceType() == ConnectivityManager.ServiceType.TV) {
+//                    //The TV or TV simulator is connected.
+//                    selectedServiceIcon.setImageResource(R.drawable.ic_tv_white);
+//                }
+//
+//                //Display the connected service name
+//                TextView selectedServiceText = (TextView)view.findViewById(R.id.selectedServiceText);
+//                selectedServiceText.setText(Util.getFriendlyTvName(ConnectivityManager.getInstance().getService().getName()));
+//
+//                //Update the disconnect button with user color.
+//                Button btnDisconnect = (Button) view.findViewById(R.id.disconnectButton);
+//                btnDisconnect.setTextColor(mColor);
+//
+//                //When disconnect button is clicked, close the activity and returns to connection screen.
+//                btnDisconnect.setOnClickListener(new View.OnClickListener() {
+//
+//                    @Override
+//                    public void onClick(View v) {
+//                        ConnectivityManager.getInstance().addConnectedServerToList();
+//                        getActivity().finish();
+//                    }
+//                });
+//
+//                switchToLayout.setVisibility(ConnectivityManager.getInstance().getServiceAdapter().getCount()==0?View.GONE:View.VISIBLE);
+//            } else {
+//
+//                //Hide connected device and disconnect button.
+//                llConnectTo.setVisibility(View.GONE);
+//
+//                //Update the dialog title.
+//                connectedToText.setText(getString(R.string.connect_to));
+//
+//                //Update the dialog icon.
+//                connectedToIcon.setImageResource(R.drawable.ic_discovered_white);
+//            }
+//        }
+//
+//        //Create a alert dialog with customized style.
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomTheme_Dialog);
+//        builder.setView(view);
+//
+//        // Allow dismiss by clicking outside the dialog
+//        AlertDialog dialog = builder.create();
+//        dialog.setCanceledOnTouchOutside(true);
+//        dialog.show();
+//
+//        // Set window width
+//        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+//        lp.copyFrom(dialog.getWindow().getAttributes());
+//        lp.gravity = Gravity.TOP;
+//        lp.width = getResources().getDimensionPixelSize(R.dimen.connect_width);
+//
+//        // Set window height
+//        int displayHeight = Util.getDisplayHeight(getActivity());
+//        int maxHeight = Math.round((float)displayHeight * 75 / 100);
+//        lp.y = Math.round((float)(displayHeight - maxHeight) / 2);
+//        lp.height = maxHeight;
+//
+//        dialog.getWindow().setAttributes(lp);
+//        return dialog;
+//    }
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_connect_service, null);
 
+        final ServiceAdapter serviceAdapter = ConnectivityManager.getInstance().getServiceAdapter();
 
         if (view != null) {
-            ListView listView = (ListView)view.findViewById(R.id.deviceListView);
-            listView.setAdapter(ConnectivityManager.getInstance().getServiceAdapter());
+            ListView listView = (ListView) view.findViewById(R.id.deviceListView);
+            listView.setAdapter(serviceAdapter);
             listView.setOnItemClickListener(new ListView.OnItemClickListener() {
 
                 @Override
@@ -108,69 +230,55 @@ public class ServiceListFragment extends DialogFragment {
                 }
             });
 
-            LinearLayout llConnectTo = (LinearLayout)view.findViewById(R.id.selectedServiceLayout);
-            TextView connectedToText = (TextView)view.findViewById(R.id.connectedToText);
-            ImageView connectedToIcon = (ImageView)view.findViewById(R.id.connectedToIcon);
-
-            LinearLayout switchToLayout = (LinearLayout)view.findViewById(R.id.switchToLayout);
+            LinearLayout connectToLayout = (LinearLayout) view.findViewById(R.id.connectToLayout);
+            LinearLayout selectedServiceLayout = (LinearLayout) view.findViewById(R.id.selectedServiceLayout);
 
             if (ConnectivityManager.getInstance().isTVConnected()) {
 
-                //Display connected device and disconnect button.
-                llConnectTo.setVisibility(View.VISIBLE);
+                // Hide connect to layout.
+                connectToLayout.setVisibility(View.GONE);
 
-                //Update the dialog title
-                connectedToText.setText(getString(R.string.connected_to));
+                // Display connected device and disconnect button.
+                selectedServiceLayout.setVisibility(View.VISIBLE);
 
-                //Update the dialog icon
-                connectedToIcon.setImageResource(R.drawable.ic_connected_white);
-
-                //Remove the connected service from service list.
-                ConnectivityManager.getInstance().removeConnectedServiceFromList();
-
-                //Update the service icon according to service type.
-                ImageView selectedServiceIcon = (ImageView)view.findViewById(R.id.selectedServiceIcon);
+                // Update the service icon according to service type.
+                ImageView selectedServiceIcon = (ImageView) view.findViewById(R.id.selectedServiceIcon);
                 if (ConnectivityManager.getInstance().getConnectedServiceType() == ConnectivityManager.ServiceType.Speaker) {
                     //The speaker is connected
-                    selectedServiceIcon.setImageResource(R.drawable.ic_speaker_gray);
+                    selectedServiceIcon.setImageResource(R.drawable.ic_speaker_white);
                 } else if (ConnectivityManager.getInstance().getConnectedServiceType() == ConnectivityManager.ServiceType.TV) {
                     //The TV or TV simulator is connected.
                     selectedServiceIcon.setImageResource(R.drawable.ic_tv_white);
                 }
 
-                //Display the connected service name
-                TextView selectedServiceText = (TextView)view.findViewById(R.id.selectedServiceText);
+                // Display the connected service name
+                TextView selectedServiceText = (TextView) view.findViewById(R.id.selectedServiceText);
                 selectedServiceText.setText(Util.getFriendlyTvName(ConnectivityManager.getInstance().getService().getName()));
 
-                //Update the disconnect button with user color.
-                Button btnDisconnect = (Button) view.findViewById(R.id.disconnectButton);
-                btnDisconnect.setTextColor(mColor);
+                // Button btnDisconnect = (Button) view.findViewById(R.id.disconnectButton);
+                TextView btnDisconnect = (TextView) view.findViewById(R.id.disconnectButton);
 
-                //When disconnect button is clicked, close the activity and returns to connection screen.
+                // When disconnect button is clicked, close the activity and returns to connection screen.
                 btnDisconnect.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
-                        ConnectivityManager.getInstance().addConnectedServerToList();
-                        getActivity().finish();
+                        ConnectivityManager.getInstance().disconnect();
+                        ConnectivityManager.getInstance().startDiscovery();
+                        dismiss();
                     }
                 });
 
-                switchToLayout.setVisibility(ConnectivityManager.getInstance().getServiceAdapter().getCount()==0?View.GONE:View.VISIBLE);
             } else {
+                // Hide connected device and disconnect button.
+                selectedServiceLayout.setVisibility(View.GONE);
 
-                //Hide connected device and disconnect button.
-                llConnectTo.setVisibility(View.GONE);
-
-                //Update the dialog title.
-                connectedToText.setText(getString(R.string.connect_to));
-
-                //Update the dialog icon.
-                connectedToIcon.setImageResource(R.drawable.ic_discovered_white);
+                // Show connect to layout.
+                connectToLayout.setVisibility(View.VISIBLE);
             }
         }
 
-        //Create a alert dialog with customized style.
+        // Create a alert dialog with customized style.
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomTheme_Dialog);
         builder.setView(view);
 
@@ -179,17 +287,21 @@ public class ServiceListFragment extends DialogFragment {
         dialog.setCanceledOnTouchOutside(true);
         dialog.show();
 
-        // Set window width
+        // Set window width.
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.gravity = Gravity.TOP;
         lp.width = getResources().getDimensionPixelSize(R.dimen.connect_width);
 
-        // Set window height
-        int displayHeight = Util.getDisplayHeight(getActivity());
-        int maxHeight = Math.round((float)displayHeight * 75 / 100);
-        lp.y = Math.round((float)(displayHeight - maxHeight) / 2);
-        lp.height = maxHeight;
+        // Disconnect dialog use center by default.
+        if (!ConnectivityManager.getInstance().isTVConnected()) {
+
+            lp.gravity = Gravity.TOP;
+
+            // Set window height
+            int displayHeight = Util.getDisplayHeight(getActivity());
+            int maxHeight = Math.round((float) displayHeight * 75 / 100);
+            lp.y = Math.round((float) (displayHeight - maxHeight) / 2);
+        }
 
         dialog.getWindow().setAttributes(lp);
         return dialog;

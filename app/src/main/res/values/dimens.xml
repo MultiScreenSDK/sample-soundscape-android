@@ -20,4 +20,7 @@
 
     <dimen name="add_button_bottom_margin">28dp</dimen>
     <dimen name="add_button_right_margin">16dp</dimen>
+
+    <dimen name="service_list_item_height">48dp</dimen>
+    <dimen name="service_disconnect_height">64dp</dimen>
 </resources>
