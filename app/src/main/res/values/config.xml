@@ -5,7 +5,7 @@
     <integer name="drawerAnimtime">1500</integer>
     <integer name="drawerAnimtime2">3000</integer>
 
-    <string name="app_url">http://multiscreen.samsung.com/examples/soundscape/tv/index.html</string>
+    <string name="app_url">http://dgpcnfdr6d6y5.cloudfront.net/examples/soundscape/tv/index.html</string>
     <string name="channel_id">com.samsung.soundscape</string>
-    <string name="playlist_url">http://multiscreen.samsung.com/examples/soundscape/music/library.json</string>
+    <string name="playlist_url">http://dgpcnfdr6d6y5.cloudfront.net/examples/soundscape/music/library.json</string>
 </resources>
